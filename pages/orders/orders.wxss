@@ -98,3 +98,55 @@ page{
     color: #fff;
     background: #AB956D;
 }
+
+/* 支付方式样式 */
+.orders-payment{
+  padding: 20rpx 30rpx;
+  border-bottom: 20rpx solid #ededed;
+}
+
+.orders-section-title{
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20rpx;
+}
+
+.payment-item{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.payment-item:last-child{
+  border-bottom: none;
+}
+
+.payment-item.selected{
+  background-color: #f8f8f8;
+  border-radius: 8rpx;
+  margin: 0 -20rpx;
+  padding: 20rpx;
+}
+
+.payment-info{
+  flex: 1;
+}
+
+.payment-name{
+  display: block;
+  font-size: 32rpx;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.payment-desc{
+  font-size: 24rpx;
+  color: #999;
+}
+
+.payment-select{
+  margin-left: 20rpx;
+}

@@ -289,6 +289,52 @@ const paymentData = {
   }
 };
 
+// 收货地址数据
+const addressData = {
+  code: "success",
+  data: [
+    {
+      id: 1,
+      consignee: "张三",
+      mobile: "13800138000",
+      address: "北京市朝阳区建国路88号现代城1栋1单元101室",
+      is_default: true
+    },
+    {
+      id: 2,
+      consignee: "李四",
+      mobile: "13900139000",
+      address: "上海市浦东新区陆家嘴金融中心2栋2单元202室",
+      is_default: false
+    }
+  ]
+};
+
+// 支付方式数据
+const paymentMethodsData = {
+  code: "success",
+  data: [
+    {
+      id: 1,
+      name: "微信支付",
+      icon: "/wechat_pay.png",
+      description: "安全便捷的微信支付"
+    },
+    {
+      id: 2,
+      name: "支付宝",
+      icon: "/alipay.png",
+      description: "快速高效的支付宝"
+    },
+    {
+      id: 3,
+      name: "银行卡支付",
+      icon: "/bank_card.png",
+      description: "支持各大银行储蓄卡和信用卡"
+    }
+  ]
+};
+
 // 用户验证数据
 const userVerifyData = {
   code: "success",
@@ -310,5 +356,7 @@ module.exports = {
   orderData,
   userOrdersData,
   paymentData,
-  userVerifyData
+  userVerifyData,
+  addressData,
+  paymentMethodsData
 };

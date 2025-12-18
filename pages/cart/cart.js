@@ -14,7 +14,7 @@ Page({
    * 页面的初始数据
    */
   data: {
-    carts: [], //数据 
+    carts: [], //数据
     iscart: false,
     hidden: null,
     isAllSelect: false,
@@ -43,7 +43,7 @@ Page({
     var arr = wx.getStorageSync('cart') || [];
     // console.log("缓存数据：", arr);
     if (arr.length > 0) {
-      // 更新数据  
+      // 更新数据
       this.setData({
         carts: arr,
         iscart: true,
@@ -59,9 +59,9 @@ Page({
     }
   },
 
-  //勾选事件处理函数  
+  //勾选事件处理函数
   switchSelect: function (e) {
-    // 获取item项的id，和数组的下标值  
+    // 获取item项的id，和数组的下标值
     var Allprice = 0,
       i = 0;
     let id = e.target.dataset.id,
@@ -119,7 +119,7 @@ Page({
     if (count > 1) {
       this.data.carts[index].count--;
     }
-    // 将数值与状态写回  
+    // 将数值与状态写回
     this.setData({
       carts: this.data.carts
     });
@@ -130,11 +130,11 @@ Page({
   addCount: function (e) {
     var index = e.target.dataset.index;
     // console.log("count++");
-    var count = this.data.carts[index].count; // 商品总数量+1  
+    var count = this.data.carts[index].count; // 商品总数量+1
     if (count < 10) {
       this.data.carts[index].count++;
     }
-    // 将数值与状态写回  
+    // 将数值与状态写回
     this.setData({
       carts: this.data.carts
     });
@@ -155,7 +155,7 @@ Page({
   },
   /* 删除item */
   delGoods: function (e) {
-    this.data.carts.splice(e.target.id.substring(3), 1); // 更新data数据对象  
+    this.data.carts.splice(e.target.id.substring(3), 1); // 更新data数据对象
     if (this.data.carts.length > 0) {
       this.setData({
         carts: this.data.carts
@@ -173,103 +173,65 @@ Page({
   },
 
   goBuy: function (e) {
-    var newProducts = [];
-    const that = this;
+    // 筛选选中的商品
+    var selectedProducts = [];
     this.data.carts.forEach(item => {
       if (item.isSelect == true) {
-
-        newProducts.push({
+        selectedProducts.push({
           product_id: item.id,
           count: item.count,
-        })
-        // 删除选中进入订单的商品
+        });
       }
-      newProducts.forEach(item_selected => {
-        var index = this.data.carts.indexOf(item_selected);
-        this.data.carts.splice(index, 1);
-      })
-    })
-    console.log(newProducts);
-    if (this.data.carts.length > 0) {
-      this.setData({
-        carts: this.data.carts
-      })
-      wx.setStorageSync('cart', this.data.carts);
-      this.priceCount();
-    } else {
-      this.setData({
-        cart: this.data.carts,
-        iscart: false,
-        hidden: true,
-      })
-      wx.setStorageSync('cart', []);
+    });
+
+    // 检查是否有选中的商品
+    if (selectedProducts.length === 0) {
+      wx.showToast({
+        title: '请选择要结算的商品',
+        icon: 'none'
+      });
+      return;
     }
 
+    console.log('选中的商品:', selectedProducts);
 
-    // console.log("app.globalData.token：   ", app.globalData.token);
-    let token = app.globalData.token.token;
-    // console.log("token：   ", token);
+    const that = this;
 
-    verify(token).then(res => {
-      if (res.data.isValid == true) {
-        console.log("2", newProducts)
+    // 调用创建订单接口
+    setOrder(selectedProducts).then(res => {
+      console.log('订单创建成功:', res);
+
+      // 清空购物车中已结算的商品
+      let remainingCarts = that.data.carts.filter(item => !item.isSelect);
+
+      // 更新购物车数据
+      if (remainingCarts.length > 0) {
+        that.setData({
+          carts: remainingCarts
+        });
+        wx.setStorageSync('cart', remainingCarts);
+        that.priceCount();
       } else {
-        // console.log(res.data.isValid)
-        const that = this;
-        let gbdata = app.globalData;
-        wx.login({
-          success: function (res) {
-            let code = res.code;
-            // console.log(res.code)
-            getApp().post('/token/user', {
-              code: code
-            }).then((e) => {
-              try {
-                wx.setStorageSync('token', e.data);
-                // console.log(wx.getStorageSync('token'))
-              } catch (e) {
-                // console.log('setTokenErr', e)
-              }
-              gbdata.token = e.data;
-              let isLogined = true;
-              that.setData({
-                isLogined
-              })
-              wx.setStorageSync('isLogined', isLogined);
-              // console.log(wx.getStorageSync('isLogined'))
-              wx.showToast({
-                title: '登陆成功',
-                icon: 'success'
-              })
-            })
-          }
-        })
+        that.setData({
+          carts: [],
+          iscart: false,
+          hidden: true,
+        });
+        wx.setStorageSync('cart', []);
       }
-    })
-    wx.request({
-      url: 'https://hanmashanghu.qiaomai365.com/api/v1/order',
-      method: 'POST',
-      header: {
-        //修改
-        'content-type': 'application/json',
-        'token': token
-      },
-      data: {
-        products: newProducts
-      },
-      success: res => {
-        var order_id = res.data.data.order_id;
-        wx.setStorageSync('data', res.data.data)
-        console.log(res.data.data)
-        wx.setStorageSync('order_id', order_id)
-        wx.navigateTo({
-          url: '/pages/orders/orders?order_id=' + wx.getStorageSync('order_id')
-        })
-        console.log(wx.getStorageSync('order_id'))
-      }
-    })
 
-    // console.log(res.data.isValid)
+      // 跳转到订单详情页面
+      wx.setStorageSync('order_id', res.order_id);
+      wx.navigateTo({
+        url: '/pages/orders/orders?order_id=' + res.order_id
+      });
 
+    }).catch(err => {
+      console.error('订单创建失败:', err);
+      wx.showToast({
+        title: '订单创建失败',
+        icon: 'none'
+      });
+    });
   },
 })
