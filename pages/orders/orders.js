@@ -36,8 +36,8 @@ Page({
     getOrderDetail(order_id).then(res => {
       const that = this;
       that.setData({
-        orders: res.data.data.snap_items,
-        total: res.data.data.total_price
+        orders: res.snap_items,
+        total: res.total_price
       })
     })
   },

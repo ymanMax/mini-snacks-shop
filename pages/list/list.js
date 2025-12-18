@@ -25,8 +25,8 @@ Page({
 
     getThemeInfo(item).then(res => {
       that.setData({
-        products: res.data.data.products,
-        pic: res.data.data.head_img.url
+        products: res.products,
+        pic: res.head_img.url
       })
     })
   },

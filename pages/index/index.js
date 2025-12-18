@@ -32,7 +32,8 @@ Page({
     ],
     theme_2:[{}],
     theme_3:[{}],
-    products:[{}],
+    products:[],
+
   },
   swiperChange: function (e) { //指示图标
     this.setData({
@@ -43,39 +44,39 @@ Page({
     const that = this;
     //获得轮播图列表
     getBanner().then(res => {
-      // console.log(res.data.data.items)
+      // console.log(res)
       that.setData({
-        items: res.data.data.items
+        items: res
       })
     })
 
     // 获得首页推荐图片1
     getThemeInfo(1).then(res => {
-      // console.log(res.data.data)
+      // console.log(res)
       that.setData({
-        theme_1: res.data.data
+        theme_1: res
       })
     })
 
     getThemeInfo(2).then(res => {
-      // console.log(res.data.data)
+      // console.log(res)
       that.setData({
-        theme_2: res.data.data
+        theme_2: res
       })
     })
 
     getThemeInfo(3).then(res => {
-      // console.log(res.data.data)
+      // console.log(res)
       that.setData({
-        theme_3: res.data.data
+        theme_3: res
       })
     })
 
     // 获得首页商品
     getItems().then(res => {
-      console.log(res.data.data)
+      console.log(res)
       that.setData({
-        products: res.data.data
+        products: res
       })
     })
   },

@@ -129,9 +129,9 @@ Page({
     const that = this;
     let product_id = options.product_id;
     getDetail(product_id).then(res => {
-      console.log(res.data.data)
+      console.log(res)
       that.setData({
-        item: res.data.data
+        item: res
       })
     })
   },

@@ -44,7 +44,7 @@
       <text>最近新品</text>
     </view>
     <view class="list-box">
-    <view class="newest-list" wx:for="{{products}}">
+    <view class="newest-list" wx:for="{{products}}" wx:key="id">
       <navigator url="../detail/detail?product_id={{item.id}}">
         <image src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
         <view class="newest-text"><text>{{item.name}}</text></view>

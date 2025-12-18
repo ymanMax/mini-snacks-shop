@@ -69,13 +69,13 @@ Page({
     let token = app.globalData.token.token;
     verify(token).then(res => {
       console.log(token)
-      if (res.data.isValid == true) {
+      if (res.isValid == true) {
 
         getAllOrders(1, 8).then(res => {
           this.setData({
-            orders: res.data.data.data.data
+            orders: res.data.data
           })
-          console.log(res.data.data.data.data)
+          console.log(res.data.data)
         })
       } else {
         console.log(res.data.isValid)

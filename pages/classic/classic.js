@@ -40,11 +40,11 @@ Page({
     var classs = [];
     let detail;
     getClass().then(res => {
-      detail = res.data.data
+      detail = res
       // console.log(detail)
       for (var i = 0; i < detail.length; i++) {
         getClassDetail(detail[i].id).then(res => {
-          classs.push(res.data.data)
+          classs.push(res)
           that.setData({
             detail,
             classs
