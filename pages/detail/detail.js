@@ -14,7 +14,14 @@ Page({
     show: false,
     scaleCart: false,
     item: [],
-    isClick: true
+    isClick: true,
+    // 评价相关数据
+    userRating: 0,
+    userComment: '',
+    displayReviews: [], // 用于显示的评价（默认显示前3条）
+    showAllReviews: false, // 是否显示全部评价
+    averageRating: 0, // 平均评分
+    ratingDistribution: [] // 评分分布
   },
   addCount() {
     let num = this.data.num;
@@ -133,6 +140,8 @@ Page({
       that.setData({
         item: res
       })
+      // 初始化评价数据
+      that.initReviewData();
     })
   },
 
@@ -183,5 +192,114 @@ Page({
    */
   onShareAppMessage() {
 
+  },
+
+  // ==================== 评价相关方法 ====================
+
+  /**
+   * 初始化评价数据
+   */
+  initReviewData() {
+    const { item } = this.data;
+
+    if (item.reviews && item.reviews.length > 0) {
+      // 计算平均评分
+      const totalRating = item.reviews.reduce((sum, review) => sum + review.rating, 0);
+      const averageRating = totalRating / item.reviews.length;
+
+      // 计算评分分布
+      const ratingDistribution = [0, 0, 0, 0, 0]; // 分别对应5星到1星的数量
+      item.reviews.forEach(review => {
+        ratingDistribution[5 - review.rating]++;
+      });
+
+      // 转换为百分比
+      const distributionWithPercentage = ratingDistribution.map(count => ({
+        count,
+        percentage: (count / item.reviews.length) * 100
+      }));
+
+      // 设置初始显示的评价（前3条）
+      const displayReviews = item.reviews.slice(0, 3);
+
+      this.setData({
+        averageRating: averageRating.toFixed(1),
+        ratingDistribution: distributionWithPercentage,
+        displayReviews
+      });
+    }
+  },
+
+  /**
+   * 设置用户评分
+   */
+  setUserRating(e) {
+    const rating = parseInt(e.currentTarget.dataset.rating);
+    this.setData({
+      userRating: rating
+    });
+  },
+
+  /**
+   * 处理评价输入
+   */
+  onCommentInput(e) {
+    this.setData({
+      userComment: e.detail.value
+    });
+  },
+
+  /**
+   * 提交评价
+   */
+  submitReview() {
+    const { userRating, userComment, item } = this.data;
+
+    if (!userRating || !userComment.trim()) {
+      wx.showToast({
+        title: '请填写评分和评价内容',
+        icon: 'none'
+      });
+      return;
+    }
+
+    // 创建新评价
+    const newReview = {
+      user_name: '匿名用户',
+      rating: userRating,
+      comment: userComment.trim(),
+      date: new Date().toISOString().split('T')[0]
+    };
+
+    // 更新评价数据
+    let updatedReviews = item.reviews ? [...item.reviews, newReview] : [newReview];
+    let updatedItem = { ...item, reviews: updatedReviews };
+
+    // 更新页面数据
+    this.setData({
+      item: updatedItem,
+      userRating: 0,
+      userComment: ''
+    });
+
+    // 重新初始化评价数据
+    this.initReviewData();
+
+    wx.showToast({
+      title: '评价提交成功',
+      icon: 'success'
+    });
+  },
+
+  /**
+   * 查看全部评价
+   */
+  viewAllReviews() {
+    const { item } = this.data;
+
+    this.setData({
+      displayReviews: item.reviews,
+      showAllReviews: true
+    });
   }
 })
