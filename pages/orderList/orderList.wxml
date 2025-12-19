@@ -1,0 +1,43 @@
+<!--pages/orderList/orderList.wxml-->
+<view class="main">
+  <view class="page-header">我的订单</view>
+
+  <view class="orders-filter">
+    <button class="filter-btn {{currentFilter === 'all' ? 'active' : ''}}" bindtap="filterOrders" data-status="all">全部</button>
+    <button class="filter-btn {{currentFilter === 'pending' ? 'active' : ''}}" bindtap="filterOrders" data-status="pending">待付款</button>
+    <button class="filter-btn {{currentFilter === 'processing' ? 'active' : ''}}" bindtap="filterOrders" data-status="processing">处理中</button>
+    <button class="filter-btn {{currentFilter === 'shipped' ? 'active' : ''}}" bindtap="filterOrders" data-status="shipped">已发货</button>
+    <button class="filter-btn {{currentFilter === 'completed' ? 'active' : ''}}" bindtap="filterOrders" data-status="completed">已完成</button>
+    <button class="filter-btn {{currentFilter === 'cancelled' ? 'active' : ''}}" bindtap="filterOrders" data-status="cancelled">已取消</button>
+  </view>
+
+  <view class="orders-list">
+    <view wx:for="{{filteredOrders}}" wx:key="order_id" class="order-item" bindtap="goToDetail" data-order-id="{{item.order_id}}">
+      <view class="order-header">
+        <view class="order-number">订单编号：{{item.order_id}}</view>
+        <view class="order-status">{{getStatusText(item.status)}}</view>
+      </view>
+      <view class="order-products">
+        <view wx:for="{{item.products}}" wx:for-item="product" wx:key="id" class="product-item">
+          <image src="{{product.image}}" class="product-image"></image>
+          <view class="product-info">
+            <view class="product-name">{{product.name}}</view>
+            <view class="product-price">￥{{product.price}} ×{{product.quantity}}</view>
+          </view>
+        </view>
+      </view>
+      <view class="order-footer">
+        <view class="order-total">总计：￥{{item.total_amount}}</view>
+        <view class="order-actions">
+          <button wx:if="{{item.status === 'pending'}}" size="mini" class="action-btn pay-btn" bindtap="payOrder" data-order-id="{{item.order_id}}">付款</button>
+          <button wx:if="{{item.status === 'pending'}}" size="mini" class="action-btn cancel-btn" bindtap="cancelOrder" data-order-id="{{item.order_id}}">取消</button>
+          <button wx:if="{{item.status === 'shipped'}}" size="mini" class="action-btn confirm-btn" bindtap="confirmReceipt" data-order-id="{{item.order_id}}">确认收货</button>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{filteredOrders.length === 0}}" class="empty-state">
+    <text>暂无订单</text>
+  </view>
+</view>

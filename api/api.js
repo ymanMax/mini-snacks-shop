@@ -80,6 +80,20 @@ function payment(id) {
   }, 1, 1);
 }
 
+// 取消订单
+function cancelOrder(order_id) {
+  return request('/order/' + order_id + '/cancel', {}, {
+    prompt: false
+  }, 3, 1);
+}
+
+// 编辑订单
+function editOrder(order_id, data) {
+  return request('/order/' + order_id, data, {
+    prompt: false
+  }, 2, 1);
+}
+
 module.exports = {
   getBanner,
   getThemeInfo,
@@ -91,6 +105,8 @@ module.exports = {
   verify,
   getOrderDetail,
   getAllOrders,
-  payment
+  payment,
+  cancelOrder,
+  editOrder
 };
 

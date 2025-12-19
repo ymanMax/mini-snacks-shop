@@ -2,7 +2,8 @@
 const app = getApp();
 const {
   getAllOrders,
-  verify
+  verify,
+  cancelOrder
 } = require('../../api/api.js');
 Page({
   data: {
@@ -66,56 +67,8 @@ Page({
       address,
       hasAddress
     })
-    let token = app.globalData.token.token;
-    verify(token).then(res => {
-      console.log(token)
-      if (res.isValid == true) {
-
-        getAllOrders(1, 8).then(res => {
-          this.setData({
-            orders: res.data.data
-          })
-          console.log(res.data.data)
-        })
-      } else {
-        console.log(res.data.isValid)
-        const that = this;
-        let gbdata = app.globalData;
-        wx.login({
-          success: function (res) {
-            let code = res.code;
-            // console.log(res.code)
-            getApp().post('/token/user', {
-              code: code
-            }).then((e) => {
-              try {
-                wx.setStorageSync('token', e.data);
-                // console.log(wx.getStorageSync('token'))
-              } catch (e) {
-                // console.log('setTokenErr', e)
-              }
-              gbdata.token = e.data;
-              let isLogined = true;
-              that.setData({
-                isLogined
-              })
-              wx.setStorageSync('isLogined', isLogined);
-              // console.log(wx.getStorageSync('isLogined'))
-              wx.showToast({
-                title: '登陆成功',
-                icon: 'success'
-              })
-            })
-          }
-        })
-        getAllOrders(1, 8).then(res => {
-          this.setData({
-            orders: res.data.data.orders
-          })
-          console.log(res.data.data.data)
-        })
-      }
-    })
+    // 加载订单数据
+    this.loadOrders();
   },
   login: function () {
     const that = this;
@@ -181,10 +134,70 @@ Page({
     })
 
   },
-  payOrders() {
+  // 获取订单状态文本
+  getStatusText(status) {
+    const statusMap = {
+      pending: '未付款',
+      completed: '已完成',
+      cancelled: '已取消',
+      shipped: '已发货',
+      processing: '处理中'
+    };
+    return statusMap[status] || status;
+  },
+
+  // 跳转到订单详情
+  goToOrderDetail(e) {
+    const orderId = e.currentTarget.dataset.orderId;
     wx.navigateTo({
-      url: '../fail/fail'
-    })
+      url: `/pages/orderDetail/orderDetail?order_id=${orderId}`
+    });
+  },
+
+  // 付款
+  payOrders(e) {
+    const orderId = e.currentTarget ? e.currentTarget.dataset.orderId : null;
+    wx.showToast({
+      title: '支付功能开发中',
+      icon: 'none'
+    });
+  },
+
+  // 取消订单
+  cancelOrder(e) {
+    const that = this;
+    const orderId = e.currentTarget.dataset.orderId;
+
+    wx.showModal({
+      title: '确认取消',
+      content: '您确定要取消该订单吗？',
+      success: function (res) {
+        if (res.confirm) {
+          cancelOrder(orderId).then(res => {
+            wx.showToast({
+              title: '订单已取消',
+              icon: 'success'
+            });
+            // 更新订单列表
+            that.loadOrders();
+          }).catch(() => {
+            wx.showToast({
+              title: '取消失败',
+              icon: 'none'
+            });
+          });
+        }
+      }
+    });
+  },
+
+  // 加载订单数据
+  loadOrders() {
+    getAllOrders(1, 8).then(res => {
+      this.setData({
+        orders: res
+      });
+    });
   },
   onPullDownRefresh: function () {
     wx.showNavigationBarLoading() //在标题栏中显示加载
