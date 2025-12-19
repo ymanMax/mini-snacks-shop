@@ -80,4 +80,11 @@ Page({
       })
     })
   },
+
+  // 跳转到搜索页面
+  goToSearch: function () {
+    wx.navigateTo({
+      url: '/pages/search/search'
+    });
+  },
 })

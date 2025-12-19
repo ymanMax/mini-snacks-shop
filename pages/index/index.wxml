@@ -1,4 +1,12 @@
 <view class="main">
+  <!-- 搜索框 -->
+  <view class="search-container">
+    <view class="search-box" bindtap="goToSearch">
+      <image class="search-icon" src="/image/search.png"></image>
+      <text class="search-placeholder">请输入商品名称搜索</text>
+    </view>
+  </view>
+
   <!-- 轮播图 -->
   <view class="swiperContainer">
     <swiper class="imageContainer" bindchange="swiperChange" previous-margin="55rpx" next-margin="50rpx" circular autoplay>
