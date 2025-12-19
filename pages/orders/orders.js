@@ -1,7 +1,8 @@
 // pages/orders/orders.js
 const {
   getOrderDetail,
-  payment
+  payment,
+  getPaymentMethods
 } = require('../../api/api.js');
 const app = getApp();
 
@@ -16,7 +17,9 @@ Page({
     total: 0,
     orders: [],
     id: {},
-    data: []
+    data: [],
+    paymentMethods: [],
+    selectedPayment: 1 // 默认选择微信支付
   },
 
   /**
@@ -30,6 +33,14 @@ Page({
       hasAddress,
       address
     })
+
+    // 获取支付方式
+    getPaymentMethods().then(res => {
+      that.setData({
+        paymentMethods: res
+      })
+    })
+
     let order_id = options.order_id;
     this.data.id = order_id
     console.log(this.data.id);
@@ -40,6 +51,14 @@ Page({
         total: res.total_price
       })
     })
+  },
+
+  // 选择支付方式
+  selectPayment(e) {
+    const paymentId = e.currentTarget.dataset.id;
+    this.setData({
+      selectedPayment: paymentId
+    });
   },
 
   toPay() {

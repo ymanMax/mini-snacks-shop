@@ -1,15 +1,17 @@
-const { 
-  mockDelay, 
-  bannerData, 
-  themeData, 
-  productsData, 
-  productDetailData, 
-  categoryData, 
-  categoryProductsData, 
-  orderData, 
-  userOrdersData, 
-  paymentData, 
-  userVerifyData
+const {
+  mockDelay,
+  bannerData,
+  themeData,
+  productsData,
+  productDetailData,
+  categoryData,
+  categoryProductsData,
+  orderData,
+  userOrdersData,
+  paymentData,
+  userVerifyData,
+  addressData,
+  paymentMethodsData
 } = require('../api/mockData.js')
 
 const app = getApp()
@@ -115,6 +117,10 @@ module.exports = (url = '', data={}, op = {}, type = 0, content = 0) => {
         mockResponse.data = paymentData.data;
       } else if (url.includes('/token/verify')) {
         mockResponse.data = userVerifyData.data;
+      } else if (url.includes('/address')) {
+        mockResponse.data = addressData.data;
+      } else if (url.includes('/payment/methods')) {
+        mockResponse.data = paymentMethodsData.data;
       } else {
         // 默认返回商品数据
         mockResponse.data = productsData.data;

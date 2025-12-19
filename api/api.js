@@ -80,6 +80,20 @@ function payment(id) {
   }, 1, 1);
 }
 
+// 获取收货地址
+function getAddresses() {
+  return request('/address', {}, {
+    prompt: false
+  }, 0, 0);
+}
+
+// 获取支付方式
+function getPaymentMethods() {
+  return request('/payment/methods', {}, {
+    prompt: false
+  }, 0, 0);
+}
+
 module.exports = {
   getBanner,
   getThemeInfo,
@@ -91,6 +105,8 @@ module.exports = {
   verify,
   getOrderDetail,
   getAllOrders,
-  payment
+  payment,
+  getAddresses,
+  getPaymentMethods
 };
 

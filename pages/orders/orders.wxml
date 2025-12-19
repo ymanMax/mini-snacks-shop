@@ -17,6 +17,21 @@
     </view>
   </view>
 
+  <!-- 支付方式选择 -->
+  <view class="orders-payment">
+    <view class="orders-section-title">支付方式</view>
+    <view wx:for="{{paymentMethods}}" wx:key="index" class="payment-item {{selectedPayment === item.id ? 'selected' : ''}}" bindtap="selectPayment" data-id="{{item.id}}">
+      <view class="payment-info">
+        <text class="payment-name">{{item.name}}</text>
+        <text class="payment-desc">{{item.description}}</text>
+      </view>
+      <view class="payment-select">
+        <icon wx:if="{{selectedPayment === item.id}}" type="success" color="#f0145a" size="20"></icon>
+        <icon wx:else type="circle" size="20"></icon>
+      </view>
+    </view>
+  </view>
+
   <view class="orders-footer">
     <view class="orders-footer-total">付款合计：￥{{total}}</view>
     <view class="orders-footer-btn" bindtap="toPay">去付款</view>
