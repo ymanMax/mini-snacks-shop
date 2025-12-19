@@ -25,10 +25,71 @@
         <view class="item-tab-nav {{curIndex === 0 ?'on':''}}" bindtap="bindTap" data-index="0">商品详情</view>
         <view class="item-tab-nav {{curIndex === 1 ?'on':''}}" bindtap="bindTap" data-index="1">产品参数</view>
         <view class="item-tab-nav {{curIndex === 2 ?'on':''}}" bindtap="bindTap" data-index="2">售后保障</view>
+        <view class="item-tab-nav {{curIndex === 3 ?'on':''}}" bindtap="bindTap" data-index="3">用户评价</view>
         <view class="item-content">
             <view wx:if="{{curIndex === 0}}">{{item.detail}}</view>
             <view wx:if="{{curIndex === 1}}">{{item.parameter}}</view>
             <view wx:if="{{curIndex === 2}}">{{item.service}}</view>
+            <view wx:if="{{curIndex === 3}}" class="reviews-section">
+                <!-- 评价统计 -->
+                <view class="reviews-summary" wx:if="{{item.reviews && item.reviews.length > 0}}">
+                    <view class="summary-left">
+                        <view class="total-rating">{{averageRating}}</view>
+                        <view class="rating-stars">
+                            <text wx:for="{{5}}" wx:key="index" class="star {{index < Math.floor(averageRating) ? 'active' : ''}}">★</text>
+                        </view>
+                        <view class="rating-count">{{item.reviews.length}}条评价</view>
+                    </view>
+                    <view class="summary-right">
+                        <view class="rating-item" wx:for="{{ratingDistribution}}" wx:key="index">
+                            <view class="rating-label">{{5 - index}}星</view>
+                            <view class="rating-bar">
+                                <view class="rating-bar-fill" style="width: {{item.percentage}}%"></view>
+                            </view>
+                            <view class="rating-number">{{item.count}}</view>
+                        </view>
+                    </view>
+                </view>
+
+                <!-- 评价提交表单 -->
+                <view class="review-form">
+                    <view class="form-title">发表评价</view>
+                    <view class="rating-input">
+                        <text class="rating-label">评分：</text>
+                        <text wx:for="{{5}}" wx:key="index" class="star {{index < userRating ? 'active' : ''}}" bindtap="setUserRating" data-rating="{{index + 1}}">★</text>
+                    </view>
+                    <view class="comment-input">
+                        <textarea placeholder="请写下您的评价..." value="{{userComment}}" bindinput="onCommentInput" maxlength="200"></textarea>
+                    </view>
+                    <button class="submit-btn" bindtap="submitReview" disabled="{{!userRating || !userComment.trim()}}">提交评价</button>
+                </view>
+
+                <!-- 评价列表 -->
+                <view class="reviews-list" wx:if="{{item.reviews && item.reviews.length > 0}}">
+                    <view class="list-title">用户评价</view>
+                    <view class="review-item" wx:for="{{displayReviews}}" wx:key="index">
+                        <view class="review-header">
+                            <view class="user-avatar">{{item.user_name.charAt(0)}}</view>
+                            <view class="user-info">
+                                <view class="user-name">{{item.user_name}}</view>
+                                <view class="rating-stars">
+                                    <text wx:for="{{5}}" wx:key="starIndex" class="star {{starIndex < item.rating ? 'active' : ''}}">★</text>
+                                </view>
+                            </view>
+                            <view class="review-date">{{item.date}}</view>
+                        </view>
+                        <view class="review-content">{{item.comment}}</view>
+                    </view>
+                    <view class="view-all-btn" wx:if="{{item.reviews.length > 3}}" bindtap="viewAllReviews">
+                        <text>查看全部{{item.reviews.length}}条评价</text>
+                    </view>
+                </view>
+
+                <!-- 暂无评价 -->
+                <view class="no-reviews" wx:if="{{!item.reviews || item.reviews.length === 0}}">
+                    <text>暂无评价，快来发表第一条评价吧！</text>
+                </view>
+            </view>
         </view>
     </view>
 </view>

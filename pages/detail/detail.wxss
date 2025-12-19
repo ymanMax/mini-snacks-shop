@@ -158,3 +158,226 @@ item-operation-unadd{
 .goods-content{
     padding: 40rpx;
 }
+
+/* 评价区域样式 */
+.reviews-section{
+    padding: 40rpx;
+}
+
+/* 评价统计 */
+.reviews-summary{
+    display: flex;
+    padding: 40rpx 0;
+    border-bottom: 1rpx solid #ededed;
+}
+
+.summary-left{
+    flex: 1;
+    text-align: center;
+}
+
+.total-rating{
+    font-size: 60rpx;
+    font-weight: bold;
+    color: #AB956D;
+    margin-bottom: 20rpx;
+}
+
+.rating-stars{
+    font-size: 32rpx;
+    color: #ccc;
+    margin-bottom: 20rpx;
+}
+
+.rating-stars .star.active{
+    color: #FFD700;
+}
+
+.rating-count{
+    font-size: 28rpx;
+    color: #999;
+}
+
+.summary-right{
+    flex: 2;
+    padding-left: 40rpx;
+}
+
+.rating-item{
+    display: flex;
+    align-items: center;
+    margin-bottom: 20rpx;
+    font-size: 28rpx;
+}
+
+.rating-label{
+    width: 80rpx;
+    color: #666;
+}
+
+.rating-bar{
+    flex: 1;
+    height: 8rpx;
+    background: #f0f0f0;
+    border-radius: 4rpx;
+    margin: 0 20rpx;
+    overflow: hidden;
+}
+
+.rating-bar-fill{
+    height: 100%;
+    background: #FFD700;
+    border-radius: 4rpx;
+}
+
+.rating-number{
+    width: 60rpx;
+    text-align: right;
+    color: #999;
+}
+
+/* 评价提交表单 */
+.review-form{
+    padding: 40rpx 0;
+    border-bottom: 1rpx solid #ededed;
+}
+
+.form-title{
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 40rpx;
+}
+
+.rating-input{
+    display: flex;
+    align-items: center;
+    margin-bottom: 40rpx;
+}
+
+.rating-label{
+    font-size: 32rpx;
+    color: #666;
+    margin-right: 20rpx;
+}
+
+.rating-input .star{
+    font-size: 40rpx;
+    color: #ccc;
+    margin-right: 10rpx;
+}
+
+.rating-input .star.active{
+    color: #FFD700;
+}
+
+.comment-input textarea{
+    width: 100%;
+    min-height: 120rpx;
+    padding: 20rpx;
+    border: 1rpx solid #e0e0e0;
+    border-radius: 10rpx;
+    font-size: 30rpx;
+    line-height: 1.5;
+    box-sizing: border-box;
+}
+
+.submit-btn{
+    width: 100%;
+    height: 80rpx;
+    margin-top: 40rpx;
+    background: #AB956D;
+    color: #fff;
+    border: none;
+    border-radius: 40rpx;
+    font-size: 32rpx;
+}
+
+.submit-btn[disabled]{
+    background: #ccc;
+}
+
+/* 评价列表 */
+.reviews-list{
+    padding: 40rpx 0;
+}
+
+.list-title{
+    font-size: 36rpx;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 40rpx;
+}
+
+.review-item{
+    margin-bottom: 40rpx;
+    padding-bottom: 40rpx;
+    border-bottom: 1rpx solid #f0f0f0;
+}
+
+.review-item:last-child{
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.review-header{
+    display: flex;
+    align-items: center;
+    margin-bottom: 20rpx;
+}
+
+.user-avatar{
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 50%;
+    background: #AB956D;
+    color: #fff;
+    font-size: 30rpx;
+    line-height: 60rpx;
+    text-align: center;
+    margin-right: 20rpx;
+}
+
+.user-info{
+    flex: 1;
+}
+
+.user-name{
+    font-size: 30rpx;
+    color: #333;
+    margin-bottom: 10rpx;
+}
+
+.review-date{
+    font-size: 26rpx;
+    color: #999;
+}
+
+.review-content{
+    font-size: 30rpx;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* 查看全部按钮 */
+.view-all-btn{
+    text-align: center;
+    margin-top: 40rpx;
+    padding: 20rpx;
+    background: #f8f8f8;
+    border-radius: 10rpx;
+}
+
+.view-all-btn text{
+    font-size: 30rpx;
+    color: #AB956D;
+}
+
+/* 暂无评价 */
+.no-reviews{
+    padding: 80rpx 0;
+    text-align: center;
+    color: #999;
+    font-size: 30rpx;
+}
