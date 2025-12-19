@@ -80,6 +80,13 @@ function payment(id) {
   }, 1, 1);
 }
 
+// 商品搜索接口
+function searchProducts(params) {
+  return request('/product/search', params, {
+    prompt: false
+  }, 0, 0);
+}
+
 module.exports = {
   getBanner,
   getThemeInfo,
@@ -91,6 +98,7 @@ module.exports = {
   verify,
   getOrderDetail,
   getAllOrders,
-  payment
+  payment,
+  searchProducts
 };
 

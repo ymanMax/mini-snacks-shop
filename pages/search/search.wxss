@@ -1,0 +1,281 @@
+/* 搜索页面样式 */
+.main {
+  padding-bottom: 20rpx;
+}
+
+/* 搜索框 */
+.search-container {
+  display: flex;
+  align-items: center;
+  padding: 20rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+
+.search-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 30rpx;
+  padding: 0 20rpx;
+  height: 70rpx;
+}
+
+.search-icon {
+  width: 30rpx;
+  height: 30rpx;
+  margin-right: 15rpx;
+}
+
+.search-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.clear-icon {
+  width: 30rpx;
+  height: 30rpx;
+  margin-left: 15rpx;
+}
+
+.clear-icon image {
+  width: 100%;
+  height: 100%;
+}
+
+.cancel-btn {
+  font-size: 28rpx;
+  color: #666;
+  margin-left: 20rpx;
+}
+
+/* 筛选栏 */
+.filter-container {
+  display: flex;
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
+  height: 80rpx;
+  align-items: center;
+}
+
+.filter-item {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.filter-item.active {
+  color: #ff6b6b;
+  border-bottom: 3rpx solid #ff6b6b;
+}
+
+.arrow-icon {
+  width: 20rpx;
+  height: 12rpx;
+  margin-left: 8rpx;
+  transition: transform 0.3s;
+}
+
+.filter-item.active .arrow-icon {
+  transform: rotate(180deg);
+}
+
+/* 筛选弹窗 */
+.filter-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.filter-content {
+  width: 100%;
+  background: #fff;
+  border-radius: 20rpx 20rpx 0 0;
+  padding-bottom: 40rpx;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.filter-title {
+  font-size: 32rpx;
+  color: #333;
+  text-align: center;
+  margin: 30rpx 0;
+  font-weight: bold;
+}
+
+/* 分类筛选 */
+.category-list {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 30rpx;
+}
+
+.category-item {
+  width: 33.33%;
+  text-align: center;
+  padding: 20rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  border-bottom: 2rpx solid transparent;
+}
+
+.category-item.active {
+  color: #ff6b6b;
+  border-bottom-color: #ff6b6b;
+}
+
+/* 价格筛选 */
+.price-list {
+  padding: 0 30rpx;
+}
+
+.price-item {
+  text-align: center;
+  padding: 25rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  border-bottom: 1rpx solid #eee;
+}
+
+.price-item:last-child {
+  border-bottom: none;
+}
+
+.price-item.active {
+  color: #ff6b6b;
+  background: #fef5f5;
+}
+
+/* 排序筛选 */
+.sort-list {
+  padding: 0 30rpx;
+}
+
+.sort-item {
+  text-align: center;
+  padding: 25rpx 0;
+  font-size: 28rpx;
+  color: #666;
+  border-bottom: 1rpx solid #eee;
+}
+
+.sort-item:last-child {
+  border-bottom: none;
+}
+
+.sort-item.active {
+  color: #ff6b6b;
+  background: #fef5f5;
+}
+
+/* 筛选操作按钮 */
+.filter-actions {
+  display: flex;
+  padding: 30rpx;
+  margin-top: 20rpx;
+  border-top: 1rpx solid #eee;
+}
+
+.reset-btn {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx;
+  background: #f5f5f5;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  color: #666;
+  margin-right: 20rpx;
+}
+
+.confirm-btn {
+  flex: 1;
+  text-align: center;
+  padding: 20rpx;
+  background: #ff6b6b;
+  border-radius: 10rpx;
+  font-size: 28rpx;
+  color: #fff;
+}
+
+/* 商品列表 */
+.products-container {
+  padding: 20rpx;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.product-item {
+  width: 48%;
+  background: #fff;
+  border-radius: 15rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.product-image {
+  width: 100%;
+  height: 250rpx;
+  object-fit: cover;
+}
+
+.product-info {
+  padding: 15rpx;
+}
+
+.product-name {
+  font-size: 28rpx;
+  color: #333;
+  margin-bottom: 10rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.product-price {
+  font-size: 32rpx;
+  color: #ff6b6b;
+  font-weight: bold;
+  margin-bottom: 5rpx;
+}
+
+.product-sales {
+  font-size: 24rpx;
+  color: #999;
+}
+
+/* 空状态 */
+.empty-state {
+  text-align: center;
+  padding: 100rpx 0;
+  color: #999;
+}
+
+.empty-state image {
+  width: 120rpx;
+  height: 120rpx;
+  margin-bottom: 20rpx;
+  opacity: 0.5;
+}
+
+.empty-state text {
+  font-size: 28rpx;
+}

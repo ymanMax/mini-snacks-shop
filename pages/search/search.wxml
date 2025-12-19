@@ -1,0 +1,107 @@
+<view class="main">
+  <!-- 搜索框 -->
+  <view class="search-container">
+    <view class="search-box">
+      <image class="search-icon" src="/image/search.png"></image>
+      <input class="search-input" placeholder="请输入商品名称" value="{{keyword}}" bindinput="onInputChange" confirm-type="search" bindconfirm="onSearch" />
+      <view class="clear-icon" wx:if="{{keyword}}" bindtap="onClear">
+        <image src="/image/clear.png"></image>
+      </view>
+    </view>
+    <view class="cancel-btn" bindtap="onCancel">取消</view>
+  </view>
+
+  <!-- 筛选栏 -->
+  <view class="filter-container">
+    <view class="filter-item {{activeFilter === 'category' ? 'active' : ''}}" bindtap="showCategoryFilter">
+      <text>分类</text>
+      <image class="arrow-icon" src="/image/arrow-down.png"></image>
+    </view>
+    <view class="filter-item {{activeFilter === 'price' ? 'active' : ''}}" bindtap="showPriceFilter">
+      <text>价格</text>
+      <image class="arrow-icon" src="/image/arrow-down.png"></image>
+    </view>
+    <view class="filter-item {{activeFilter === 'sort' ? 'active' : ''}}" bindtap="showSortFilter">
+      <text>排序</text>
+      <image class="arrow-icon" src="/image/arrow-down.png"></image>
+    </view>
+  </view>
+
+  <!-- 筛选弹窗 -->
+  <view class="filter-modal" wx:if="{{activeFilter}}" catchtap="hideFilter">
+    <view class="filter-content" catchtap="">
+      <!-- 分类筛选 -->
+      <view class="filter-category" wx:if="{{activeFilter === 'category'}}">
+        <view class="filter-title">选择分类</view>
+        <view class="category-list">
+          <view class="category-item {{selectedCategory === item.id ? 'active' : ''}}" wx:for="{{categories}}" wx:key="id" data-id="{{item.id}}" bindtap="onCategorySelect">
+            {{item.name}}
+          </view>
+        </view>
+      </view>
+
+      <!-- 价格筛选 -->
+      <view class="filter-price" wx:if="{{activeFilter === 'price'}}">
+        <view class="filter-title">选择价格区间</view>
+        <view class="price-list">
+          <view class="price-item {{selectedPrice === '0-5' ? 'active' : ''}}" data-range="0-5" bindtap="onPriceSelect">
+            0-5元
+          </view>
+          <view class="price-item {{selectedPrice === '5-10' ? 'active' : ''}}" data-range="5-10" bindtap="onPriceSelect">
+            5-10元
+          </view>
+          <view class="price-item {{selectedPrice === '10-20' ? 'active' : ''}}" data-range="10-20" bindtap="onPriceSelect">
+            10-20元
+          </view>
+          <view class="price-item {{selectedPrice === '20+' ? 'active' : ''}}" data-range="20+" bindtap="onPriceSelect">
+            20元以上
+          </view>
+        </view>
+      </view>
+
+      <!-- 排序筛选 -->
+      <view class="filter-sort" wx:if="{{activeFilter === 'sort'}}">
+        <view class="filter-title">选择排序方式</view>
+        <view class="sort-list">
+          <view class="sort-item {{selectedSort === 'default' ? 'active' : ''}}" data-sort="default" bindtap="onSortSelect">
+            默认排序
+          </view>
+          <view class="sort-item {{selectedSort === 'price_asc' ? 'active' : ''}}" data-sort="price_asc" bindtap="onSortSelect">
+            价格从低到高
+          </view>
+          <view class="sort-item {{selectedSort === 'price_desc' ? 'active' : ''}}" data-sort="price_desc" bindtap="onSortSelect">
+            价格从高到低
+          </view>
+          <view class="sort-item {{selectedSort === 'sales_desc' ? 'active' : ''}}" data-sort="sales_desc" bindtap="onSortSelect">
+            销量从高到低
+          </view>
+        </view>
+      </view>
+
+      <view class="filter-actions">
+        <view class="reset-btn" bindtap="onResetFilter">重置</view>
+        <view class="confirm-btn" bindtap="onConfirmFilter">确定</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品列表 -->
+  <view class="products-container">
+    <view class="product-item" wx:for="{{products}}" wx:key="id">
+      <navigator url="../detail/detail?product_id={{item.id}}">
+        <image class="product-image" src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
+        <view class="product-info">
+          <view class="product-name">{{item.name}}</view>
+          <view class="product-price">¥{{item.price}}</view>
+          <view class="product-sales" wx:if="{{item.sales}}">销量: {{item.sales}}</view>
+        </view>
+      </navigator>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:if="{{products.length === 0 && hasSearched}}">
+    <image src="/image/empty.png"></image>
+    <text>暂无相关商品</text>
+  </view>
+</view>

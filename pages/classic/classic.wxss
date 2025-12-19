@@ -8,6 +8,32 @@ page {
   background: none;
 }
 
+/* 搜索框 */
+.search-container {
+  padding: 20rpx;
+  background: #fff;
+  border-bottom: 1rpx solid #eee;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: #f5f5f5;
+  border-radius: 30rpx;
+  padding: 20rpx 30rpx;
+}
+
+.search-icon {
+  width: 30rpx;
+  height: 30rpx;
+  margin-right: 15rpx;
+}
+
+.search-placeholder {
+  font-size: 28rpx;
+  color: #999;
+}
+
 
 page,
 .main {
