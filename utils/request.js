@@ -102,6 +102,22 @@ module.exports = (url = '', data={}, op = {}, type = 0, content = 0) => {
         mockResponse.data = orderData.data;
       } else if (url.includes('/order/by_user')) {
         mockResponse.data = userOrdersData.data;
+      } else if (url.includes('/order/') && url.includes('/cancel')) {
+        // 取消订单
+        const orderId = url.split('/')[2]; // 从 /order/{id}/cancel 获取订单ID
+        mockResponse.data = {
+          order_id: orderId,
+          status: "cancelled",
+          message: "订单已取消"
+        };
+      } else if (url.includes('/order/') && type === 2) {
+        // 编辑订单 (PUT请求)
+        const orderId = url.split('/').pop();
+        mockResponse.data = {
+          order_id: orderId,
+          status: "updated",
+          message: "订单已更新"
+        };
       } else if (url.includes('/order/') && !url.includes('/by_user')) {
         const orderId = url.split('/').pop();
         const order = userOrdersData.data.find(item => item.order_id === orderId);

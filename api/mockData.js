@@ -275,6 +275,58 @@ const userOrdersData = {
           image: "https://example.com/product2.jpg"
         }
       ]
+    },
+    {
+      order_id: "ORDER202309250001",
+      total_amount: 8.99,
+      status: "shipped",
+      create_time: "2023-09-25 09:15:00",
+      products: [
+        {
+          id: 3,
+          name: "坚果",
+          price: 8.99,
+          quantity: 1,
+          image: "https://example.com/product3.jpg"
+        }
+      ]
+    },
+    {
+      order_id: "ORDER202309200001",
+      total_amount: 19.97,
+      status: "processing",
+      create_time: "2023-09-20 14:45:00",
+      products: [
+        {
+          id: 4,
+          name: "饼干",
+          price: 6.99,
+          quantity: 2,
+          image: "https://example.com/product4.jpg"
+        },
+        {
+          id: 5,
+          name: "糖果",
+          price: 3.99,
+          quantity: 2,
+          image: "https://example.com/product5.jpg"
+        }
+      ]
+    },
+    {
+      order_id: "ORDER202309150001",
+      total_amount: 3.99,
+      status: "cancelled",
+      create_time: "2023-09-15 11:20:00",
+      products: [
+        {
+          id: 5,
+          name: "糖果",
+          price: 3.99,
+          quantity: 1,
+          image: "https://example.com/product5.jpg"
+        }
+      ]
     }
   ]
 };

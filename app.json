@@ -10,8 +10,10 @@
     "pages/orders/orders",
     "pages/address/address",
     "pages/newAddress/newAddress",
-    "pages/fail/fail"
-    
+    "pages/fail/fail",
+    "pages/orderList/orderList",
+    "pages/orderDetail/orderDetail"
+
   ],
   "window": {
     "backgroundTextStyle": "light",

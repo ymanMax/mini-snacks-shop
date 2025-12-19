@@ -30,19 +30,24 @@
     </view>
   </view>
   <view class="orders-box">
-    <view class="orders">我的订单</view>
+    <view class="orders">
+      <text>我的订单</text>
+      <navigator url="/pages/orderList/orderList" class="view-all">查看全部 ></navigator>
+    </view>
     <scroll-view scroll-y="true" bindscrolltolower="searchScrollLower" class="newsListView"  style="height: {{scrollHeight}}rpx;">
-      <view class="orders-list" wx:for="{{orders}}" wx:key="index">
-        <view class="orders-number">订单编号：{{item.order_no}}</view>
+      <view class="orders-list" wx:for="{{orders}}" wx:key="order_id" bindtap="goToOrderDetail" data-order-id="{{item.order_id}}">
+        <view class="orders-number">订单编号：{{item.order_id}}</view>
         <view class="orders-detail">
-          <image src="{{'https://hanmashanghu.qiaomai365.com' + item.snap_img}}"></image>
-          <view class="">{{item.snap_name}}</view>
-          <view class="">{{item.total_count}}</view>
-          <text class="orders-status">未付款</text>
+          <image wx:if="{{item.products[0].image}}" src="{{item.products[0].image}}"></image>
+          <image wx:else src="/image/default-product.png"></image>
+          <view class="">{{item.products[0].name}}</view>
+          <view class="">×{{item.products[0].quantity}}</view>
+          <text class="orders-status">{{getStatusText(item.status)}}</text>
         </view>
         <view class="orders-footer">
-          <text>实付：￥{{item.total_price}}</text>
-          <button size="mini" class="orders-btn" bindtap="payOrders">付款</button>
+          <text>实付：￥{{item.total_amount}}</text>
+          <button size="mini" class="orders-btn" bindtap="payOrders" data-order-id="{{item.order_id}}">付款</button>
+          <button size="mini" class="orders-btn-cancel" bindtap="cancelOrder" data-order-id="{{item.order_id}}">取消</button>
         </view>
       </view>
       <view class="loading" hidden="{{!searchLoading}}">正在载入更多...</view>
