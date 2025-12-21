@@ -1,0 +1,23 @@
+{
+  "name": "mini-snacks-shop",
+  "version": "1.0.0",
+  "description": "功能完善的零食购物微信小程序，提供商品展示、分类浏览、购物车、订单管理等功能，让用户轻松选购心仪零食。",
+  "main": ".eslintrc.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ymanMax/mini-snacks-shop.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ymanMax/mini-snacks-shop/issues"
+  },
+  "homepage": "https://github.com/ymanMax/mini-snacks-shop#readme",
+  "dependencies": {
+    "eslint": "^9.39.2"
+  }
+}

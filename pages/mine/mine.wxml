@@ -19,6 +19,21 @@
     <text class="about">关于我们</text>
   </view>
 
+  <!-- 会员积分入口 -->
+  <view class="points-box" bindtap="goToPoints">
+    <view class="points-header">
+      <text class="points-title">会员积分</text>
+      <text class="points-arrow">></text>
+    </view>
+    <view class="points-info">
+      <text class="points-amount">{{userPoints.available_points || 0}}</text>
+      <text class="points-unit">可用积分</text>
+      <view class="points-expire" wx:if="{{userPoints.expiring_points}}">
+        <text class="expire-text">即将过期: {{userPoints.expiring_points.amount}}分</text>
+      </view>
+    </view>
+  </view>
+
   <view class="address-box">
     <view class="address-manage">
       <navigator url="/pages/address/address">地址管理</navigator>
