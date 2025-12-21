@@ -289,6 +289,103 @@ const paymentData = {
   }
 };
 
+// 用户积分数据
+const userPointsData = {
+  code: "success",
+  data: {
+    total_points: 1580,
+    available_points: 1200,
+    used_points: 380,
+    expiring_points: {
+      amount: 500,
+      expire_date: "2023-12-31"
+    }
+  }
+};
+
+// 积分记录数据
+const pointsRecordsData = {
+  code: "success",
+  data: [
+    {
+      id: 1,
+      type: "earn",
+      source: "购买商品",
+      amount: 59,
+      points: 59,
+      date: "2023-10-15 14:30:00",
+      description: "购买薯片等商品获得积分"
+    },
+    {
+      id: 2,
+      type: "earn",
+      source: "评价商品",
+      amount: 10,
+      points: 10,
+      date: "2023-10-14 10:20:00",
+      description: "评价巧克力商品获得积分"
+    },
+    {
+      id: 3,
+      type: "spend",
+      source: "积分抵扣",
+      amount: -100,
+      points: -100,
+      date: "2023-10-10 16:45:00",
+      description: "订单抵扣现金1元"
+    },
+    {
+      id: 4,
+      type: "earn",
+      source: "购买商品",
+      amount: 129,
+      points: 129,
+      date: "2023-10-08 09:15:00",
+      description: "购买巧克力获得积分"
+    },
+    {
+      id: 5,
+      type: "earn",
+      source: "每日签到",
+      amount: 5,
+      points: 5,
+      date: "2023-10-07 08:30:00",
+      description: "连续签到第3天获得积分"
+    }
+  ]
+};
+
+// 积分兑换商品数据
+const pointsExchangeProductsData = {
+  code: "success",
+  data: [
+    {
+      id: 1,
+      name: "小零食大礼包",
+      points_required: 800,
+      original_price: 89.9,
+      image: "https://example.com/exchange1.jpg",
+      description: "多种零食组合，积分兑换专享"
+    },
+    {
+      id: 2,
+      name: "饮料兑换券",
+      points_required: 300,
+      original_price: 29.9,
+      image: "https://example.com/exchange2.jpg",
+      description: "任选饮料一瓶"
+    },
+    {
+      id: 3,
+      name: "5元现金券",
+      points_required: 500,
+      original_price: 5,
+      image: "https://example.com/exchange3.jpg",
+      description: "购物满30元可用"
+    }
+  ]
+};
+
 // 用户验证数据
 const userVerifyData = {
   code: "success",
@@ -310,5 +407,8 @@ module.exports = {
   orderData,
   userOrdersData,
   paymentData,
-  userVerifyData
+  userVerifyData,
+  userPointsData,
+  pointsRecordsData,
+  pointsExchangeProductsData
 };

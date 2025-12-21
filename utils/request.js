@@ -1,15 +1,18 @@
-const { 
-  mockDelay, 
-  bannerData, 
-  themeData, 
-  productsData, 
-  productDetailData, 
-  categoryData, 
-  categoryProductsData, 
-  orderData, 
-  userOrdersData, 
-  paymentData, 
-  userVerifyData
+const {
+  mockDelay,
+  bannerData,
+  themeData,
+  productsData,
+  productDetailData,
+  categoryData,
+  categoryProductsData,
+  orderData,
+  userOrdersData,
+  paymentData,
+  userVerifyData,
+  userPointsData,
+  pointsRecordsData,
+  pointsExchangeProductsData
 } = require('../api/mockData.js')
 
 const app = getApp()
@@ -115,6 +118,27 @@ module.exports = (url = '', data={}, op = {}, type = 0, content = 0) => {
         mockResponse.data = paymentData.data;
       } else if (url.includes('/token/verify')) {
         mockResponse.data = userVerifyData.data;
+      } else if (url.includes('/user/points') && !url.includes('/records')) {
+        mockResponse.data = userPointsData.data;
+      } else if (url.includes('/user/points/records')) {
+        mockResponse.data = pointsRecordsData.data;
+      } else if (url.includes('/points/exchange/products')) {
+        mockResponse.data = pointsExchangeProductsData.data;
+      } else if (url.includes('/points/exchange')) {
+        mockResponse.data = {
+          code: "success",
+          message: "积分兑换成功"
+        };
+      } else if (url.includes('/points/deduction')) {
+        mockResponse.data = {
+          code: "success",
+          message: "积分抵扣成功"
+        };
+      } else if (url.includes('/points/earn/review')) {
+        mockResponse.data = {
+          code: "success",
+          message: "评价成功，获得积分"
+        };
       } else {
         // 默认返回商品数据
         mockResponse.data = productsData.data;

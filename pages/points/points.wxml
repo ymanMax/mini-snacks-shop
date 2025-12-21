@@ -1,0 +1,67 @@
+<!--pages/points/points.wxml-->
+<view class="container">
+  <!-- 积分概览 -->
+  <view class="points-overview">
+    <view class="overview-header">
+      <text class="overview-title">我的积分</text>
+    </view>
+    <view class="overview-content">
+      <view class="total-points">
+        <text class="points-number">{{userPoints.total_points || 0}}</text>
+        <text class="points-label">总积分</text>
+      </view>
+      <view class="points-stats">
+        <view class="stat-item">
+          <text class="stat-number">{{userPoints.available_points || 0}}</text>
+          <text class="stat-label">可用</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-number">{{userPoints.used_points || 0}}</text>
+          <text class="stat-label">已用</text>
+        </view>
+        <view class="stat-item" wx:if="{{userPoints.expiring_points}}">
+          <text class="stat-number">{{userPoints.expiring_points.amount}}</text>
+          <text class="stat-label">即将过期</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 积分功能菜单 -->
+  <view class="points-menu">
+    <view class="menu-item" bindtap="goToExchange">
+      <image class="menu-icon" src="https://example.com/exchange-icon.png"></image>
+      <text class="menu-text">积分兑换</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToRecords">
+      <image class="menu-icon" src="https://example.com/records-icon.png"></image>
+      <text class="menu-text">积分记录</text>
+      <text class="menu-arrow">></text>
+    </view>
+    <view class="menu-item" bindtap="goToRules">
+      <image class="menu-icon" src="https://example.com/rules-icon.png"></image>
+      <text class="menu-text">积分规则</text>
+      <text class="menu-arrow">></text>
+    </view>
+  </view>
+
+  <!-- 积分兑换商品 -->
+  <view class="exchange-section">
+    <view class="section-title">
+      <text>积分兑换商品</text>
+      <text class="more" bindtap="goToExchange">查看全部 ></text>
+    </view>
+    <scroll-view scroll-x="true" class="exchange-list">
+      <view class="exchange-item" wx:for="{{exchangeProducts}}" wx:key="id" bindtap="exchangeProduct" data-product="{{item}}">
+        <image class="product-image" src="{{item.image}}"></image>
+        <view class="product-info">
+          <text class="product-name">{{item.name}}</text>
+          <text class="product-points">{{item.points_required}}积分</text>
+          <text class="product-price">原价: ¥{{item.original_price}}</text>
+        </view>
+        <button class="exchange-btn">立即兑换</button>
+      </view>
+    </scroll-view>
+  </view>
+</view>

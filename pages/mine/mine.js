@@ -2,7 +2,8 @@
 const app = getApp();
 const {
   getAllOrders,
-  verify
+  verify,
+  getUserPoints
 } = require('../../api/api.js');
 Page({
   data: {
@@ -12,6 +13,7 @@ Page({
     hasAddress: false,
     address: {},
     orders: [],
+    userPoints: {}, // 用户积分信息
     page: 1, // 设置加载的第几次，默认是第一次
     size: 8, // 每次加载的数据条数
     total: null, //返回数据的个数(可以传空)
@@ -69,6 +71,10 @@ Page({
     let token = app.globalData.token.token;
     verify(token).then(res => {
       console.log(token)
+
+      // 获取用户积分信息
+      this.getUserPointsInfo();
+
       if (res.isValid == true) {
 
         getAllOrders(1, 8).then(res => {
@@ -229,6 +235,23 @@ Page({
           searchLoading: false //把"上拉加载"的变量设为false，隐藏  
         });
       }
+    })
+  },
+
+  // 获取用户积分信息
+  getUserPointsInfo() {
+    getUserPoints().then(res => {
+      this.setData({
+        userPoints: res
+      })
+      console.log('用户积分信息:', res)
+    })
+  },
+
+  // 跳转到积分详情页面
+  goToPoints() {
+    wx.navigateTo({
+      url: '/pages/points/points'
     })
   },
 
