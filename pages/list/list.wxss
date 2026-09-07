@@ -1,37 +1,41 @@
-.banner image{
-  width: 100%;
-  height: 400rpx;
+/* pages/list/list.wxss */
+page { background: #f5f6f7; }
+
+.theme-header {
+  position: relative;
+  margin: 20rpx 24rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  height: 220rpx;
 }
-.list-box{
-  padding: 30rpx 20rpx;
+.th-img { width: 100%; height: 220rpx; }
+.th-mask {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,.1), rgba(0,0,0,.55));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24rpx;
 }
-.newest-list{
-  display: inline-block;
-  width: 347rpx;
-  height: 347rpx;
-  margin:0 15rpx 10rpx 0;
-  border-radius: 10px;
-  text-align: center;
-  background: #f5f6f5;
-}
-.newest-list:nth-child(2n){
-  margin-right: 0;
-}
-.newest-list image{
-  width: 180rpx;
-  height: 180rpx;
-  margin: 30rpx 0 20rpx;
-}
-.newest-list .newest-text{
-  font-size: 32rpx;
-  line-height: 45rpx;
+.th-name { color: #fff; font-size: 36rpx; font-weight: 800; }
+.th-desc { color: rgba(255,255,255,.9); font-size: 22rpx; margin-top: 8rpx; }
+
+.goods-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18rpx;
+  padding: 0 24rpx;
 }
 
-page{
-  background-color: #ffffff;
-  font-family: "Helvetica Neue","Hiragino Sans GB","Microsoft YaHei","\9ED1\4F53",Arial,sans-serif;
-  font-size: 32rpx;
+.sk-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18rpx;
+  padding: 0 24rpx;
 }
-.navigator-hover{
-  background: none;
-}
+.sk-goods { background: #fff; border-radius: 16rpx; padding-bottom: 20rpx; overflow: hidden; }
+.sk-goods-img { width: 100%; height: 340rpx; }
+.sk-goods .l1 { height: 28rpx; margin: 16rpx 16rpx 0; width: 80%; }
+.sk-goods .l2 { height: 28rpx; margin: 12rpx 16rpx 0; width: 50%; }
+.sk-line { border-radius: 8rpx; }

@@ -1,169 +1,58 @@
-<form bindsubmit="saveAddress">
-
-  <view class="weui-cells weui-cells_after-title">
-
-    <view class="weui-cell weui-cell_input">
-
-      <view class="weui-cell__hd">
-
-        <view class="weui-label">收货人</view>
-
-      </view>
-
-      <view class="weui-cell__bd">
-
-        <input class="weui-input" name="consignee" placeholder="请输入收货人真实姓名" />
-
-      </view>
-
+<!--pages/newAddress/newAddress.wxml-->
+<view class="na-page">
+  <view class="form-card">
+    <view class="form-row">
+      <text class="form-label">收货人</text>
+      <input class="form-input" placeholder="请输入姓名" value="{{name}}" data-field="name" bindinput="onInput" />
     </view>
-
-    <view class="weui-cell weui-cell_input">
-
-      <view class="weui-cell__hd">
-
-        <view class="weui-label">手机号</view>
-
-      </view>
-
-      <view class="weui-cell__bd">
-
-        <input class="weui-input" name="mobile" placeholder="请输入收货人手机号" />
-
-      </view>
-
+    <view class="form-row">
+      <text class="form-label">手机号</text>
+      <input class="form-input" type="number" maxlength="11" placeholder="请输入手机号" value="{{phone}}"
+        data-field="phone" bindinput="onInput" />
     </view>
-
-    <!-- <view class="weui-cell weui-cell_select">
-
-      <view class="weui-cell__hd weui-cell__hd_in-select-after">
-
-      <view class="weui-label">收货时间</view>
-
+    <view class="form-row">
+      <text class="form-label">所在地区</text>
+      <picker mode="region" value="{{region}}" bindchange="onRegion" class="form-picker">
+        <view class="picker-text">{{region[0]}} {{region[1]}} {{region[2]}} ›</view>
+      </picker>
     </view>
-
-      <view class="weui-cell__bd">
-
-        <picker bindchange="bindTransportDayChange" value="{{transportIndex}}" range="{{transportValues}}">
-
-          <view class="weui-select weui-select_in-select-after">{{transportValues[transportIndex]}}</view>
-
-          <input name="transportDay" hidden="true" value="{{transportValues[transportIndex]}}" />
-
-        </picker>
-
-      </view>
-
-    </view> -->
-
+    <view class="form-row map-entry" bindtap="chooseOnMap">
+      <text class="form-label">地图选点</text>
+      <text class="map-entry-text">🗺 在地图上选择位置 ›</text>
+    </view>
+    <view class="form-row align-top">
+      <text class="form-label">详细地址</text>
+      <textarea class="form-textarea" placeholder="楼栋/门牌号等详细信息" value="{{detail}}"
+        data-field="detail" bindinput="onInput" maxlength="100" />
+    </view>
   </view>
 
-  <view class="weui-cells__title"></view>
-
-  <view class="weui-cells weui-cells_after-title">
-
-    <view class="weui-cell weui-cell_select">
-
-      <view class="weui-cell__hd weui-cell__hd_in-select-after">
-
-        <view class="weui-label">省份</view>
-
+  <view class="form-card">
+    <view class="form-row">
+      <text class="form-label">地址标签</text>
+      <view class="tag-row">
+        <view wx:for="{{tags}}" wx:key="*this"
+          class="tag-opt {{index === tagIndex ? 'on' : ''}}"
+          data-index="{{index}}" bindtap="pickTag">{{item}}</view>
       </view>
-
-      <view class="weui-cell__bd">
-
-        <picker bindchange="bindProvinceNameChange" value="{{provinceIndex}}" range="{{provinceNames}}">
-
-          <view class="weui-select weui-select_in-select-after">{{provinceNames[provinceIndex]}}</view>
-
-          <input name="provinceName" hidden="true" value="{{provinceNames[provinceIndex]}}" />
-
-        </picker>
-
-      </view>
-
     </view>
-
-    <view class="weui-cell weui-cell_select">
-
-      <view class="weui-cell__hd weui-cell__hd_in-select-after">
-
-        <view class="weui-label">城市</view>
-
-      </view>
-
-      <view class="weui-cell__bd">
-
-        <picker bindchange="bindCityNameChange" value="{{cityIndex}}" range="{{cityNames}}">
-
-          <view class="weui-select weui-select_in-select-after" name="city_name">{{cityNames[cityIndex]}}</view>
-
-
-
-          <input name="cityName" hidden="true" value="{{cityNames[cityIndex]}}" />
-
-        </picker>
-
-      </view>
-
+    <view class="form-row">
+      <text class="form-label">默认地址</text>
+      <switch checked="{{isDefault}}" color="#b4282d" bindchange="onDefault" />
     </view>
-
-    <view class="weui-cell weui-cell_select">
-
-      <view class="weui-cell__hd weui-cell__hd_in-select-after">
-
-        <view class="weui-label">区县</view>
-
+    <view class="form-row column">
+      <view class="distance-head">
+        <text class="form-label">距店铺距离</text>
+        <text class="sub">{{distanceText}}</text>
       </view>
-
-      <view class="weui-cell__bd">
-
-        <picker bindchange="bindCountyNameChange" value="{{countyIndex}}" range="{{countyNames}}">
-
-          <view class="weui-select weui-select_in-select-after">{{countyNames[countyIndex]}}</view>
-
-          <input name="countyName" hidden="true" value="{{countyNames[countyIndex]}}" />
-
-        </picker>
-
-      </view>
-
+      <slider min="0.5" max="30" step="0.1" value="{{distanceKm}}" activeColor="#b4282d"
+        block-size="22" bindchange="onDistance" />
+      <text class="light">距离用于试算配送费（演示数据）</text>
     </view>
-
-    <view class="weui-cell weui-cell_input">
-
-      <view class="weui-cell__hd">
-
-        <view class="weui-label">详细地址</view>
-
-      </view>
-
-      <view class="weui-cell__bd">
-
-        <input class="weui-input" name="address" placeholder="请输入收货人详细地址" />
-
-      </view>
-
-    </view>
-
-    <view class="weui-cell weui-cell_input">
-
-      <view class="weui-cell__hd">
-
-        <view class="weui-label">邮政编码</view>
-
-      </view>
-
-      <view class="weui-cell__bd">
-
-        <input class="weui-input" name="address" placeholder="请输入邮政编码" />
-
-      </view>
-
-    </view>
-
   </view>
 
-  <button class="weui-btn" type="primary" form-type="submit">保存</button>
-
-</form>
+  <view style="height:140rpx"></view>
+  <view class="save-bar">
+    <button class="save-btn" bindtap="save">保存地址</button>
+  </view>
+</view>

@@ -1,0 +1,56 @@
+<!--pages/service/chat/chat.wxml-->
+<view class="chat-page">
+  <scroll-view class="chat-scroll" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation>
+    <view wx:for="{{messages}}" wx:key="id" id="msg-{{item.id}}"
+      class="msg-row {{item.role === 'user' ? 'me' : 'bot'}}">
+      <image wx:if="{{item.role === 'bot'}}" class="msg-avatar" src="/static/mock/avatar3.jpg" />
+      <view class="bubble {{item.role}}">{{item.content}}</view>
+      <image wx:if="{{item.role === 'user'}}" class="msg-avatar" src="{{'/static/mock/avatar1.jpg'}}" />
+    </view>
+    <view wx:if="{{typing}}" class="msg-row bot">
+      <image class="msg-avatar" src="/static/mock/avatar3.jpg" />
+      <view class="bubble bot typing">
+        <text class="dot"></text><text class="dot d2"></text><text class="dot d3"></text>
+      </view>
+    </view>
+    <view style="height:20rpx"></view>
+  </scroll-view>
+
+  <!-- 常见问题 -->
+  <scroll-view scroll-x class="faq-bar" enhanced show-scrollbar="{{false}}">
+    <view wx:for="{{faq}}" wx:key="*this" class="faq-item" data-text="{{item}}" bindtap="sendFaq">{{item}}</view>
+  </scroll-view>
+
+  <!-- 输入区 -->
+  <view class="input-bar">
+    <view class="solved-btn" bindtap="solved">问题已解决</view>
+    <input class="chat-input" value="{{inputValue}}" placeholder="请输入问题" bindinput="onInput"
+      confirm-type="send" bindconfirm="send" />
+    <view class="send-btn" bindtap="send">发送</view>
+  </view>
+
+  <!-- 客服评价弹层 -->
+  <view wx:if="{{showRate}}" class="mask" bindtap="noop"></view>
+  <view wx:if="{{showRate}}" class="sheet rate-sheet" catchtap="noop">
+    <view class="rate-title">客服服务评价</view>
+    <view class="rate-row">
+      <text class="rate-label">响应速度</text>
+      <view class="stars">
+        <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+          class="star {{item <= speed ? 'on' : ''}}" data-score="{{item}}" bindtap="setSpeed">★</text>
+      </view>
+    </view>
+    <view class="rate-row">
+      <text class="rate-label">问题解决</text>
+      <view class="stars">
+        <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+          class="star {{item <= solve ? 'on' : ''}}" data-score="{{item}}" bindtap="setSolve">★</text>
+      </view>
+    </view>
+    <textarea class="rate-input" placeholder="说说本次服务感受（选填）" value="{{rateText}}" bindinput="onRateInput" />
+    <view class="rate-actions">
+      <view class="btn-gray rate-btn" bindtap="clearHistory">清空会话</view>
+      <view class="btn-primary rate-btn primary" bindtap="submitRate">提交评价 +5积分</view>
+    </view>
+  </view>
+</view>

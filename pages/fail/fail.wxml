@@ -1,12 +1,10 @@
 <view class="first">
-  <view class='header'>
-    <image src='https://636c-cloud1-1g8ynlo793b33c64-1309106795.tcb.qcloud.la/%E9%94%99%E8%AF%AF.png?sign=5d1a500838a13ca108a5faaed3798e47&t=1658220580'></image>
+  <view class="header">
+    <image class="fail-img" src="/image/cry.png" mode="aspectFit"></image>
   </view>
-  <view class='content'>
-    <view>支付失败</view>
-    <text>请稍后再进行尝试</text>
+  <view class="content">
+    <view class="fail-title">支付未完成</view>
+    <text class="fail-sub">演示环境未发起真实支付，可在订单中重新支付</text>
   </view>
-  <button class='bottom' type='warn' lang="zh_CN" bindtap="toOrderDetail">
-    查看订单
-  </button>
+  <button class="bottom" bindtap="toOrderDetail">查看订单</button>
 </view>

@@ -1,0 +1,149 @@
+<!--pages/order/confirm/confirm.wxml-->
+<wxs src="../../../utils/format.wxs" module="fmt" />
+<view class="page cf-page">
+  <!-- 地址 -->
+  <view class="addr-card" bindtap="goAddress" hover-class="hover-bg">
+    <block wx:if="{{address}}">
+      <view class="addr-loc">📍</view>
+      <view class="addr-info">
+        <view class="addr-row1">
+          <text class="addr-name">{{address.name}}</text>
+          <text class="addr-phone">{{address.phone}}</text>
+          <text wx:if="{{address.tag}}" class="addr-tag">{{address.tag}}</text>
+          <text wx:if="{{unsupported}}" class="addr-warn">暂不支持配送</text>
+        </view>
+        <view class="addr-detail">{{address.province}}{{address.city}}{{address.district}}{{address.detail}}</view>
+        <view class="addr-line3 sub">
+          <text>距店铺约 {{address.distanceKm}}km</text>
+          <text wx:if="{{preview && !unsupported}}" class="freight-preview">
+            {{preview.freight > 0 ? '配送费 ¥' + fmt.fixed(preview.freight) : '本单免配送费'}}
+          </text>
+          <text wx:elif="{{unsupported}}" class="freight-warn">超出 20km 配送范围</text>
+        </view>
+      </view>
+      <view class="addr-arrow">›</view>
+    </block>
+    <view wx:else class="no-addr">
+      <text>请选择收货地址</text>
+      <text class="addr-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 商品 -->
+  <view class="goods-card-box">
+    <view wx:for="{{items}}" wx:key="goodsId" class="cf-item">
+      <safe-image class="cf-pic" img-class="cf-pic" src="{{item.pic}}" mode="aspectFill" />
+      <view class="cf-info">
+        <view class="cf-name ellipsis-2">{{item.name}}</view>
+        <view class="sub">{{item.specText}}</view>
+        <view class="cf-bottom">
+          <text class="cf-price">¥{{fmt.fixed(item.price)}}</text>
+          <text class="cf-count">×{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 配送 & 优惠 -->
+  <view class="opt-card">
+    <view class="opt-row" bindtap="openSlot">
+      <text class="opt-label">配送时间</text>
+      <text class="opt-value">{{slots[slotIndex]}}</text>
+      <text class="opt-arrow">›</text>
+    </view>
+    <view class="opt-row" bindtap="openCoupon">
+      <text class="opt-label">优惠券</text>
+      <text class="opt-value {{couponId ? 'red' : ''}}">{{couponTitle || (preview && preview.fullReduceAmount ? '满减已自动生效' : '暂无可用')}}</text>
+      <text class="opt-arrow">›</text>
+    </view>
+    <view class="opt-row column">
+      <text class="opt-label">订单备注</text>
+      <input class="remark-input" placeholder="选填，可告知商家偏好" value="{{remark}}" bindinput="onRemark" />
+    </view>
+  </view>
+
+  <!-- 金额明细 -->
+  <view wx:if="{{preview}}" class="amount-card">
+    <view class="am-row">
+      <text>商品金额</text>
+      <text>¥{{fmt.fixed(preview.goodsAmount)}}</text>
+    </view>
+    <view class="am-row">
+      <text>满减优惠</text>
+      <text class="red">-¥{{fmt.fixed(preview.fullReduceAmount)}}</text>
+    </view>
+    <view wx:if="{{preview.couponDiscount > 0}}" class="am-row">
+      <text>优惠券（{{preview.couponTitle}}）</text>
+      <text class="red">-¥{{fmt.fixed(preview.couponDiscount)}}</text>
+    </view>
+    <view class="am-row">
+      <text>配送费</text>
+      <text>{{preview.freight > 0 ? '¥' + fmt.fixed(preview.freight) : '免配送费'}}</text>
+    </view>
+    <view class="am-tip light">
+      会员满 ¥{{preview.deliveryRule.freeThreshold}} 免基础配送费（起步 ¥{{preview.deliveryRule.baseFee}} 含 {{preview.deliveryRule.baseKm}}km）
+    </view>
+  </view>
+
+  <view style="height:140rpx"></view>
+
+  <!-- 底部提交 -->
+  <view class="submit-bar">
+    <view class="sb-left">
+      实付：<text class="sb-price">¥{{preview ? fmt.fixed(preview.payAmount) : goodsAmount}}</text>
+    </view>
+    <view class="sb-btn {{submitting ? 'disabled' : ''}}" bindtap="submit">提交订单</view>
+  </view>
+
+  <!-- 配送时段弹层 -->
+  <view wx:if="{{showSlot}}" class="mask" bindtap="closeSheet"></view>
+  <view wx:if="{{showSlot}}" class="sheet pick-sheet" catchtap="noop">
+    <view class="ps-title">选择配送时间</view>
+    <view wx:for="{{slots}}" wx:key="*this"
+      class="ps-item {{index === slotIndex ? 'on' : ''}}"
+      data-index="{{index}}" bindtap="pickSlot">{{item}}</view>
+  </view>
+
+  <!-- 地址选择弹层（带每地址运费预览） -->
+  <view wx:if="{{showAddress}}" class="mask" bindtap="closeAddressSheet"></view>
+  <view wx:if="{{showAddress}}" class="sheet addr-sheet" catchtap="noopSheet">
+    <view class="ps-title">选择收货地址</view>
+    <view wx:if="{{addressLoading}}" class="load-status">正在试算配送费...</view>
+    <scroll-view scroll-y class="addr-options">
+      <view wx:for="{{addressOptions}}" wx:key="id"
+        class="addr-opt {{item.id === addressId ? 'on' : ''}} {{item.unsupported ? 'disabled' : ''}}"
+        data-id="{{item.id}}" bindtap="pickAddress">
+        <view class="ao-main">
+          <view class="ao-row1">
+            <text class="ao-name">{{item.name}}</text>
+            <text class="sub">{{item.phone}}</text>
+            <text wx:if="{{item.tag}}" class="ao-tag">{{item.tag}}</text>
+            <text wx:if="{{item.isDefault}}" class="ao-default">默认</text>
+          </view>
+          <view class="ao-detail ellipsis-2">{{item.text}}</view>
+          <view class="ao-sub sub">{{item.distanceKm}}km</view>
+        </view>
+        <view class="ao-right">
+          <view class="ao-fee {{item.unsupported ? 'unsupported' : ''}}">{{item.freightText}}</view>
+          <view wx:if="{{item.id === addressId}}" class="ao-check">✓</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="addr-manage" bindtap="noopSheet">
+      <navigator url="/pages/address/address" class="manage-link">管理收货地址 ›</navigator>
+    </view>
+  </view>
+
+  <!-- 优惠券弹层 -->
+  <view wx:if="{{showCoupon}}" class="mask" bindtap="closeSheet"></view>
+  <view wx:if="{{showCoupon}}" class="sheet pick-sheet" catchtap="noop">
+    <view class="ps-title">选择优惠券</view>
+    <view class="ps-item {{couponId === '' ? 'on' : ''}}" data-id="" bindtap="pickCoupon">不使用优惠券</view>
+    <view wx:for="{{coupons}}" wx:key="id"
+      class="ps-item {{couponId === item.id ? 'on' : ''}}"
+      data-id="{{item.id}}" bindtap="pickCoupon">
+      {{item.name}}（满 {{item.threshold}} 元可用 · {{item.scope}}）
+    </view>
+    <empty wx:if="{{!coupons.length}}" image="/image/cry.png" text="暂无可用优惠券" top="40rpx" />
+  </view>
+</view>

@@ -1,0 +1,27 @@
+<!--pages/service/tickets/tickets.wxml-->
+<wxs src="../../../utils/format.wxs" module="fmt" />
+<view class="tk-page">
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="key"
+      class="tab {{String(active) === String(item.key) ? 'on' : ''}}"
+      data-key="{{item.key}}" bindtap="switchTab">{{item.label}}</view>
+  </view>
+
+  <view class="tk-list">
+    <view wx:for="{{filtered}}" wx:key="id" class="tk-card" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="tk-head">
+        <text class="tk-type">{{item.typeText}}</text>
+        <text class="tk-status status-{{item.status}}">{{item.statusText}}</text>
+      </view>
+      <view class="tk-order sub">订单号 {{item.orderNo}}</view>
+      <view class="tk-reason">{{item.reason}}</view>
+      <view class="tk-foot">
+        <text class="light">{{item.createTime}}</text>
+        <text wx:if="{{item.status !== 3 && item.status !== 4}}" class="tk-amount">退款 ¥{{fmt.fixed(item.amount)}}</text>
+        <text wx:elif="{{item.refundStatus}}" class="tk-done">{{item.refundStatus}}</text>
+      </view>
+    </view>
+  </view>
+
+  <empty wx:if="{{!loading && !filtered.length}}" image="/image/cry.png" text="暂无售后工单" top="160rpx" />
+</view>

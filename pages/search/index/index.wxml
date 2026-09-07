@@ -1,0 +1,76 @@
+<!--pages/search/index/index.wxml-->
+<wxs src="../../../utils/format.wxs" module="fmt" />
+<view class="search-page">
+  <!-- 搜索框 -->
+  <view class="search-bar">
+    <view class="search-input">
+      <text class="s-ico">🔍</text>
+      <input value="{{kw}}" placeholder="搜索零食，如薯片、坚果" confirm-type="search"
+        bindinput="onInput" bindconfirm="doSearch" focus />
+      <text wx:if="{{kw}}" class="s-clear" bindtap="onClear">✕</text>
+    </view>
+    <view class="s-cancel" bindtap="doSearch">搜索</view>
+  </view>
+
+  <!-- 联想 -->
+  <view wx:if="{{suggests.length}}" class="suggest">
+    <view wx:for="{{suggests}}" wx:key="id" class="sg-item" data-kw="{{item.name}}" bindtap="doSearch">
+      <text class="sg-ico">🔍</text>
+      <text class="sg-name">{{item.name}}</text>
+      <text class="sg-price">¥{{fmt.fixed(item.price)}}</text>
+    </view>
+  </view>
+
+  <!-- 搜索前：历史 + 热词 -->
+  <block wx:elif="{{!searched}}">
+    <view wx:if="{{history.length}}" class="card block">
+      <view class="block-head">
+        <text class="block-title">搜索历史</text>
+        <text class="block-clear" bindtap="clearHistory">🗑 清空</text>
+      </view>
+      <view class="kw-wrap">
+        <view wx:for="{{history}}" wx:key="*this" class="kw-tag" data-kw="{{item}}" bindtap="doSearch">
+          {{item}}
+          <text class="kw-del" catchtap="removeHistory" data-kw="{{item}}"> ✕</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="card block">
+      <view class="block-title">热门搜索</view>
+      <view class="kw-wrap">
+        <view wx:for="{{hotWords}}" wx:key="*this" class="kw-tag hot" data-kw="{{item}}" bindtap="doSearch">
+          <text wx:if="{{index < 3}}" class="hot-rank">{{index + 1}}</text>{{item}}
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 搜索结果 -->
+  <block wx:else>
+    <view class="sort-bar">
+      <view wx:for="{{sorts}}" wx:key="key"
+        class="sort-item {{sort === item.key ? 'on' : ''}}"
+        data-key="{{item.key}}" bindtap="switchSort">{{item.label}}</view>
+      <view class="sort-total sub">共 {{total}} 件商品</view>
+    </view>
+
+    <view wx:if="{{loading}}" class="sk-results">
+      <view class="sk-result" wx:for="{{[1,2,3,4]}}" wx:key="*this">
+        <view class="sk sk-img"></view>
+        <view class="sk-lines">
+          <view class="sk sk-line w80"></view>
+          <view class="sk sk-line w40"></view>
+        </view>
+      </view>
+    </view>
+
+    <block wx:else>
+      <view wx:if="{{results.length}}" class="result-list">
+        <goods-card wx:for="{{results}}" wx:key="id" goods="{{item}}" mode="list" bindadd="onAddCart" />
+      </view>
+      <empty wx:else text="没有找到「{{kw}}」相关商品" subText="换个关键词试试" top="120rpx" />
+      <loading-more status="{{loadStatus}}" />
+    </block>
+  </block>
+</view>

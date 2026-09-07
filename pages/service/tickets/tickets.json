@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "售后工单",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "empty": "/components/empty/index"
+  }
+}

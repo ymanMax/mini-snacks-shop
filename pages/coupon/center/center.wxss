@@ -1,0 +1,101 @@
+/* pages/coupon/center/center.wxss */
+page { background: #f5f6f7; }
+
+.cc-banner {
+  background: linear-gradient(135deg, #d34046, #b4282d);
+  color: #fff;
+  padding: 44rpx 40rpx 56rpx;
+  position: relative;
+}
+.banner-title { font-size: 40rpx; font-weight: 800; }
+.banner-sub { font-size: 24rpx; opacity: .85; margin-top: 10rpx; }
+.banner-btn {
+  position: absolute;
+  right: 32rpx;
+  top: 48rpx;
+  font-size: 22rpx;
+  border: 1rpx solid rgba(255, 255, 255, .8);
+  border-radius: 999rpx;
+  padding: 8rpx 22rpx;
+}
+
+.tabs {
+  display: flex;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 27rpx;
+  color: #555;
+  position: relative;
+}
+.tab.on { color: #b4282d; font-weight: 700; }
+.tab.on::after {
+  content: '';
+  position: absolute;
+  bottom: 10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  border-radius: 4rpx;
+  background: #b4282d;
+}
+
+.cc-list {
+  margin: 20rpx 24rpx 0;
+  position: relative;
+}
+.empty-tip { text-align: center; padding: 120rpx 0; font-size: 24rpx; }
+
+/* 优惠券票券 */
+.coupon {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+}
+.coupon.used { opacity: .6; }
+.c-left {
+  width: 200rpx;
+  padding: 28rpx 0;
+  text-align: center;
+  color: #b4282d;
+  position: relative;
+}
+.c-left::after {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 20rpx;
+  bottom: 20rpx;
+  width: 2rpx;
+  background: repeating-linear-gradient(#f0d8d9 0 8rpx, transparent 8rpx 16rpx);
+}
+.c-value { display: flex; align-items: baseline; justify-content: center; }
+.v-sym { font-size: 26rpx; font-weight: 700; }
+.v-num { font-size: 56rpx; font-weight: 800; line-height: 1; }
+.v-unit { font-size: 26rpx; font-weight: 700; }
+.c-threshold { font-size: 18rpx; color: #b4282d; margin-top: 8rpx; }
+.c-mid { flex: 1; min-width: 0; padding: 20rpx; }
+.c-name { font-size: 28rpx; font-weight: 700; }
+.c-scope { font-size: 22rpx; color: #838383; margin: 8rpx 0; }
+.c-expire { font-size: 18rpx; }
+.c-right { padding-right: 24rpx; }
+.c-btn {
+  background: linear-gradient(135deg, #d34046, #b4282d);
+  color: #fff;
+  font-size: 22rpx;
+  border-radius: 999rpx;
+  padding: 12rpx 26rpx;
+  white-space: nowrap;
+}
+.c-btn.done { background: #c9ccd1; }
+.c-btn.use { background: linear-gradient(135deg, #ff8a7a, #b4282d); }

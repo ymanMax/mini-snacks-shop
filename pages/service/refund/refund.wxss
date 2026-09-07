@@ -1,0 +1,93 @@
+/* pages/service/refund/refund.wxss */
+.block-title { font-size: 30rpx; font-weight: 700; margin-bottom: 20rpx; }
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx 24rpx 0;
+  padding: 24rpx;
+}
+
+.type-list { display: flex; gap: 18rpx; }
+.type-item {
+  flex: 1;
+  border: 2rpx solid #e5e6e8;
+  border-radius: 14rpx;
+  padding: 22rpx 16rpx;
+  text-align: center;
+}
+.type-item.on { border-color: #b4282d; background: #fdecec; }
+.type-label { font-size: 28rpx; font-weight: 700; }
+.type-item.on .type-label { color: #b4282d; }
+.type-desc { margin-top: 8rpx; font-size: 20rpx; }
+
+.rf-item { display: flex; align-items: center; padding: 18rpx 0; }
+.check {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 2rpx solid #c9ccd1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24rpx;
+  flex-shrink: 0;
+}
+.check.on { background: #b4282d; border-color: #b4282d; }
+.rf-pic {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 10rpx;
+  margin: 0 18rpx;
+  background: #f5f6f7;
+}
+.rf-info { flex: 1; min-width: 0; }
+.rf-name { font-size: 25rpx; }
+.rf-price { font-size: 24rpx; width: 150rpx; text-align: right; }
+
+.reason-list { display: flex; flex-wrap: wrap; gap: 16rpx; }
+.reason-item {
+  font-size: 24rpx;
+  color: #555;
+  background: #f5f6f7;
+  border-radius: 999rpx;
+  padding: 12rpx 30rpx;
+}
+.reason-item.on { background: #fdecec; color: #b4282d; font-weight: 600; }
+.remark-input {
+  width: 100%;
+  box-sizing: border-box;
+  height: 140rpx;
+  background: #f7f8f9;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-top: 24rpx;
+  font-size: 26rpx;
+}
+.amount-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.rf-amount { color: #b4282d; font-size: 40rpx; font-weight: 800; }
+
+.submit-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 14rpx 24rpx;
+  background: #fff;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, .05);
+}
+.submit-btn {
+  height: 84rpx;
+  line-height: 84rpx;
+  text-align: center;
+  color: #fff;
+  font-size: 30rpx;
+  font-weight: 700;
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, #d34046, #b4282d);
+}
+.submit-btn.disabled { opacity: .5; }

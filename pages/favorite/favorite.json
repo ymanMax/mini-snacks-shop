@@ -1,0 +1,8 @@
+{
+  "usingComponents": {
+    "safe-image": "/components/safe-image/index",
+    "goods-card": "/components/goods-card/index",
+    "empty": "/components/empty/index",
+    "loading-more": "/components/loading-more/index"
+  }
+}

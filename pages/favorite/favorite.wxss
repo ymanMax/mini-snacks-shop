@@ -1,0 +1,42 @@
+/* pages/favorite/favorite.wxss */
+.fav-head {
+  display: flex;
+  justify-content: space-between;
+  padding: 20rpx 24rpx 8rpx;
+}
+.clear-btn { color: #b4282d; font-size: 22rpx; }
+
+.fav-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18rpx;
+  padding: 16rpx 24rpx;
+}
+.fav-cell {
+  position: relative;
+  border-radius: 16rpx;
+  overflow: visible;
+}
+.fav-cancel {
+  position: absolute;
+  top: 12rpx;
+  right: 12rpx;
+  background: rgba(0, 0, 0, .5);
+  color: #fff;
+  font-size: 18rpx;
+  border-radius: 999rpx;
+  padding: 4rpx 14rpx;
+  z-index: 5;
+}
+
+.fp-group { padding: 0 24rpx; }
+.fp-date {
+  font-size: 24rpx;
+  color: #838383;
+  padding: 20rpx 4rpx 12rpx;
+}
+.fp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18rpx;
+}

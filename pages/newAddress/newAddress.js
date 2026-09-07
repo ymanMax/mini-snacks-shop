@@ -1,399 +1,109 @@
-var area = require('../../utils/area.js');
+// pages/newAddress/newAddress.js —— 新建 / 编辑收货地址
+const app = getApp();
+const { addressApi } = require('../../api/index.js');
+const toast = require('../../utils/toast.js');
 
-var areaInfo = []; //所有省市区县数据
-
-var provinces = []; //省
-
-var provinceNames = []; //省名称
-
-var citys = []; //城市
-
-var cityNames = []; //城市名称
-
-var countys = []; //区县
-
-var countyNames = []; //区县名称
-
-var value = [0, 0, 0]; //数据位置下标
-
-var addressList = null;
+const TAGS = ['家', '学校', '公司'];
 
 Page({
-
- 
-
-  /**
-
-   * 页面的初始数据
-
-   */
-
   data: {
-
-    transportValues: ["收货时间不限", "周六日/节假日收货", "周一至周五收货"],
-
-    transportIndex: 0,
-
-    provinceIndex: 0, //省份
-
-    cityIndex: 0, //城市
-
-    countyIndex: 0, //区县
-
+    id: null,
+    name: '',
+    phone: '',
+    region: ['上海市', '上海市', '浦东新区'],
+    detail: '',
+    tags: TAGS,
+    tagIndex: 0,
+    isDefault: false,
+    distanceKm: 3,
+    distanceText: '约 3 km'
   },
 
- 
-
- 
-
-  /**
-
-   * 生命周期函数--监听页面加载
-
-   */
-
-  onLoad: function(options) {
-
- 
-
+  onShow() {
+    // 地图选点回填
+    const picked = app.globalData ? app.globalData.mapPickedAddress : null;
+    if (picked) {
+      app.globalData.mapPickedAddress = null;
+      const patch = {
+        region: picked.region,
+        detail: picked.detail,
+        distanceKm: picked.distanceKm,
+        distanceText: '约 ' + picked.distanceKm + ' km'
+      };
+      this.setData(patch);
+      toast.showToast('已在地图上选择位置');
+    }
   },
 
- 
+  onLoad(options) {
+    if (options.id) {
+      wx.setNavigationBarTitle({ title: '编辑地址' });
+      addressApi.list().then((list) => {
+        const a = list.find((x) => String(x.id) === String(options.id));
+        if (!a) return;
+        this.setData({
+          id: a.id,
+          name: a.name,
+          phone: a.phone,
+          region: [a.province, a.city, a.district],
+          detail: a.detail,
+          tagIndex: Math.max(0, TAGS.indexOf(a.tag)),
+          isDefault: !!a.isDefault,
+          distanceKm: a.distanceKm,
+          distanceText: '约 ' + a.distanceKm + ' km'
+        });
+      });
+    }
+  },
 
-  /**
+  onInput(e) {
+    this.setData({ [e.currentTarget.dataset.field]: e.detail.value });
+  },
 
-   * 生命周期函数--监听页面显示
+  onRegion(e) {
+    this.setData({ region: e.detail.value });
+  },
 
-   */
+  chooseOnMap() {
+    wx.navigateTo({ url: '/pages/address/map/map' });
+  },
 
-  onShow: function() {
+  pickTag(e) {
+    this.setData({ tagIndex: Number(e.currentTarget.dataset.index) });
+  },
 
-    var that = this;
+  onDefault(e) {
+    this.setData({ isDefault: e.detail.value });
+  },
 
-    area.getAreaInfo(function(arr) {
+  onDistance(e) {
+    const v = Number(e.detail.value);
+    this.setData({ distanceKm: v, distanceText: '约 ' + v + ' km' });
+  },
 
-      areaInfo = arr;
+  save() {
+    const { id, name, phone, region, detail, tags, tagIndex, isDefault, distanceKm } = this.data;
+    if (!name.trim()) return toast.showToast('请填写收货人姓名');
+    if (!/^1\d{10}$/.test(phone) && !/^\d{3}\*{4}\d{4}$/.test(phone)) {
+      return toast.showToast('请输入正确的手机号');
+    }
+    if (!detail.trim()) return toast.showToast('请填写详细地址');
 
-      //获取省份数据
-
-      that.getProvinceData();
-
+    const payload = {
+      name: name.trim(),
+      phone,
+      province: region[0],
+      city: region[1],
+      district: region[2],
+      detail: detail.trim(),
+      tag: tags[tagIndex],
+      isDefault,
+      distanceKm
+    };
+    if (id) payload.id = id;
+    addressApi.save(payload).then(() => {
+      toast.showSuccess(id ? '已保存修改' : '地址添加成功');
+      setTimeout(() => wx.navigateBack(), 800);
     });
-
-  },
-
-  // 获取省份数据
-
-  getProvinceData: function() {
-
-    var that = this;
-
-    var s;
-
-    provinces = [];
-
-    provinceNames = [];
-
-    var num = 0;
-
-    for (var i = 0; i < areaInfo.length; i++) {
-
-      s = areaInfo[i];
-
-      if (s.di == "00" && s.xian == "00") {
-
-        provinces[num] = s;
-
-        provinceNames[num] = s.name;
-
-        num++;
-
-      }
-
-    }
-
-    that.setData({
-
-      provinceNames: provinceNames
-
-    })
-
- 
-
-    that.getCityArr();
-
-    that.getCountyInfo();
-
-  },
-
- 
-
-  // 获取城市数据
-
-  getCityArr: function(count = 0) {
-
-    var c;
-
-    citys = [];
-
-    cityNames = [];
-
-    var num = 0;
-
-    for (var i = 0; i < areaInfo.length; i++) {
-
-      c = areaInfo[i];
-
-      if (c.xian == "00" && c.sheng == provinces[count].sheng && c.di != "00") {
-
-        citys[num] = c;
-
-        cityNames[num] = c.name;
-
-        num++;
-
-      }
-
-    }
-
-    if (citys.length == 0) {
-
-      citys[0] = {
-
-        name: ''
-
-      };
-
-      cityNames[0] = {
-
-        name: ''
-
-      };
-
-    }
-
-    var that = this;
-
-    that.setData({
-
-      citys: citys,
-
-      cityNames: cityNames
-
-    })
-
-    console.log('cityNames:' + cityNames);
-
-    that.getCountyInfo(count, 0);
-
-  },
-
- 
-
-  // 获取区县数据
-
-  getCountyInfo: function(column0 = 0, column1 = 0) {
-
-    var c;
-
-    countys = [];
-
-    countyNames = [];
-
-    var num = 0;
-
-    for (var i = 0; i < areaInfo.length; i++) {
-
-      c = areaInfo[i];
-
-      if (c.xian != "00" && c.sheng == provinces[column0].sheng && c.di == citys[column1].di) {
-
-        countys[num] = c;
-
-        countyNames[num] = c.name;
-
-        num++;
-
-      }
-
-    }
-
-    if (countys.length == 0) {
-
-      countys[0] = {
-
-        name: ''
-
-      };
-
-      countyNames[0] = {
-
-        name: ''
-
-      };
-
-    }
-
-    console.log('countyNames:' + countyNames);
-
-    var that = this;
-
-    // value = [column0, column1, 0];
-
- 
-
-    that.setData({
-
-      countys: countys,
-
-      countyNames: countyNames,
-
-      // value: value,
-
-    })
-
-  },
-
- 
-
-  bindTransportDayChange: function(e) {
-
-    console.log('picker country 发生选择改变，携带值为', e.detail.value);
-
-    this.setData({
-
-      transportIndex: e.detail.value
-
-    })
-
-  },
-
- 
-
-  bindProvinceNameChange: function(e) {
-
-    var that = this;
-
-    console.log('picker province 发生选择改变，携带值为', e.detail.value);
-
-    var val = e.detail.value
-
-    that.getCityArr(val); //获取地级市数据
-
-    that.getCountyInfo(val, 0); //获取区县数据
-
- 
-
-    value = [val, 0, 0];
-
-    this.setData({
-
-      provinceIndex: e.detail.value,
-
-      cityIndex: 0,
-
-      countyIndex: 0,
-
-      value: value
-
-    })
-
- 
-
-  },
-
- 
-
-  bindCityNameChange: function(e) {
-
-    var that = this;
-
-    console.log('picker city 发生选择改变，携带值为', e.detail.value);
-
- 
-
-    var val = e.detail.value
-
-    that.getCountyInfo(value[0], val); //获取区县数据
-
-    value = [value[0], val, 0];
-
-    this.setData({
-
-      cityIndex: e.detail.value,
-
-      countyIndex: 0,
-
-      value: value
-
-    })
-
-  },
-
- 
-
-  bindCountyNameChange: function(e) {
-
-    var that = this;
-
-    console.log('picker county 发生选择改变，携带值为', e.detail.value);
-
-    this.setData({
-
-      countyIndex: e.detail.value
-
-    })
-
-  },
-
- 
-
-  saveAddress: function(e) {
-
-    var consignee = e.detail.value.consignee;
-
-    var mobile = e.detail.value.mobile;
-
-    var transportDay = e.detail.value.transportDay;
-
-    var provinceName = e.detail.value.provinceName;
-
-    var cityName = e.detail.value.cityName;
-
-    var countyName = e.detail.value.countyName;
-
-    var address = e.detail.value.address;
-
- 
-
-    console.log(transportDay + "," + provinceName + "," + cityName + "," + countyName + "," + address); //输出该文本 
-
- 
-
-    var arr = wx.getStorageSync('addressList') || [];
-
-    console.log("arr,{}", arr);
-
-    addressList = {
-
-      consignee: consignee,
-
-      mobile: mobile,
-
-      address: provinceName + cityName + countyName+address,
-
-      transportDay: transportDay
-
-    }
-
-      arr.push(addressList);
-
-    wx.setStorageSync('addressList', arr);
-    wx.setStorageSync('hasAddress', true);
-    wx.navigateBack({
-      // delta: 1
-    });
-
   }
-
-})
+});

@@ -1,0 +1,33 @@
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: 80rpx;
+}
+.empty-img {
+  width: 220rpx;
+  height: 220rpx;
+}
+.empty-text {
+  margin-top: 20rpx;
+  font-size: 28rpx;
+  color: #838383;
+}
+.empty-sub {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #b0b3b8;
+}
+.empty-btn {
+  margin-top: 32rpx;
+  width: 240rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(135deg, #d34046, #b4282d);
+  color: #fff;
+  font-size: 26rpx;
+}
+.empty-btn::after {
+  border: none;
+}

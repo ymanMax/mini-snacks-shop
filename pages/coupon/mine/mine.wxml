@@ -1,0 +1,34 @@
+<!--pages/coupon/mine/mine.wxml-->
+<view class="cm-page">
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="status"
+      class="tab {{active === item.status ? 'on' : ''}}"
+      data-status="{{item.status}}" bindtap="switchTab">{{item.label}}</view>
+  </view>
+
+  <view class="cm-list">
+    <view wx:for="{{list}}" wx:key="id" class="coupon {{item.status !== 1 ? 'disabled' : ''}}">
+      <view class="c-left">
+        <block wx:if="{{item.type === 2}}">
+          <view class="c-value"><text class="v-num">{{item.discount / 10}}</text><text class="v-unit">折</text></view>
+        </block>
+        <block wx:else>
+          <view class="c-value"><text class="v-sym">¥</text><text class="v-num">{{item.discount}}</text></view>
+        </block>
+        <view class="c-threshold">{{item.threshold > 0 ? '满 ' + item.threshold + ' 元可用' : '无门槛'}}</view>
+      </view>
+      <view class="c-mid">
+        <view class="c-name">{{item.name}}</view>
+        <view class="c-scope">{{item.scope}} · {{item.source}}</view>
+        <view class="c-expire light">有效期至 {{item.expireTime}}</view>
+      </view>
+      <view wx:if="{{item.status === 2}}" class="stamp">已使用</view>
+      <view wx:elif="{{item.status === 3}}" class="stamp">已过期</view>
+    </view>
+  </view>
+
+  <empty wx:if="{{!loading && !list.length}}"
+    text="{{active === 1 ? '还没有可用优惠券' : (active === 2 ? '暂无已使用优惠券' : '暂无过期优惠券')}}"
+    btnText="{{active === 1 ? '去领券' : ''}}"
+    bindbutton="onEmptyBtn" top="120rpx" />
+</view>

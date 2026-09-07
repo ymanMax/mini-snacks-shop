@@ -1,52 +1,172 @@
 <!--pages/mine/mine.wxml-->
-<view wx:if="{{!isLogined}}" class="first">
-  <view class='header'>
-    <image src='https://636c-cloud1-1g8ynlo793b33c64-1309106795.tcb.qcloud.la/wx_login.png?sign=1eac53668a2446a318f1bf108115d134&t=1657608211'></image>
-  </view>
-  <view class='content'>
-    <view>申请获取以下权限</view>
-    <text>获得你的公开信息(昵称，头像等)</text>
-  </view>
-  <button class='bottom' type='primary' lang="zh_CN" bindtap="login">
-    授权登录
-  </button>
-</view>
-
-<view class="main" wx:else>
-  <view class="header-new">
-    <image src="{{avatarUrl}}" class="thumb"></image>
-    <text class="nickname">{{nickName}}</text>
-    <text class="about">关于我们</text>
-  </view>
-
-  <view class="address-box">
-    <view class="address-manage">
-      <navigator url="/pages/address/address">地址管理</navigator>
-    </view>
-    <view wx:if="{{hasAddress}}" class="address-list">
-      <view>{{address.consignee}}</view>
-      <view>{{address.mobile}}</view>
-      <view>{{address.address}}</view>
-    </view>
-  </view>
-  <view class="orders-box">
-    <view class="orders">我的订单</view>
-    <scroll-view scroll-y="true" bindscrolltolower="searchScrollLower" class="newsListView"  style="height: {{scrollHeight}}rpx;">
-      <view class="orders-list" wx:for="{{orders}}" wx:key="index">
-        <view class="orders-number">订单编号：{{item.order_no}}</view>
-        <view class="orders-detail">
-          <image src="{{'https://hanmashanghu.qiaomai365.com' + item.snap_img}}"></image>
-          <view class="">{{item.snap_name}}</view>
-          <view class="">{{item.total_count}}</view>
-          <text class="orders-status">未付款</text>
+<view class="mine-page" wx:if="{{member}}">
+  <!-- 用户卡 -->
+  <view class="user-card">
+    <view class="uc-top">
+      <image class="uc-avatar" src="{{member.user.avatar}}" bindtap="changeAvatar" />
+      <view class="uc-info">
+        <view class="uc-name-row">
+          <text class="uc-name">{{member.user.nickName}}</text>
+          <view class="uc-level">{{member.level.name}}</view>
         </view>
-        <view class="orders-footer">
-          <text>实付：￥{{item.total_price}}</text>
-          <button size="mini" class="orders-btn" bindtap="payOrders">付款</button>
+        <view class="uc-phone">{{member.user.phone}}</view>
+        <view class="growth-row">
+          <view class="growth-bar">
+            <view class="growth-inner" style="width:{{member.growthPercent}}%"></view>
+          </view>
+          <text class="growth-text">成长值 {{member.user.growthValue}}<block wx:if="{{member.nextLevel}"> · 距{{member.nextLevel.name}}还需 {{member.nextLevel.minGrowth - member.user.growthValue}}</block></text>
         </view>
       </view>
-      <view class="loading" hidden="{{!searchLoading}}">正在载入更多...</view>
-      <view class="loading complete" hidden="{{!searchLoadingComplete}}">已加载全部</view>
-    </scroll-view>
+      <view class="uc-msg" bindtap="goMessage">
+        🔔<view wx:if="{{unread > 0}}" class="uc-dot">{{unread}}</view>
+      </view>
+    </view>
+    <view class="uc-stats">
+      <view class="uc-stat" data-url="/pages/member/points/points" bindtap="goPage">
+        <text class="stat-num">{{member.user.points}}</text><text class="stat-label">积分</text>
+      </view>
+      <view class="uc-stat" data-url="/pages/coupon/mine/mine" bindtap="goPage">
+        <text class="stat-num">{{member.couponCount}}</text><text class="stat-label">优惠券</text>
+      </view>
+      <view class="uc-stat" data-url="/pages/favorite/favorite?type=collect" bindtap="goPage">
+        <text class="stat-num">{{member.collectCount}}</text><text class="stat-label">收藏</text>
+      </view>
+      <view class="uc-stat" data-url="/pages/member/center/center" bindtap="goPage">
+        <text class="stat-num">{{member.user.growthValue}}</text><text class="stat-label">成长值</text>
+      </view>
+    </view>
   </view>
+
+  <!-- 我的订单 -->
+  <view class="card order-entry">
+    <view class="oe-head" data-status="0" bindtap="goOrders">
+      <text class="oe-title">我的订单</text>
+      <text class="oe-all">全部订单 ›</text>
+    </view>
+    <view class="oe-grid">
+      <view class="oe-item" data-status="1" bindtap="goOrders">
+        <text class="oe-ico">💰</text>
+        <text>待付款</text>
+        <view wx:if="{{counts[1] > 0}}" class="oe-badge">{{counts[1]}}</view>
+      </view>
+      <view class="oe-item" data-status="2" bindtap="goOrders">
+        <text class="oe-ico">📦</text>
+        <text>待发货</text>
+        <view wx:if="{{counts[2] > 0}}" class="oe-badge">{{counts[2]}}</view>
+      </view>
+      <view class="oe-item" data-status="3" bindtap="goOrders">
+        <text class="oe-ico">🛵</text>
+        <text>配送中</text>
+        <view wx:if="{{counts[3] > 0}}" class="oe-badge">{{counts[3]}}</view>
+      </view>
+      <view class="oe-item" data-status="4" bindtap="goOrders">
+        <text class="oe-ico">✅</text>
+        <text>待收货</text>
+        <view wx:if="{{counts[4] > 0}}" class="oe-badge">{{counts[4]}}</view>
+      </view>
+      <view class="oe-item" data-status="5" bindtap="goOrders">
+        <text class="oe-ico">✍️</text>
+        <text>待评价</text>
+        <view wx:if="{{counts.review > 0}}" class="oe-badge">{{counts.review}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 会员权益 -->
+  <view class="card menu-card">
+    <view class="menu-title">会员权益</view>
+    <view class="menu-grid">
+      <view class="menu-item" data-url="/pages/member/center/center" bindtap="goPage">
+        <text class="menu-ico">👑</text><text>会员中心</text>
+      </view>
+      <view class="menu-item" data-url="/pages/member/checkin/checkin" bindtap="goPage">
+        <text class="menu-ico">📅</text><text>每日签到</text>
+        <view wx:if="{{!signedToday}}" class="menu-dot"></view>
+      </view>
+      <view class="menu-item" data-url="/pages/member/points/points" bindtap="goPage">
+        <text class="menu-ico">🎁</text><text>我的积分</text>
+      </view>
+      <view class="menu-item" data-url="/pages/coupon/center/center" bindtap="goPage">
+        <text class="menu-ico">🎟️</text><text>领券中心</text>
+      </view>
+      <view class="menu-item" data-url="/pages/coupon/mine/mine" bindtap="goPage">
+        <text class="menu-ico">💳</text><text>我的优惠券</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 我的服务 -->
+  <view class="card menu-card">
+    <view class="menu-title">我的服务</view>
+    <view class="menu-grid">
+      <view class="menu-item" data-url="/pages/address/address" bindtap="goPage">
+        <text class="menu-ico">📍</text><text>收货地址</text>
+      </view>
+      <view class="menu-item" data-url="/pages/cart/cart" bindtap="goPage">
+        <text class="menu-ico">🛒</text><text>购物车</text>
+      </view>
+      <view class="menu-item" data-url="/pages/favorite/favorite?type=collect" bindtap="goPage">
+        <text class="menu-ico">❤️</text><text>收藏记录</text>
+      </view>
+      <view class="menu-item" data-url="/pages/favorite/favorite?type=footprint" bindtap="goPage">
+        <text class="menu-ico">👣</text><text>浏览足迹</text>
+      </view>
+      <view class="menu-item" data-url="/pages/group/index/index?tab=mine" bindtap="goPage">
+        <text class="menu-ico">👥</text><text>我的拼团</text>
+      </view>
+      <view class="menu-item" data-url="/pages/service/tickets/tickets" bindtap="goPage">
+        <text class="menu-ico">🛠</text><text>售后工单</text>
+        <view wx:if="{{false}}" class="menu-dot"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 店铺与配送 -->
+  <view class="card menu-card">
+    <view class="menu-title">店铺与配送</view>
+    <view class="menu-list">
+      <view class="menu-row" data-url="/pages/shop/index/index" bindtap="goPage">
+        <text>🏪 店铺主页</text><text class="mr-arrow">›</text>
+      </view>
+      <view class="menu-row" data-url="/pages/shop/index/index?tab=review" bindtap="goPage">
+        <text>⭐ 店铺评价</text><text class="mr-arrow">›</text>
+      </view>
+      <view class="menu-row" data-url="delivery" bindtap="goPage">
+        <text>🛵 配送说明</text><text class="mr-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 其他 -->
+  <view class="card menu-card">
+    <view class="menu-title">其他</view>
+    <view class="menu-list">
+      <view class="menu-row" data-url="/pages/service/chat/chat" bindtap="goPage">
+        <text>💬 联系客服</text><text class="mr-arrow">›</text>
+      </view>
+      <view class="menu-row" data-url="about" bindtap="goPage">
+        <text>ℹ️ 关于我们</text><text class="mr-arrow">›</text>
+      </view>
+      <view class="menu-row" data-url="settings" bindtap="goPage">
+        <text>⚙️ 设置</text><text class="mr-arrow">›</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="version light">零食商城 v1.0.0 · 演示环境不产生真实交易</view>
+
+  <!-- 配送说明弹层 -->
+  <view wx:if="{{showDelivery}}" class="mask" bindtap="closePop"></view>
+  <view wx:if="{{showDelivery}}" class="sheet pop-sheet" catchtap="noop">
+    <view class="pop-title">配送说明</view>
+    <view class="pop-body" wx:if="{{shopRule}}">
+      <view class="pop-line">起步配送费 <text class="red">¥{{shopRule.baseFee}}</text>（含 {{shopRule.baseKm}}km）</view>
+      <view class="pop-line">超出距离按 <text class="red">¥{{shopRule.perKmFee}}/km</text> 加收</view>
+      <view class="pop-line">订单满 <text class="red">¥{{shopRule.freeThreshold}}</text> 免基础配送费（会员门槛更低）</view>
+      <view class="pop-line">营业时间 08:00-22:00，{{shopRule.etaText}}</view>
+      <view class="pop-line light">顺丰冷链配送，坏果包赔</view>
+    </view>
+    <view class="btn-primary pop-btn" bindtap="closePop">我知道了</view>
+  </view>
+
 </view>

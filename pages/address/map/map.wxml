@@ -1,0 +1,48 @@
+<!--pages/address/map/map.wxml-->
+<view class="map-page">
+  <!-- mock 地图 -->
+  <view class="mock-map {{locating ? 'locating' : ''}}">
+    <view class="road r1"></view>
+    <view class="road r2"></view>
+    <view class="road r3"></view>
+    <view class="road r4"></view>
+    <view class="block b1"></view>
+    <view class="block b2"></view>
+    <view class="block b3"></view>
+    <view class="block b4"></view>
+    <!-- 店铺 -->
+    <view class="shop-pin">🏪<text class="pin-text">店铺</text></view>
+    <!-- 中心点 -->
+    <view class="center-pin {{selected ? 'picked' : ''}}">
+      <view class="pin-bounce">📍</view>
+    </view>
+    <view wx:if="{{selected}}" class="selected-card">
+      <view class="sc-name">{{selected.name}}</view>
+      <view class="sub">{{selected.region[2]}} · 距店铺 {{selected.distanceKm}}km</view>
+      <view wx:if="{{selected.distanceKm > 20}}" class="sc-warn">该位置暂不支持配送</view>
+    </view>
+  </view>
+
+  <!-- 操作条 -->
+  <view class="map-actions">
+    <view class="locate-btn" bindtap="locate">{{locating ? '定位中...' : '◎ 重新定位'}}</view>
+    <view class="confirm-btn" bindtap="confirm">确认选点</view>
+  </view>
+
+  <!-- 周边地点 -->
+  <view class="poi-list">
+    <view class="poi-title">周边地点（模拟）</view>
+    <view wx:for="{{pois}}" wx:key="id"
+      class="poi-item {{selected && selected.id === item.id ? 'on' : ''}}"
+      data-id="{{item.id}}" bindtap="pickPoi">
+      <view class="poi-info">
+        <view class="poi-name">{{item.name}}</view>
+        <view class="sub">{{item.detail}}</view>
+      </view>
+      <view class="poi-right">
+        <view class="poi-distance">{{item.distanceKm}}km</view>
+        <view wx:if="{{item.distanceKm > 20}}" class="poi-unsupported">不支持配送</view>
+      </view>
+    </view>
+  </view>
+</view>

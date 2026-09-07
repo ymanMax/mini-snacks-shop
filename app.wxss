@@ -1,10 +1,189 @@
-/**app.wxss**/
-.container {
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: 200rpx 0;
+/**app.wxss —— 全局主题与通用样式（红色主题 #b4282d）**/
+page {
+  --primary: #b4282d;
+  --primary-light: #fdecec;
+  --primary-gradient: linear-gradient(135deg, #d34046, #b4282d);
+  --warn: #ff6b00;
+  --bg: #f5f6f7;
+  --card: #ffffff;
+  --text-main: #222427;
+  --text-sub: #838383;
+  --text-light: #b0b3b8;
+  --line: #f0f1f2;
+  background: var(--bg);
+  color: var(--text-main);
+  font-size: 26rpx;
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", "Noto Sans CJK SC", sans-serif;
+}
+
+view, text, navigator, scroll-view, swiper, image, input, button {
   box-sizing: border-box;
-} 
+}
+
+/* 页面容器 */
+.page {
+  min-height: 100vh;
+  padding-bottom: 32rpx;
+}
+
+.page-padding {
+  padding: 24rpx;
+}
+
+/* 卡片 */
+.card {
+  background: var(--card);
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin: 24rpx;
+}
+
+.card-flush {
+  background: var(--card);
+  margin-top: 20rpx;
+}
+
+/* 主按钮 */
+.btn-primary {
+  background: var(--primary-gradient);
+  color: #fff;
+  border-radius: 999rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  height: 80rpx;
+  line-height: 80rpx;
+  border: none;
+}
+.btn-primary::after { border: none; }
+.btn-primary[disabled] { opacity: .5; color: #fff; }
+
+.btn-plain {
+  border: 2rpx solid var(--primary);
+  color: var(--primary);
+  background: #fff;
+  border-radius: 999rpx;
+  text-align: center;
+  font-size: 26rpx;
+  height: 72rpx;
+  line-height: 68rpx;
+}
+.btn-plain::after { border: none; }
+
+.btn-gray {
+  background: #f2f3f5;
+  color: #666;
+  border-radius: 999rpx;
+  text-align: center;
+  font-size: 26rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+}
+.btn-gray::after { border: none; }
+
+/* 价格（红色加粗突出） */
+.price {
+  color: var(--primary);
+  font-weight: 700;
+}
+.price-symbol { font-size: 22rpx; }
+.price-int { font-size: 34rpx; }
+.price-decimal { font-size: 22rpx; }
+.price-origin {
+  color: var(--text-light);
+  font-size: 22rpx;
+  text-decoration: line-through;
+  font-weight: 400;
+}
+.price-large .price-int { font-size: 44rpx; }
+
+/* 标签胶囊（浅底深字） */
+.tag {
+  display: inline-block;
+  font-size: 18rpx;
+  color: var(--primary);
+  background: var(--primary-light);
+  border-radius: 6rpx;
+  padding: 2rpx 10rpx;
+  margin-right: 10rpx;
+  line-height: 1.6;
+}
+.tag-gray {
+  color: #8a8f99;
+  background: #f2f3f5;
+}
+
+/* 通用文本辅助 */
+.sub { color: var(--text-sub); font-size: 22rpx; }
+.light { color: var(--text-light); font-size: 20rpx; }
+.ellipsis { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ellipsis-2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.flex { display: flex; align-items: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-1 { flex: 1; min-width: 0; }
+
+/* 分割线 */
+.divider { height: 1rpx; background: var(--line); margin: 20rpx 0; }
+
+/* ===== 骨架屏（灰色色块呼吸动画） ===== */
+.sk {
+  background: #eceef0;
+  border-radius: 10rpx;
+  position: relative;
+  overflow: hidden;
+}
+.sk::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.55) 50%, rgba(255,255,255,0) 100%);
+  animation: sk-shimmer 1.3s infinite;
+}
+@keyframes sk-shimmer {
+  100% { transform: translateX(100%); }
+}
+
+/* ===== 吸顶通用 ===== */
+.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: #fff;
+}
+
+/* ===== 半屏弹层遮罩 ===== */
+.mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .45);
+  z-index: 100;
+}
+.sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  border-radius: 28rpx 28rpx 0 0;
+  z-index: 101;
+  max-height: 86vh;
+  overflow-y: auto;
+}
+
+/* ===== 上拉加载状态 ===== */
+.load-status {
+  text-align: center;
+  color: var(--text-light);
+  font-size: 22rpx;
+  padding: 24rpx 0 40rpx;
+}
+
+/* 隐藏滚动条 */
+::-webkit-scrollbar { display: none; }

@@ -1,275 +1,200 @@
-// pages/cart/cart.js
-const {
-  setOrder,
-  verify
-} = require('../../api/api.js');
-const {
-  login
-} = require('../mine/mine.js')
+// pages/cart/cart.js —— 购物车：修复全选 bug / 失效区 / 编辑批量删 / 优惠预览 / 空态推荐
 const app = getApp();
+const { cartApi, orderApi, goodsApi } = require('../../api/index.js');
+const toast = require('../../utils/toast.js');
+const fmt = require('../../utils/format.js');
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    carts: [], //数据 
-    iscart: false,
-    hidden: null,
-    isAllSelect: false,
-    totalMoney: 0,
-    order_id: 0
+    validList: [],
+    invalidList: [],
+    loading: true,
+    allChecked: false,
+    checkedCount: 0,
+    totalAmount: '0.00',
+    discountAmount: '0.00',
+    couponDiscount: '0.00',
+    couponTitle: '',
+    usableCouponCount: 0,
+    freightText: '',
+    payAmount: '0.00',
+    reduceTip: '',
+    freightTip: '',
+    editMode: false,
+    guessList: [],
+    freeThreshold: 59
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
   onShow() {
-    var arr = wx.getStorageSync('cart') || [];
-    // console.log("缓存数据：", arr);
-    if (arr.length > 0) {
-      // 更新数据  
-      this.setData({
-        carts: arr,
-        iscart: true,
-        hidden: false
+    this.loadCart();
+    app.updateCartBadge();
+  },
+
+  loadCart() {
+    this.setData({ loading: true });
+    cartApi.getCart().then((list) => {
+      list = list || [];
+      const validList = list.filter((it) => !it.invalid);
+      const invalidList = list.filter((it) => it.invalid);
+      this.setData({ validList, invalidList, loading: false }, () => {
+        this.recalc();
       });
-      // console.log("新缓存数据：", this.data.carts);
-    } else {
-      this.setData({
-        iscart: false,
-        hidden: true,
+      // 猜你喜欢
+      if (!validList.length && !this.data.guessList.length) {
+        goodsApi.getPage({ current: 1, size: 8, sort: 'sales' })
+          .then((res) => this.setData({ guessList: res.records }))
+          .catch(() => {});
+      }
+    }).catch(() => this.setData({ loading: false }));
+  },
+
+  // 统一重新计算（修复原 Allprice 循环引用 index 的 bug）
+  recalc() {
+    const list = this.data.validList;
+    const checked = list.filter((it) => it.checked);
+    const checkedCount = checked.reduce((s, it) => s + it.count, 0);
+    const totalAmount = checked.reduce((s, it) => fmt.add(s, fmt.mul(it.price, it.count)), 0);
+
+    this.setData({
+      allChecked: list.length > 0 && checked.length === list.length,
+      checkedCount,
+      totalAmount: fmt.fixed(totalAmount)
+    });
+
+    const emptyTip = {
+      discountAmount: '0.00', couponDiscount: '0.00', couponTitle: '',
+      usableCouponCount: 0, payAmount: '0.00', freightText: '',
+      reduceTip: '', freightTip: ''
+    };
+    if (!checked.length) {
+      this.setData(emptyTip);
+      return;
+    }
+    // 服务端预览：满减 + 自动最优券 + 配送费（实时触发）
+    orderApi.preview({
+      items: checked.map((it) => ({ price: it.price, count: it.count }))
+    }).then((p) => {
+      const totalDiscount = fmt.add(p.fullReduceAmount, p.couponDiscount);
+      const patch = Object.assign({}, emptyTip, {
+        discountAmount: fmt.fixed(totalDiscount),
+        couponDiscount: fmt.fixed(p.couponDiscount),
+        couponTitle: p.couponTitle || '',
+        usableCouponCount: p.usableCouponCount || 0,
+        payAmount: fmt.fixed(p.payAmount),
+        freeThreshold: p.freeFreightThreshold || p.deliveryRule.freeThreshold,
+        freightText: p.unsupported
+          ? '地址超配送范围'
+          : (p.freight > 0 ? '另需配送费 ¥' + fmt.fixed(p.freight) : '已免配送费')
       });
-      // console.info("缓存数据：啥也没有");
-    }
-  },
-
-  //勾选事件处理函数  
-  switchSelect: function (e) {
-    // 获取item项的id，和数组的下标值  
-    var Allprice = 0,
-      i = 0;
-    let id = e.target.dataset.id,
-      index = parseInt(e.target.dataset.index);
-    this.data.carts[index].isSelect = !this.data.carts[index].isSelect; //价钱统计
-    if (this.data.carts[index].isSelect) {
-      this.data.totalMoney = this.data.totalMoney + (this.data.carts[index].price * this.data.carts[index].count);
-    } else {
-      this.data.totalMoney = this.data.totalMoney - (this.data.carts[index].price * this.data.carts[index].count);
-    }
-    //是否全选判断
-    for (i = 0; i < this.data.carts.length; i++) {
-      Allprice = Allprice + (this.data.carts[index].price * this.data.carts[index].count);
-      // console.log(this.data.carts[i].isSelect);
-    }
-    if (Allprice == this.data.totalMoney) {
-      this.data.isAllSelect = true;
-    } else {
-      this.data.isAllSelect = false;
-    }
-    this.setData({
-      carts: this.data.carts,
-      totalMoney: this.data.totalMoney,
-      isAllSelect: this.data.isAllSelect,
-    })
-  },
-
-  allSelect: function (e) {
-    //处理全选逻辑
-    let i = 0;
-    if (!this.data.isAllSelect) {
-      this.data.totalMoney = 0;
-      for (i = 0; i < this.data.carts.length; i++) {
-        this.data.carts[i].isSelect = true;
-        this.data.totalMoney = this.data.totalMoney + (this.data.carts[i].price * this.data.carts[i].count);
+      // 凑单提示：还差 xx 元享下一档满减 / 免配送费
+      if (p.nextReduce && p.reduceGap > 0) {
+        patch.reduceTip = `再买 ¥${fmt.fixed(p.reduceGap)}，可享满${p.nextReduce.threshold}减${p.nextReduce.reduce}`;
       }
-    } else {
-      for (i = 0; i < this.data.carts.length; i++) {
-        this.data.carts[i].isSelect = false;
+      if (p.freightGap > 0) {
+        patch.freightTip = `再买 ¥${fmt.fixed(p.freightGap)} 免配送费`;
       }
-      this.data.totalMoney = 0;
-    }
-    this.setData({
-      carts: this.data.carts,
-      isAllSelect: !this.data.isAllSelect,
-      totalMoney: this.data.totalMoney,
-    })
+      this.setData(patch);
+    }).catch(() => {});
   },
 
-  /* 减数 */
-  delCount: function (e) {
-    var index = e.target.dataset.index;
-    // console.log("count--");
-    var count = this.data.carts[index].count; // 商品总数量-1
-    if (count > 1) {
-      this.data.carts[index].count--;
-    }
-    // 将数值与状态写回  
-    this.setData({
-      carts: this.data.carts
+  // 单选
+  toggleItem(e) {
+    const id = e.currentTarget.dataset.id;
+    const it = this.data.validList.find((x) => x.id === id);
+    cartApi.update({ id, checked: !it.checked }).then((list) => {
+      this.applyList(list);
     });
-    // console.log("carts:" + this.data.carts);
-    this.priceCount();
   },
-  /* 加数 */
-  addCount: function (e) {
-    var index = e.target.dataset.index;
-    // console.log("count++");
-    var count = this.data.carts[index].count; // 商品总数量+1  
-    if (count < 10) {
-      this.data.carts[index].count++;
+
+  // 全选
+  toggleAll() {
+    cartApi.toggleAll(!this.data.allChecked).then((list) => this.applyList(list));
+  },
+
+  applyList(list) {
+    const validList = (list || []).filter((it) => !it.invalid);
+    const invalidList = (list || []).filter((it) => it.invalid);
+    this.setData({ validList, invalidList }, () => this.recalc());
+    app.updateCartBadge();
+  },
+
+  // 数量
+  minus(e) {
+    const { id, count } = e.currentTarget.dataset;
+    if (count <= 1) return;
+    cartApi.update({ id, count: count - 1 }).then((list) => this.applyList(list));
+  },
+  plus(e) {
+    const { id, count, stock } = e.currentTarget.dataset;
+    if (count >= stock) {
+      toast.showToast('已达库存上限');
+      return;
     }
-    // 将数值与状态写回  
-    this.setData({
-      carts: this.data.carts
+    cartApi.update({ id, count: count + 1 }).then((list) => this.applyList(list));
+  },
+
+  // 删除单个
+  removeOne(e) {
+    const id = e.currentTarget.dataset.id;
+    toast.showModal('确定删除这件商品吗？', '删除商品').then((ok) => {
+      if (!ok) return;
+      cartApi.remove([id]).then((list) => {
+        toast.showSuccess('已删除');
+        this.applyList(list);
+      });
     });
-    // console.log("carts:" + this.data.carts);
-    this.priceCount();
   },
-  priceCount: function (e) {
-    this.data.totalMoney = 0;
-    for (var i = 0; i < this.data.carts.length; i++) {
-      if (this.data.carts[i].isSelect == true) {
-        this.data.totalMoney = this.data.totalMoney + (this.data.carts[i].price * this.data.carts[i].count);
-      }
 
+  // 编辑模式
+  toggleEdit() {
+    this.setData({ editMode: !this.data.editMode });
+  },
+
+  // 批量删除（二次确认）
+  batchDelete() {
+    const ids = this.data.validList.filter((it) => it.checked).map((it) => it.id);
+    if (!ids.length) {
+      toast.showToast('请先选择商品');
+      return;
     }
-    this.setData({
-      totalMoney: this.data.totalMoney,
-    })
+    toast.showModal(`确定删除选中的 ${ids.length} 件商品吗？`, '批量删除').then((ok) => {
+      if (!ok) return;
+      cartApi.remove(ids).then((list) => {
+        toast.showSuccess('已删除');
+        this.setData({ editMode: false });
+        this.applyList(list);
+      });
+    });
   },
-  /* 删除item */
-  delGoods: function (e) {
-    this.data.carts.splice(e.target.id.substring(3), 1); // 更新data数据对象  
-    if (this.data.carts.length > 0) {
-      this.setData({
-        carts: this.data.carts
-      })
-      wx.setStorageSync('cart', this.data.carts);
-      this.priceCount();
-    } else {
-      this.setData({
-        cart: this.data.carts,
-        iscart: false,
-        hidden: true,
-      })
-      wx.setStorageSync('cart', []);
+
+  // 失效商品
+  clearInvalid() {
+    if (!this.data.invalidList.length) return;
+    toast.showModal('确定清空全部失效商品吗？', '清空失效商品').then((ok) => {
+      if (!ok) return;
+      cartApi.clearInvalid().then((list) => {
+        this.applyList(list);
+        toast.showSuccess('已清空');
+      });
+    });
+  },
+
+  // 去结算
+  checkout() {
+    const checked = this.data.validList.filter((it) => it.checked);
+    if (!checked.length) {
+      toast.showToast('请选择要结算的商品');
+      return;
     }
+    app.globalData.cartCheckout = checked;
+    wx.navigateTo({ url: '/pages/order/confirm/confirm?from=cart' });
   },
 
-  goBuy: function (e) {
-    var newProducts = [];
-    const that = this;
-    this.data.carts.forEach(item => {
-      if (item.isSelect == true) {
-
-        newProducts.push({
-          product_id: item.id,
-          count: item.count,
-        })
-        // 删除选中进入订单的商品
-      }
-      newProducts.forEach(item_selected => {
-        var index = this.data.carts.indexOf(item_selected);
-        this.data.carts.splice(index, 1);
-      })
-    })
-    console.log(newProducts);
-    if (this.data.carts.length > 0) {
-      this.setData({
-        carts: this.data.carts
-      })
-      wx.setStorageSync('cart', this.data.carts);
-      this.priceCount();
-    } else {
-      this.setData({
-        cart: this.data.carts,
-        iscart: false,
-        hidden: true,
-      })
-      wx.setStorageSync('cart', []);
-    }
-
-
-    // console.log("app.globalData.token：   ", app.globalData.token);
-    let token = app.globalData.token.token;
-    // console.log("token：   ", token);
-
-    verify(token).then(res => {
-      if (res.data.isValid == true) {
-        console.log("2", newProducts)
-      } else {
-        // console.log(res.data.isValid)
-        const that = this;
-        let gbdata = app.globalData;
-        wx.login({
-          success: function (res) {
-            let code = res.code;
-            // console.log(res.code)
-            getApp().post('/token/user', {
-              code: code
-            }).then((e) => {
-              try {
-                wx.setStorageSync('token', e.data);
-                // console.log(wx.getStorageSync('token'))
-              } catch (e) {
-                // console.log('setTokenErr', e)
-              }
-              gbdata.token = e.data;
-              let isLogined = true;
-              that.setData({
-                isLogined
-              })
-              wx.setStorageSync('isLogined', isLogined);
-              // console.log(wx.getStorageSync('isLogined'))
-              wx.showToast({
-                title: '登陆成功',
-                icon: 'success'
-              })
-            })
-          }
-        })
-      }
-    })
-    wx.request({
-      url: 'https://hanmashanghu.qiaomai365.com/api/v1/order',
-      method: 'POST',
-      header: {
-        //修改
-        'content-type': 'application/json',
-        'token': token
-      },
-      data: {
-        products: newProducts
-      },
-      success: res => {
-        var order_id = res.data.data.order_id;
-        wx.setStorageSync('data', res.data.data)
-        console.log(res.data.data)
-        wx.setStorageSync('order_id', order_id)
-        wx.navigateTo({
-          url: '/pages/orders/orders?order_id=' + wx.getStorageSync('order_id')
-        })
-        console.log(wx.getStorageSync('order_id'))
-      }
-    })
-
-    // console.log(res.data.isValid)
-
+  goDetail(e) {
+    wx.navigateTo({ url: '/pages/detail/detail?product_id=' + e.currentTarget.dataset.goodsid });
   },
-})
+
+  goShopping() {
+    wx.switchTab({ url: '/pages/classic/classic' });
+  }
+});

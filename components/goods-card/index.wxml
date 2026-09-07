@@ -1,0 +1,49 @@
+<!-- grid 双列卡片 -->
+<view wx:if="{{mode === 'grid'}}" class="g-card" bindtap="onTap">
+  <view class="g-img-wrap">
+    <safe-image class="g-img" img-class="g-img" src="{{goods.pic}}" mode="aspectFill" lazy-load />
+    <view wx:if="{{extraText}}" class="g-extra">{{extraText}}</view>
+  </view>
+  <view class="g-info">
+    <view class="g-name ellipsis-2">{{goods.name}}</view>
+    <view class="g-tags">
+      <text wx:for="{{goods.tags}}" wx:key="*this" wx:if="{{index < 2}}" class="tag">{{item}}</text>
+    </view>
+    <view class="g-bottom">
+      <view class="g-price">
+        <text class="price-symbol">¥</text><text class="price-int">{{goods.price}}</text>
+        <text wx:if="{{goods.originalPrice > goods.price}}" class="price-origin">¥{{goods.originalPrice}}</text>
+      </view>
+      <view wx:if="{{showAdd}}" class="g-add" catchtap="onAdd">+</view>
+    </view>
+    <view class="g-sales">已售 {{salesText}}</view>
+  </view>
+</view>
+
+<!-- list 横向卡片 -->
+<view wx:elif="{{mode === 'list'}}" class="l-card" bindtap="onTap">
+  <safe-image class="l-img" img-class="l-img" src="{{goods.pic}}" mode="aspectFill" lazy-load />
+  <view class="l-info">
+    <view class="g-name ellipsis-2">{{goods.name}}</view>
+    <view class="g-tags">
+      <text wx:for="{{goods.tags}}" wx:key="*this" wx:if="{{index < 3}}" class="tag">{{item}}</text>
+    </view>
+    <view class="l-sub sub">{{goods.origin}} · {{goods.unit}} · 已售 {{salesText}}</view>
+    <view class="g-bottom">
+      <view class="g-price">
+        <text class="price-symbol">¥</text><text class="price-int">{{goods.price}}</text>
+        <text wx:if="{{goods.originalPrice > goods.price}}" class="price-origin">¥{{goods.originalPrice}}</text>
+      </view>
+      <view wx:if="{{showAdd}}" class="g-add" catchtap="onAdd">+</view>
+    </view>
+  </view>
+</view>
+
+<!-- mini 横滑推荐卡片 -->
+<view wx:else class="m-card" bindtap="onTap">
+  <safe-image class="m-img" img-class="m-img" src="{{goods.pic}}" mode="aspectFill" lazy-load />
+  <view class="m-name ellipsis-2">{{goods.name}}</view>
+  <view class="g-price m-price">
+    <text class="price-symbol">¥</text><text>{{goods.price}}</text>
+  </view>
+</view>

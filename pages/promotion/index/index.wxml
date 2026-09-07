@@ -1,0 +1,102 @@
+<!--pages/promotion/index/index.wxml-->
+<wxs src="../../../utils/format.wxs" module="fmt" />
+<view class="pm-page">
+  <!-- 场次 Tab -->
+  <scroll-view scroll-x class="session-bar" enhanced show-scrollbar="{{false}}">
+    <view wx:for="{{sessions}}" wx:key="id"
+      class="session {{index === activeSession ? 'on' : ''}}"
+      data-index="{{index}}" bindtap="switchSession">
+      <view class="s-name">{{item.name}}</view>
+      <view class="s-status status-{{item.status}}">{{item.statusText}}</view>
+    </view>
+  </scroll-view>
+
+  <block wx:for="{{sessions}}" wx:key="id">
+    <block wx:if="{{index === activeSession}}">
+    <!-- 倒计时头 -->
+    <view class="seckill-head">
+      <view class="sh-row">
+        <view class="sh-title">⚡ {{item.name}} 限时抢购</view>
+        <view class="sh-cd">
+          {{item.status === 1 ? '距结束' : '距开始'}} <text class="sh-time">{{countdown}}</text>
+        </view>
+      </view>
+      <view class="sh-sub">抢完即止 · 下单自动按最优券与满减组合</view>
+    </view>
+
+    <view class="sk-list">
+      <view wx:for="{{item.goods}}" wx:for-item="g" wx:key="goodsId" class="sk-row">
+        <safe-image class="sk-pic" img-class="sk-pic" src="{{g.pic}}" mode="aspectFill" />
+        <view class="sk-info">
+          <view class="sk-name ellipsis-2">{{g.name}}</view>
+          <view class="sk-bar-wrap">
+            <view class="sk-bar">
+              <view class="sk-bar-inner {{g.soldPercent >= 90 ? 'hot' : ''}}" style="width:{{g.soldPercent}}%"></view>
+              <text class="sk-bar-text">已抢 {{g.soldPercent}}%</text>
+            </view>
+          </view>
+          <view class="sk-bottom">
+            <view>
+              <text class="sk-price">¥{{fmt.fixed(g.seckillPrice)}}</text>
+              <text class="sk-origin">¥{{fmt.fixed(g.price)}}</text>
+            </view>
+            <view class="sk-btn {{item.status !== 1 ? 'disabled' : ''}} {{g.soldPercent >= 100 ? 'soldout' : ''}}"
+              data-goodsid="{{g.goodsId}}" bindtap="buy">
+              {{g.soldPercent >= 100 ? '已抢光' : (item.status === 1 ? '立即抢购' : '未开始')}}
+            </view>
+          </view>
+        </view>
+      </view>
+    </view>
+    </block>
+  </block>
+
+  <!-- 满减阶梯 -->
+  <view wx:if="{{fullRules.length}}" class="card">
+    <view class="block-title">满减优惠（购物车自动计算）</view>
+    <view wx:for="{{fullRules}}" wx:key="threshold" class="rule-row">
+      <view class="rule-badge">满 ¥{{item.threshold}}</view>
+      <view class="rule-text">立减 <text class="red">¥{{item.reduce}}</text></view>
+    </view>
+  </view>
+
+  <!-- 团购批发 -->
+  <view wx:if="{{wholesale.length}}" class="card">
+    <view class="block-title">团购批发 · 买得多省得多</view>
+    <view wx:for="{{wholesale}}" wx:for-item="w" wx:key="id" class="ws-row">
+      <safe-image class="ws-pic" img-class="ws-pic" src="{{w.pic}}" mode="aspectFill" />
+      <view class="ws-info">
+        <view class="ws-title ellipsis">{{w.title}}</view>
+        <view class="ws-ladders">
+          <text wx:for="{{w.ladder}}" wx:for-item="l" wx:key="count" class="ws-chip">
+            {{l.count}}件 ¥{{fmt.fixed(l.price)}}
+          </text>
+        </view>
+      </view>
+      <view class="ws-btn" data-id="{{w.id}}" bindtap="openWholesale">批量加购</view>
+    </view>
+  </view>
+
+  <view class="pm-tip light">演示活动，不产生真实交易</view>
+
+  <!-- 批发加购弹层 -->
+  <view wx:if="{{wsSheet}}" class="mask" bindtap="closeSheet"></view>
+  <view wx:if="{{wsSheet}}" class="sheet ws-sheet" catchtap="noop">
+    <view class="ws-sheet-title">选择批发档位</view>
+    <view wx:if="{{curWholesale}}" class="ws-sheet-body">
+      <view class="ws-ladder-opts">
+        <view wx:for="{{curWholesale.ladder}}" wx:key="count"
+          class="ws-ladder-opt {{index === curWholesale.ladderIndex ? 'on' : ''}}"
+          data-index="{{index}}" bindtap="pickLadder">
+          <view class="wl-count">{{item.count}} 件起</view>
+          <view class="wl-price">¥{{fmt.fixed(item.price)}}/件</view>
+        </view>
+      </view>
+      <view class="ws-summary">
+        <text>共 {{curWholesale.count}} 件</text>
+        <text class="red">合计 ¥{{fmt.fixed(curWholesale.count * curWholesale.unitPrice)}}</text>
+      </view>
+      <view class="btn-primary ws-confirm" bindtap="confirmWholesale">加入购物车</view>
+    </view>
+  </view>
+</view>

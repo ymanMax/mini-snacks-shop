@@ -1,5 +1,8 @@
 {
-  "usingComponents": {},
+  "navigationBarTitleText": "我的",
   "enablePullDownRefresh": true,
-  "backgroundColor": "#AB956D"
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "safe-image": "/components/safe-image/index"
+  }
 }

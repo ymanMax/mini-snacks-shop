@@ -1,29 +1,95 @@
-
-<view class="main">
-    <view class="categroy-left">
-        <view wx:for="{{detail}}" wx:key="index" data-id="{{item.id}}" data-index="{{index}}"
-            bindtap="switchTab"
-            class="cate-list {{curIndex === index?'on':''}}">{{item.name}}</view>
+<!--pages/classic/classic.wxml-->
+<view class="classic-page">
+  <!-- 左侧分类导航 -->
+  <scroll-view class="cate-left" scroll-y>
+    <view wx:for="{{categories}}" wx:key="id"
+      class="cate-item {{item.id === activeId ? 'on' : ''}}"
+      data-id="{{item.id}}" bindtap="switchCategory">
+      <view wx:if="{{item.id === activeId}}" class="cate-bar"></view>
+      <safe-image class="cate-icon" img-class="cate-icon" src="{{item.icon}}" mode="aspectFit" />
+      <text>{{item.name}}</text>
     </view>
-    <scroll-view class="categroy-right" scroll-y="{{isScroll}}" scroll-into-view="{{toView}}" scroll-with-animation="true">
-         <block wx:for="{{detail}}" wx:for-index wx:key="idx">
-            <view id="{{'s'+item.id}}" class="cate-box">
-                <view class="cate-banner">
-                    <image src="{{'https://hanmashanghu.qiaomai365.com' + item.img.url}}"></image>
-                </view>
-                <view class="cate-title">
-                    <text>{{item.name}}</text>
-                </view>
-                <view class="product">
-                    <view class="product-list" wx:for="{{classs[index]}}" wx:key="index" wx:for-item="val">
-                        <navigator url="../detail/detail?product_id={{val.id}}">
-                            <image src="{{'https://hanmashanghu.qiaomai365.com' + val.main_img_url}}"></image>
-                            <view class="classname"><text>{{val.name}}</text></view>
-                        </navigator>
-                    </view>
-                </view>
-            </view>
-        </block> 
-    </scroll-view>
+  </scroll-view>
 
+  <!-- 右侧商品 -->
+  <view class="cate-right">
+    <!-- 吸顶筛选栏 -->
+    <view class="filter-bar">
+      <view class="sort-item {{sort === 'default' ? 'on' : ''}}" data-key="default" bindtap="switchSort">综合</view>
+      <view class="sort-item {{sort === 'sales' ? 'on' : ''}}" data-key="sales" bindtap="switchSort">销量</view>
+      <view class="sort-item {{sort === 'priceAsc' || sort === 'priceDesc' ? 'on' : ''}}"
+        data-key="priceAsc" bindtap="switchSort">
+        价格
+        <text class="sort-arrow">{{sort === 'priceAsc' ? '↑' : (sort === 'priceDesc' ? '↓' : '⇅')}}</text>
+      </view>
+      <view class="sort-item filter-btn {{priceIndex !== 0 || selectedOrigins.length || inStock ? 'on' : ''}}" bindtap="openFilter">
+        筛选
+        <text wx:if="{{priceIndex !== 0 || selectedOrigins.length || inStock}}" class="filter-dot"></text>
+      </view>
+    </view>
+
+    <scroll-view class="goods-scroll" scroll-y bindscrolltolower="onScrollLower" lower-threshold="120">
+      <!-- 骨架屏 -->
+      <view wx:if="{{loading}}" class="sk-list">
+        <view class="sk-l-item" wx:for="{{[1,2,3,4]}}" wx:key="*this">
+          <view class="sk sk-l-img"></view>
+          <view class="sk-l-info">
+            <view class="sk sk-l-line w80"></view>
+            <view class="sk sk-l-line w50"></view>
+            <view class="sk sk-l-line w30"></view>
+          </view>
+        </view>
+      </view>
+
+      <block wx:else>
+        <view class="goods-list">
+          <goods-card wx:for="{{products}}" wx:key="id" goods="{{item}}" mode="list" bindadd="onAddCart" />
+        </view>
+        <empty wx:if="{{!products.length}}" text="没有找到相关商品"
+          subText="换个筛选条件试试" btnText="清除筛选" bindbutton="clearFilter" top="100rpx" />
+        <loading-more status="{{loadStatus}}" />
+        <view style="height:20rpx"></view>
+      </block>
+    </scroll-view>
+  </view>
+
+  <!-- 筛选半屏面板 -->
+  <view wx:if="{{showFilter}}" class="mask" bindtap="closeFilter"></view>
+  <view wx:if="{{showFilter}}" class="sheet filter-sheet" catchtap="noop">
+    <view class="fs-title">筛选</view>
+
+    <view class="fs-group">
+      <view class="fs-label">价格区间</view>
+      <view class="fs-options">
+        <view wx:for="{{priceRanges}}" wx:key="label"
+          class="fs-opt {{tmpPriceIndex === index ? 'on' : ''}}"
+          data-index="{{index}}" bindtap="pickPrice">{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="fs-group">
+      <view class="fs-label">产地</view>
+      <view class="fs-options">
+        <view wx:for="{{originOptions}}" wx:key="origin"
+          class="fs-opt {{item.checked ? 'on' : ''}}"
+          data-origin="{{item.origin}}" bindtap="toggleOrigin">{{item.origin}}</view>
+      </view>
+    </view>
+
+    <view class="fs-group fs-row-group">
+      <text class="fs-label">仅看有货</text>
+      <switch checked="{{tmpInStock}}" color="#b4282d" bindchange="toggleInStock" />
+    </view>
+
+    <view class="fs-actions">
+      <view class="btn-gray fs-btn" bindtap="resetFilter">重置</view>
+      <view class="btn-primary fs-btn primary" bindtap="applyFilter">确定</view>
+    </view>
+  </view>
+
+  <!-- 悬浮购物车 -->
+  <view class="float-cart" bindtap="goCart">
+    <image class="float-icon" src="/image/gouwuche.png" />
+    <view wx:if="{{cartCount > 0}}" class="float-badge">{{cartCount > 99 ? '99+' : cartCount}}</view>
+  </view>
 </view>

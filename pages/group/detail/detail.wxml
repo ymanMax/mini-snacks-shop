@@ -1,0 +1,121 @@
+<!--pages/group/detail/detail.wxml-->
+<wxs src="../../../utils/format.wxs" module="fmt" />
+<view class="gd-page" wx:if="{{group}}">
+  <!-- 邀请横幅 -->
+  <view wx:if="{{invited && group.status === 1}}" class="invite-banner">
+    🎉 好友邀请你参加拼团，参团享拼团价
+  </view>
+
+  <!-- 状态头 -->
+  <view class="gd-head status-{{group.status}}">
+    <view class="gd-status">
+      <block wx:if="{{group.status === 1}}">⏰ 拼团进行中</block>
+      <block wx:elif="{{group.status === 2}}">🎉 拼团成功</block>
+      <block wx:else">💸 未成团已退款</block>
+    </view>
+    <view wx:if="{{group.status === 1}}" class="gd-cd">剩余 {{countdown}}</view>
+    <view wx:if="{{group.status === 2}}" class="gd-sub">商品将尽快为您发出</view>
+    <view wx:if="{{group.status === 3}}" class="gd-sub">{{group.refund.desc}}</view>
+  </view>
+
+  <!-- 商品 -->
+  <view class="card goods-box">
+    <safe-image class="gd-pic" img-class="gd-pic" src="{{group.pic}}" mode="aspectFill" bindtap="goGoods" />
+    <view class="gd-info">
+      <view class="gd-name ellipsis-2">{{group.name}}</view>
+      <view class="gd-price-row">
+        <text class="gd-price">¥{{fmt.fixed(group.groupPrice)}}</text>
+        <text class="gd-origin">¥{{fmt.fixed(group.originalPrice)}}</text>
+        <text class="gd-save">立省¥{{fmt.fixed(group.originalPrice - group.groupPrice)}}</text>
+      </view>
+      <view class="gd-rule sub">{{group.rules}}</view>
+    </view>
+  </view>
+
+  <!-- 成员进度 -->
+  <view class="card">
+    <view class="member-head">
+      <text class="block-title">已参团成员 {{group.joinedCount}}/{{group.requiredCount}}</text>
+      <text wx:if="{{group.status === 1}}" class="member-tip">还差 {{group.remainCount}} 人成团</text>
+    </view>
+    <view class="member-list">
+      <view wx:for="{{group.members}}" wx:key="userId" class="member">
+        <image class="m-avatar" src="{{item.avatar}}" />
+        <text wx:if="{{item.isLeader}}" class="leader-tag">团长</text>
+      </view>
+      <view wx:for="{{group.remainCount}}" wx:key="*this" class="member empty">
+        <view class="m-avatar placeholder">＋</view>
+        <text class="leader-tag wait">待参团</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 退款信息 -->
+  <view wx:if="{{group.status === 3 && group.refund}}" class="card refund-card">
+    <view class="refund-title">退款详情</view>
+    <view class="refund-row"><text class="sub">退款状态</text><text class="green">{{group.refund.status}}</text></view>
+    <view class="refund-row"><text class="sub">退款金额</text><text class="red">¥{{fmt.fixed(group.refund.amount)}}</text></view>
+    <view class="refund-row"><text class="sub">退款时间</text><text>{{group.refund.time}}</text></view>
+  </view>
+
+  <view wx:if="{{group.status === 1}}" class="rule-tip light">
+    24 小时内未达到成团人数，系统将自动原路退款
+  </view>
+  <view style="height:150rpx"></view>
+
+  <!-- 底部操作 -->
+  <view class="gd-bar">
+    <block wx:if="{{group.status === 2}}">
+      <view class="gd-bar-btn primary" bindtap="goOrder">查看订单</view>
+    </block>
+    <block wx:elif="{{group.status === 3}}">
+      <button class="gd-bar-btn share-btn" open-type="share">再次发起拼团</button>
+    </block>
+    <block wx:else>
+      <!-- 进行中 -->
+      <block wx:if="{{joined}}">
+        <button class="gd-bar-btn plain share-btn" open-type="share">邀请好友参团</button>
+        <view class="gd-bar-btn primary" bindtap="simulateJoin">模拟好友参团</view>
+      </block>
+      <block wx:else>
+        <view class="gd-bar-btn primary" bindtap="openSku">立即参团 ¥{{fmt.fixed(group.groupPrice)}}</view>
+      </block>
+    </block>
+  </view>
+
+  <!-- 邀请奖励悬浮入口（未成团时） -->
+  <view wx:if="{{group.status === 1 && joined}}" class="invite-reward" bindtap="inviteReward">
+    🎁 邀新好友领 50 积分 + 券
+  </view>
+
+  <!-- 参团规格弹层 -->
+  <view wx:if="{{showSku}}" class="mask" bindtap="closeSku"></view>
+  <view wx:if="{{showSku}}" class="sheet gd-sheet" catchtap="noop">
+    <view class="sheet-title">确认参团信息</view>
+    <view class="sheet-goods">
+      <safe-image class="sg-pic" img-class="sg-pic" src="{{group.pic}}" mode="aspectFill" />
+      <view>
+        <view class="gd-price">¥{{fmt.fixed(group.groupPrice)}}</view>
+        <view class="sub">拼团专享价 · 不成团自动退款</view>
+      </view>
+    </view>
+    <view wx:if="{{tastes.length > 1}}" class="sheet-group">
+      <view class="sg-label">口味</view>
+      <view class="sg-opts">
+        <view wx:for="{{tastes}}" wx:key="*this"
+          class="sg-opt {{tasteIndex === index ? 'on' : ''}}"
+          data-index="{{index}}" bindtap="pickTaste">{{item}}</view>
+      </view>
+    </view>
+    <view class="sheet-count">
+      <text class="sg-label">数量</text>
+      <view class="stepper">
+        <view class="st-btn" bindtap="minus">−</view>
+        <view class="st-num">{{count}}</view>
+        <view class="st-btn" bindtap="plus">+</view>
+      </view>
+    </view>
+    <view class="btn-primary sg-confirm" bindtap="confirmJoin">确认参团（演示支付）</view>
+    <view class="light sg-tip">演示环境，不产生真实交易</view>
+  </view>
+</view>

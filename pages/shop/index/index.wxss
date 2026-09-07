@@ -1,0 +1,77 @@
+/* pages/shop/index/index.wxss */
+page { background: #f5f6f7; }
+
+.sp-head {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #d34046, #b4282d);
+  padding: 40rpx 32rpx;
+  color: #fff;
+}
+.sp-logo {
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 20rpx;
+  border: 4rpx solid rgba(255, 255, 255, .6);
+  background: #fff;
+}
+.sp-info { margin-left: 24rpx; flex: 1; }
+.sp-name { font-size: 36rpx; font-weight: 800; }
+.sp-scores { display: flex; gap: 16rpx; margin: 12rpx 0 6rpx; font-size: 22rpx; }
+.sp-score { font-weight: 700; }
+.sub-white { color: rgba(255, 255, 255, .85); font-size: 22rpx; }
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx 24rpx 0;
+  padding: 24rpx;
+}
+.block-title { font-size: 30rpx; font-weight: 700; margin-bottom: 18rpx; }
+.row { display: flex; justify-content: space-between; align-items: center; padding: 14rpx 0; }
+.row-label { color: #555; font-size: 26rpx; }
+.row-value { color: #333; font-size: 26rpx; text-align: right; }
+.addr-row { align-items: flex-start; }
+.notice { font-size: 25rpx; color: #666; line-height: 1.6; }
+.divider { height: 1rpx; background: #f0f1f2; margin: 10rpx 0; }
+.red { color: #b4282d; font-weight: 700; }
+
+.photo-row { display: flex; gap: 14rpx; }
+.photo { width: 218rpx; height: 160rpx; border-radius: 12rpx; background: #f5f6f7; }
+
+.sr-item { display: flex; padding: 22rpx 0; border-bottom: 1rpx solid #f5f6f7; }
+.sr-item:last-of-type { border-bottom: none; }
+.sr-avatar { width: 64rpx; height: 64rpx; border-radius: 50%; }
+.sr-body { flex: 1; margin-left: 18rpx; }
+.sr-head { display: flex; justify-content: space-between; align-items: center; }
+.sr-name { font-weight: 600; font-size: 26rpx; }
+.sr-dims { display: flex; gap: 14rpx; font-size: 20rpx; color: #999; }
+.sr-content { font-size: 26rpx; color: #444; line-height: 1.5; margin: 10rpx 0; }
+.sr-images { display: flex; gap: 12rpx; }
+.sr-img { width: 130rpx; height: 130rpx; border-radius: 10rpx; }
+
+.sp-actions {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  gap: 20rpx;
+  padding: 14rpx 24rpx;
+  background: #fff;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, .05);
+}
+.sp-btn {
+  flex: 1;
+  text-align: center;
+  height: 78rpx;
+  line-height: 78rpx;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+}
+.sp-btn.plain { border: 2rpx solid #b4282d; color: #b4282d; }
+.sp-btn.primary {
+  background: linear-gradient(135deg, #d34046, #b4282d);
+  color: #fff;
+  font-weight: 700;
+}

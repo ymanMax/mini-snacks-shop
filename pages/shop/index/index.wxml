@@ -1,0 +1,77 @@
+<!--pages/shop/index/index.wxml-->
+<view class="sp-page" wx:if="{{shop}}">
+  <!-- 店铺头部 -->
+  <view class="sp-head">
+    <safe-image class="sp-logo" img-class="sp-logo" src="{{shop.logo}}" mode="aspectFill" />
+    <view class="sp-info">
+      <view class="sp-name">{{shop.name}}</view>
+      <view class="sp-scores">
+        <text class="sp-score">综合 {{shop.score}}</text>
+        <text class="sub-white">新鲜 {{shop.subScores.fresh}}</text>
+        <text class="sub-white">速度 {{shop.subScores.speed}}</text>
+        <text class="sub-white">包装 {{shop.subScores.package}}</text>
+      </view>
+      <view class="sub-white">{{shop.businessHours}} 营业中</view>
+    </view>
+  </view>
+
+  <!-- 公告 -->
+  <view class="card">
+    <view class="row"><text class="row-label">📣 店铺公告</text></view>
+    <view class="notice">{{shop.notice}}</view>
+    <view class="divider"></view>
+    <view class="row addr-row">
+      <text class="row-label">📍 店铺地址</text>
+      <text class="row-value">{{shop.address}}</text>
+    </view>
+  </view>
+
+  <!-- 门店照片 -->
+  <view class="card">
+    <view class="block-title">门店实拍</view>
+    <view class="photo-row">
+      <safe-image wx:for="{{shop.photos}}" wx:key="*this" class="photo"
+        img-class="photo" src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="previewPhoto" />
+    </view>
+  </view>
+
+  <!-- 配送规则 -->
+  <view class="card">
+    <view class="block-title">配送说明</view>
+    <view class="row"><text class="row-label">起步配送费</text><text class="row-value red">¥{{shop.deliveryRule.baseFee}}（含 {{shop.deliveryRule.baseKm}}km）</text></view>
+    <view class="row"><text class="row-label">超出距离</text><text class="row-value">¥{{shop.deliveryRule.perKmFee}}/km</text></view>
+    <view class="row"><text class="row-label">免配送费</text><text class="row-value red">满 ¥{{shop.deliveryRule.freeThreshold}}（会员门槛更低）</text></view>
+    <view class="row"><text class="row-label">送达时效</text><text class="row-value">{{shop.deliveryRule.etaText}}</text></view>
+  </view>
+
+  <!-- 店铺评价 -->
+  <view id="review-anchor" class="card">
+    <view class="block-title">店铺评价（{{total}}）</view>
+    <view wx:for="{{reviews}}" wx:key="id" class="sr-item">
+      <image class="sr-avatar" src="{{item.avatar}}" />
+      <view class="sr-body">
+        <view class="sr-head">
+          <text class="sr-name">{{item.userName}}</text>
+          <view class="sr-dims">
+            <text>新鲜 {{item.scores.fresh}}</text>
+            <text>速度 {{item.scores.speed}}</text>
+            <text>包装 {{item.scores.package}}</text>
+          </view>
+        </view>
+        <view class="sr-content">{{item.content}}</view>
+        <view wx:if="{{item.images.length}}" class="sr-images">
+          <image wx:for="{{item.images}}" wx:for-item="img" wx:key="*this" class="sr-img" src="{{img}}" mode="aspectFill" />
+        </view>
+        <view class="light">{{item.createTime}}</view>
+      </view>
+    </view>
+    <loading-more status="{{loadStatus}}" />
+  </view>
+
+  <view style="height:140rpx"></view>
+
+  <view class="sp-actions">
+    <view class="sp-btn plain" bindtap="callShop">📞 联系商家</view>
+    <view class="sp-btn primary" bindtap="goShopping">进店逛逛</view>
+  </view>
+</view>

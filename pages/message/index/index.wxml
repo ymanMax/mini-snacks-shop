@@ -1,0 +1,33 @@
+<!--pages/message/index/index.wxml-->
+<view class="msg-page">
+  <view class="tabs">
+    <view wx:for="{{types}}" wx:key="type"
+      class="tab {{active === item.type ? 'on' : ''}}"
+      data-type="{{item.type}}" bindtap="switchTab">{{item.label}}</view>
+  </view>
+
+  <view class="msg-list">
+    <view wx:for="{{records}}" wx:key="id" class="msg-item {{item.isRead ? '' : 'unread'}}"
+      data-id="{{item.id}}" data-related="{{item.relatedId}}" data-type="{{item.type}}" data-biz="{{item.biz}}"
+      bindtap="openMsg">
+      <view class="msg-ico ico-{{item.type}}">
+        <text wx:if="{{item.type === 1}}">📢</text>
+        <text wx:elif="{{item.type === 2}}">📦</text>
+        <text wx:elif="{{item.type === 3}}">🎉</text>
+        <text wx:else>💬</text>
+        <view wx:if="{{!item.isRead}}" class="msg-dot"></view>
+      </view>
+      <view class="msg-body">
+        <view class="msg-head">
+          <text class="msg-title">{{item.title}}</text>
+          <text class="msg-time light">{{item.createTime}}</text>
+        </view>
+        <view class="msg-content">{{item.content}}</view>
+      </view>
+    </view>
+  </view>
+
+  <empty wx:if="{{!records.length}}" image="/image/cry.png" text="暂无消息" top="160rpx" />
+
+  <view wx:if="{{records.length}}" class="read-all" bindtap="readAll">全部标为已读</view>
+</view>

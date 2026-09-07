@@ -1,0 +1,38 @@
+<!--pages/favorite/favorite.wxml-->
+<view class="fav-page">
+  <!-- 收藏 -->
+  <block wx:if="{{!isFootprint}}">
+    <view wx:if="{{list.length}}" class="fav-head">
+      <text class="sub">共收藏 {{total}} 件商品</text>
+      <text class="sub">点击商品查看详情</text>
+    </view>
+    <view wx:if="{{list.length}}" class="fav-grid">
+      <view wx:for="{{list}}" wx:key="id" class="fav-cell">
+        <goods-card goods="{{item}}" mode="grid" bindadd="onAddCart" />
+        <view class="fav-cancel" data-goodsid="{{item.id}}" catchtap="cancelCollect">✕ 取消收藏</view>
+      </view>
+    </view>
+    <empty wx:if="{{!loading && !list.length}}" image="/image/cry.png"
+      text="还没有收藏任何商品" subText="看到喜欢的零食点个小心心吧"
+      btnText="去逛逛" bindbutton="goShopping" top="140rpx" />
+  </block>
+
+  <!-- 足迹 -->
+  <block wx:else>
+    <view wx:if="{{groups.length}}" class="fav-head">
+      <text class="sub">共浏览 {{fpTotal}} 件商品</text>
+      <text class="clear-btn" bindtap="clearFootprint">🗑 清空</text>
+    </view>
+    <view wx:for="{{groups}}" wx:for-item="group" wx:key="date" class="fp-group">
+      <view class="fp-date">{{group.date}}</view>
+      <view class="fp-list">
+        <view wx:for="{{group.records}}" wx:for-item="g" wx:key="id" class="fp-item">
+          <goods-card goods="{{g}}" mode="list" bindadd="onAddCart" />
+        </view>
+      </view>
+    </view>
+    <empty wx:if="{{!loading && !groups.length}}" image="/image/cry.png"
+      text="还没有浏览足迹" subText="快去发现好吃的零食吧"
+      btnText="去逛逛" bindbutton="goShopping" top="140rpx" />
+  </block>
+</view>

@@ -1,0 +1,35 @@
+// utils/format.wxs —— WXML 内可调用的格式化函数（WXS 仅支持 ES5 子集）
+function toNum(n) {
+  n = parseFloat(n);
+  return isNaN(n) ? 0 : n;
+}
+
+function fixed(n) {
+  return (Math.round(toNum(n) * 100) / 100).toFixed(2);
+}
+
+function price(n) {
+  return '¥' + fixed(n);
+}
+
+// 销量：12000 -> 1.2万
+function sales(n) {
+  n = toNum(n);
+  if (n >= 10000) {
+    var v = Math.round(n / 1000) / 10;
+    return v.toFixed(1).replace('.0', '') + '万';
+  }
+  return '' + n;
+}
+
+// 数组 join
+function join(arr, sep) {
+  return arr.join(sep || ' · ');
+}
+
+module.exports = {
+  fixed: fixed,
+  price: price,
+  sales: sales,
+  join: join
+};

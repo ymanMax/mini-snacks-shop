@@ -1,0 +1,157 @@
+/* pages/order/detail/detail.wxss */
+.page-loading { padding-top: 200rpx; }
+
+/* 状态头 */
+.status-head {
+  padding: 40rpx 32rpx 48rpx;
+  color: #fff;
+  background: linear-gradient(135deg, #d34046, #b4282d);
+}
+.sh-status { font-size: 40rpx; font-weight: 800; }
+.sh-desc { font-size: 24rpx; opacity: .9; margin-top: 12rpx; }
+.sh-advance {
+  display: inline-block;
+  margin-top: 20rpx;
+  font-size: 22rpx;
+  border: 1rpx solid rgba(255, 255, 255, .7);
+  border-radius: 999rpx;
+  padding: 8rpx 24rpx;
+}
+.status-bg-5 { background: linear-gradient(135deg, #9aa0a8, #7c828b); }
+.status-bg-6 { background: linear-gradient(135deg, #b8bcc2, #9aa0a8); }
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 20rpx 24rpx 0;
+  padding: 24rpx;
+}
+
+/* 骑手 */
+.rider-card { display: flex; align-items: center; }
+.rider-avatar { width: 88rpx; height: 88rpx; border-radius: 50%; }
+.rider-info { flex: 1; margin-left: 20rpx; }
+.rider-name { font-weight: 700; font-size: 30rpx; }
+.rider-call {
+  border: 2rpx solid #b4282d;
+  color: #b4282d;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  padding: 10rpx 28rpx;
+}
+
+/* 地址 */
+.addr-card { display: flex; align-items: flex-start; }
+.addr-ico { font-size: 34rpx; margin-right: 12rpx; }
+.addr-line1 { display: flex; align-items: center; }
+.addr-name { font-weight: 700; font-size: 28rpx; margin-right: 20rpx; }
+.addr-phone { color: #666; font-size: 24rpx; }
+.addr-line2 { color: #555; font-size: 26rpx; margin-top: 8rpx; line-height: 1.5; }
+
+/* 商品 */
+.shop-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 16rpx;
+  border-bottom: 1rpx solid #f5f6f7;
+}
+.shop-name { font-weight: 700; }
+.od-item { display: flex; padding: 22rpx 0; }
+.od-pic { width: 130rpx; height: 130rpx; border-radius: 10rpx; background: #f5f6f7; }
+.od-info { flex: 1; min-width: 0; margin-left: 20rpx; }
+.od-name { font-size: 26rpx; line-height: 1.4; }
+.od-right { text-align: right; font-size: 26rpx; width: 120rpx; }
+
+.amount-box {
+  border-top: 1rpx solid #f5f6f7;
+  padding-top: 16rpx;
+}
+.am-row {
+  display: flex;
+  justify-content: space-between;
+  color: #555;
+  font-size: 25rpx;
+  margin-bottom: 12rpx;
+}
+.red { color: #b4282d; }
+.am-row.total { color: #222; font-weight: 700; margin-top: 8rpx; }
+.pay-price { color: #b4282d; font-size: 36rpx; font-weight: 800; }
+
+/* 时间线 */
+.block-title { font-size: 30rpx; font-weight: 700; margin-bottom: 24rpx; }
+.timeline { padding-left: 8rpx; }
+.tl-item { position: relative; padding-left: 40rpx; padding-bottom: 32rpx; }
+.tl-dot {
+  position: absolute;
+  left: 4rpx;
+  top: 8rpx;
+  width: 18rpx;
+  height: 18rpx;
+  border-radius: 50%;
+  background: #d8dade;
+  z-index: 2;
+}
+.tl-dot.last { background: #b4282d; box-shadow: 0 0 0 8rpx #fdecec; }
+.tl-line {
+  position: absolute;
+  left: 12rpx;
+  top: 28rpx;
+  bottom: -6rpx;
+  width: 2rpx;
+  background: #e5e6e8;
+}
+.tl-status { font-size: 27rpx; font-weight: 600; }
+.tl-time { font-size: 20rpx; margin-top: 4rpx; }
+
+/* 订单信息 */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 24rpx;
+  color: #444;
+  margin-bottom: 16rpx;
+}
+.info-right { display: flex; align-items: center; }
+.copy-btn {
+  margin-left: 14rpx;
+  color: #b4282d;
+  border: 1rpx solid #b4282d;
+  border-radius: 6rpx;
+  font-size: 20rpx;
+  padding: 2rpx 12rpx;
+}
+.demo-tip {
+  text-align: center;
+  color: #b0b3b8;
+  font-size: 20rpx;
+  margin-top: 12rpx;
+}
+
+/* 底部操作 */
+.action-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  min-height: 100rpx;
+  background: #fff;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 18rpx;
+  padding: 12rpx 24rpx;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, .05);
+  z-index: 60;
+}
+.ab-btn {
+  font-size: 26rpx;
+  padding: 12rpx 40rpx;
+  border-radius: 999rpx;
+}
+.ab-btn.plain { border: 2rpx solid #ccc; color: #666; }
+.ab-btn.plain-done { border: 2rpx solid #ddd; color: #aaa; }
+.ab-btn.primary {
+  color: #fff;
+  background: linear-gradient(135deg, #d34046, #b4282d);
+}

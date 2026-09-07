@@ -1,0 +1,53 @@
+/* pages/service/tickets/tickets.wxss */
+page { background: #f5f6f7; }
+.tabs {
+  display: flex;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 24rpx 0;
+  font-size: 26rpx;
+  color: #555;
+  position: relative;
+}
+.tab.on { color: #b4282d; font-weight: 700; }
+.tab.on::after {
+  content: '';
+  position: absolute;
+  bottom: 10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44rpx;
+  height: 6rpx;
+  border-radius: 4rpx;
+  background: #b4282d;
+}
+.tk-list { padding: 20rpx 24rpx; }
+.tk-card {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 18rpx;
+}
+.tk-head { display: flex; justify-content: space-between; }
+.tk-type { font-weight: 700; font-size: 28rpx; }
+.tk-status { font-size: 25rpx; font-weight: 700; }
+.status-1 { color: #ff6b00; }
+.status-2 { color: #4a90d9; }
+.status-3 { color: #8a8f99; }
+.status-4 { color: #b0b3b8; }
+.tk-order { margin: 10rpx 0; }
+.tk-reason { font-size: 26rpx; color: #444; }
+.tk-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16rpx;
+}
+.tk-amount { color: #b4282d; font-weight: 700; font-size: 24rpx; }
+.tk-done { color: #2fa892; font-size: 22rpx; }

@@ -1,0 +1,58 @@
+<!--pages/service/refund/refund.wxml-->
+<wxs src="../../../utils/format.wxs" module="fmt" />
+<view class="page refund-page" wx:if="{{order}}">
+  <!-- 售后类型 -->
+  <view class="card">
+    <view class="block-title">售后类型</view>
+    <view class="type-list">
+      <view wx:for="{{types}}" wx:key="type"
+        class="type-item {{activeType === item.type ? 'on' : ''}}"
+        data-type="{{item.type}}" bindtap="pickType">
+        <view class="type-label">{{item.label}}</view>
+        <view class="type-desc sub">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 申请商品 -->
+  <view class="card">
+    <view class="block-title">申请商品</view>
+    <view wx:for="{{order.items}}" wx:key="goodsId" class="rf-item">
+      <view class="check {{selected[item.goodsId] ? 'on' : ''}}"
+        data-goodsid="{{item.goodsId}}" catchtap="toggleItem">
+        <text wx:if="{{selected[item.goodsId]}}">✓</text>
+      </view>
+      <safe-image class="rf-pic" img-class="rf-pic" src="{{item.pic}}" mode="aspectFill" />
+      <view class="rf-info">
+        <view class="rf-name ellipsis-2">{{item.name}}</view>
+        <view class="sub">{{item.specText}}</view>
+      </view>
+      <view class="rf-price">¥{{fmt.fixed(item.price)}} ×{{item.count}}</view>
+    </view>
+  </view>
+
+  <!-- 原因 -->
+  <view class="card">
+    <view class="block-title">申请原因</view>
+    <view class="reason-list">
+      <view wx:for="{{reasons}}" wx:key="*this"
+        class="reason-item {{reasonIndex === index ? 'on' : ''}}"
+        data-index="{{index}}" bindtap="pickReason">{{item}}</view>
+    </view>
+    <textarea class="remark-input" placeholder="补充说明（选填）" value="{{remark}}" bindinput="onRemark" maxlength="200" />
+  </view>
+
+  <!-- 金额 -->
+  <view wx:if="{{activeType !== 3}}" class="card amount-card">
+    <text>退款金额</text>
+    <text class="rf-amount">¥{{amountText}}</text>
+  </view>
+  <view wx:else class="card amount-card">
+    <text class="sub">换货商品将尽快为您发出</text>
+  </view>
+
+  <view style="height:140rpx"></view>
+  <view class="submit-bar">
+    <view class="submit-btn {{submitting ? 'disabled' : ''}}" bindtap="submit">提交申请</view>
+  </view>
+</view>

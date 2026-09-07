@@ -1,0 +1,86 @@
+<!--pages/coupon/center/center.wxml-->
+<view class="cc-page">
+  <view class="cc-banner">
+    <view>
+      <view class="banner-title">领券中心</view>
+      <view class="banner-sub">好券天天领，下单自动按最优组合使用</view>
+    </view>
+    <view class="banner-btn" bindtap="goMine">优惠券明细 ›</view>
+  </view>
+
+  <!-- Tab -->
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="key"
+      class="tab {{active === item.key ? 'on' : ''}}"
+      data-key="{{item.key}}" bindtap="switchTab">{{item.label}}</view>
+  </view>
+
+  <!-- 可领取 -->
+  <view wx:if="{{active === 'available'}}" class="cc-list">
+    <view wx:for="{{templates}}" wx:key="id" class="coupon {{item.received ? 'used' : ''}}">
+      <view class="c-left">
+        <block wx:if="{{item.type === 2}}">
+          <view class="c-value"><text class="v-num">{{item.discount / 10}}</text><text class="v-unit">折</text></view>
+        </block>
+        <block wx:else>
+          <view class="c-value"><text class="v-sym">¥</text><text class="v-num">{{item.discount}}</text></view>
+        </block>
+        <view class="c-threshold">{{item.threshold > 0 ? '满 ' + item.threshold + ' 元可用' : '无门槛'}}</view>
+      </view>
+      <view class="c-mid">
+        <view class="c-name">{{item.name}}</view>
+        <view class="c-scope">{{item.scope}}</view>
+        <view class="c-expire light">{{item.expireDesc}}</view>
+      </view>
+      <view class="c-right">
+        <view wx:if="{{item.received}}" class="c-btn done">已领取</view>
+        <view wx:else class="c-btn" data-id="{{item.id}}" bindtap="receive">立即领取</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 已领取（未使用） -->
+  <view wx:elif="{{active === 'received'}}" class="cc-list">
+    <view wx:for="{{receivedList}}" wx:key="id" class="coupon">
+      <view class="c-left">
+        <block wx:if="{{item.type === 2}}">
+          <view class="c-value"><text class="v-num">{{item.discount / 10}}</text><text class="v-unit">折</text></view>
+        </block>
+        <block wx:else>
+          <view class="c-value"><text class="v-sym">¥</text><text class="v-num">{{item.discount}}</text></view>
+        </block>
+        <view class="c-threshold">{{item.threshold > 0 ? '满 ' + item.threshold + ' 元可用' : '无门槛'}}</view>
+      </view>
+      <view class="c-mid">
+        <view class="c-name">{{item.name}}</view>
+        <view class="c-scope">{{item.scope}} · {{item.source}}</view>
+        <view class="c-expire light">{{item.expireTime}} 到期</view>
+      </view>
+      <view class="c-right">
+        <view class="c-btn use" bindtap="goShopping">去使用</view>
+      </view>
+    </view>
+    <view wx:if="{{!receivedList.length}}" class="empty-tip light">还没有已领取的优惠券</view>
+  </view>
+
+  <!-- 已使用/已过期 -->
+  <view wx:else class="cc-list">
+    <view wx:for="{{usedList}}" wx:key="id" class="coupon disabled">
+      <view class="c-left">
+        <block wx:if="{{item.type === 2}}">
+          <view class="c-value"><text class="v-num">{{item.discount / 10}}</text><text class="v-unit">折</text></view>
+        </block>
+        <block wx:else>
+          <view class="c-value"><text class="v-sym">¥</text><text class="v-num">{{item.discount}}</text></view>
+        </block>
+        <view class="c-threshold">{{item.threshold > 0 ? '满 ' + item.threshold + ' 元可用' : '无门槛'}}</view>
+      </view>
+      <view class="c-mid">
+        <view class="c-name">{{item.name}}</view>
+        <view class="c-scope">{{item.scope}} · {{item.source}}</view>
+        <view class="c-expire light">{{item.status === 2 ? '已使用' : '已过期'}}</view>
+      </view>
+    </view>
+    <view wx:if="{{!usedList.length}}" class="empty-tip light">暂无已使用或过期的优惠券</view>
+  </view>
+</view>

@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "确认订单",
+  "usingComponents": {
+    "safe-image": "/components/safe-image/index",
+    "empty": "/components/empty/index"
+  }
+}

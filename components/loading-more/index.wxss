@@ -1,0 +1,26 @@
+.load-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24rpx 0 40rpx;
+  color: #b0b3b8;
+  font-size: 22rpx;
+}
+.loading-dot {
+  width: 24rpx;
+  height: 24rpx;
+  border: 4rpx solid #f0d2d3;
+  border-top-color: #b4282d;
+  border-radius: 50%;
+  margin-right: 12rpx;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+.end-line {
+  width: 48rpx;
+  height: 1rpx;
+  background: #d8dade;
+  margin: 0 16rpx;
+}

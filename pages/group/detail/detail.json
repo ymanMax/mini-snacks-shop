@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "拼团详情",
+  "usingComponents": {
+    "safe-image": "/components/safe-image/index"
+  }
+}

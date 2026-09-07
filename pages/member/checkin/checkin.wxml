@@ -1,0 +1,60 @@
+<!--pages/member/checkin/checkin.wxml-->
+<view class="ck-page" wx:if="{{info}}">
+  <!-- 顶部积分卡 -->
+  <view class="ck-head">
+    <view class="ck-title">每日签到</view>
+    <view class="ck-points">
+      <text class="cp-num">{{points}}</text>
+      <text class="cp-label">我的积分</text>
+    </view>
+    <view class="ck-continuous">已连续签到 {{info.continuousDays}} 天</view>
+  </view>
+
+  <!-- 7 天奖励梯度 -->
+  <view class="card reward-card">
+    <view class="rc-title">连续签到奖励</view>
+    <view class="rc-list">
+      <view wx:for="{{rewardItems}}" wx:key="day"
+        class="rc-item {{item.state}} {{item.big ? 'big' : ''}}">
+        <view class="rc-medal {{item.big ? 'big' : ''}}">+{{item.reward}}</view>
+        <view class="rc-day">第{{item.day}}天</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 签到日历 -->
+  <view class="card cal-card">
+    <view class="cal-title">{{info.year}}年{{info.month}}月</view>
+    <view class="cal-week">
+      <text wx:for="{{weekDays}}" wx:key="*this" class="cal-w">{{item}}</text>
+    </view>
+    <view class="cal-grid">
+      <view wx:for="{{cells}}" wx:key="key" class="cal-cell {{item.signed ? 'signed' : ''}} {{item.today ? 'today' : ''}}">
+        <block wx:if="{{!item.empty}}">
+          <text class="cell-day">{{item.day}}</text>
+          <text wx:if="{{item.today && !item.signed}}" class="cell-today">今</text>
+          <text wx:elif="{{item.signed && item.today}}" class="cell-today">已签</text>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- 签到按钮 -->
+  <view class="sign-area">
+    <view class="sign-btn {{info.todaySigned ? 'done' : ''}}" bindtap="doSign">
+      {{info.todaySigned ? '今日已签到' : '立即签到 +' + info.tomorrowReward + ' 积分'}}
+    </view>
+    <view class="sign-tip sub">
+      {{info.todaySigned ? '明天继续签到可得 +' + info.rewards[(info.continuousDays) % 7] + ' 积分' : '7 天一个循环，第 7 天可得 50 积分大奖'}}
+    </view>
+  </view>
+
+  <!-- 规则 -->
+  <view class="card rules-card">
+    <view class="block-title">活动规则</view>
+    <view wx:for="{{info.rules}}" wx:key="*this" class="rule-item">{{index + 1}}. {{item}}</view>
+  </view>
+
+  <!-- 积分动画 -->
+  <view wx:if="{{showAnim}}" class="point-anim">+{{animReward}}</view>
+</view>

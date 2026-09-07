@@ -1,50 +1,97 @@
-<view class="J-shopping-cart-empty" hidden="{{iscart}}">
-  <view class="shopping-cart-empty">
-    <view class="bg"></view>
-    <image src="../../image/cry.png"></image>
-    <text class='empty-text'>购物车空空如也</text>
+<!--pages/cart/cart.wxml-->
+<wxs src="../../utils/format.wxs" module="fmt" />
+<view class="page cart-page">
+  <!-- 顶部操作 -->
+  <view wx:if="{{validList.length || invalidList.length}}" class="cart-top">
+    <text class="cart-title">购物车</text>
+    <view class="edit-btn" bindtap="toggleEdit">{{editMode ? '完成' : '管理'}}</view>
   </view>
-</view>
 
-<view class="main" hidden="{{hidden}}">
-  <scroll-view class="scroll" scroll-y="true">
-    <view class="separate"></view>
-    <view class="cart-box">
-      <view class="cart-list" wx:for="{{carts}}" wx:key="{{index}}">
-        <view wx:if="{{!item.isSelect}}">
-          <icon class="cart-pro-select" bindtap="switchSelect" data-index="{{index}}" data-id="{{index}}" type="circle" size="20"></icon>
+  <!-- 商品列表 -->
+  <view wx:if="{{validList.length}}" class="cart-list">
+    <view wx:for="{{validList}}" wx:key="id" class="cart-item">
+      <view class="check {{item.checked ? 'on' : ''}}" catchtap="toggleItem" data-id="{{item.id}}">
+        <text wx:if="{{item.checked}}">✓</text>
+      </view>
+      <safe-image class="ci-pic" img-class="ci-pic" src="{{item.pic}}" mode="aspectFill"
+        data-goodsid="{{item.goodsId}}" bindtap="goDetail" />
+      <view class="ci-info">
+        <view class="ci-name ellipsis-2" data-goodsid="{{item.goodsId}}" bindtap="goDetail">{{item.name}}</view>
+        <view class="ci-spec sub">{{item.specText}}</view>
+        <view class="ci-bottom">
+          <text class="ci-price">¥{{fmt.fixed(item.price)}}</text>
+          <view class="ci-actions">
+            <view wx:if="{{editMode}}" class="ci-del" catchtap="removeOne" data-id="{{item.id}}">删除</view>
+            <view wx:else class="stepper">
+              <view class="st-btn" catchtap="minus" data-id="{{item.id}}" data-count="{{item.count}}">−</view>
+              <view class="st-num">{{item.count}}</view>
+              <view class="st-btn" catchtap="plus" data-id="{{item.id}}" data-count="{{item.count}}" data-stock="{{item.stock}}">+</view>
+            </view>
+          </view>
         </view>
-        <view wx:elif="{{item.isSelect}}">
-          <icon class="cart-pro-select" bindtap="switchSelect" data-index="{{index}}" data-id="{{index}}" type="success" color="#f0145a" size="20"></icon>
-        </view>
-        <navigator url="../detail/detail?product_id={{item.id}}">
-          <image class="cart-thumb" src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
-        </navigator>
-        <text class="cart-pro-name">{{item.name}}</text>
-        <text class="cart-pro-price">￥{{item.price}}</text>
-        <view class="cart-count-box">
-          <text class="cart-count-down" bindtap="delCount" data-obj="{{obj}}" data-index="{{index}}">-</text>
-          <text class="cart-count-num">{{item.count}}</text>
-          <text class="cart-count-add" bindtap="addCount" data-index="{{index}}">+</text>
-        </view>
-        <image class="cart-del" bindtap="delGoods" data-index="{{index}}" src="/image/delete.png"></image>
       </view>
     </view>
+  </view>
 
-    <view class="cart-footer">
-      <view wx:if="{{!isAllSelect}}">
-        <icon class="total-select" bindtap="allSelect" type="circle" size="20"></icon>
-      </view>
-      <view wx:elif="{{isAllSelect}}">
-        <icon class="total-select" bindtap="allSelect" type="success" color="#f0145a" size="20"></icon>
-      </view>
-      <view class="order-icon">
-        <navigator  bindtap="goBuy">
-          <image src="/image/buy.png"></image>
-        </navigator>
-      </view>
-      <text>全选</text>
-      <text class="cart-toatl-price">￥{{totalMoney}}</text>
+  <!-- 失效商品 -->
+  <view wx:if="{{invalidList.length}}" class="invalid-wrap">
+    <view class="invalid-head" bindtap="clearInvalid">
+      <text>失效商品 {{invalidList.length}} 件</text>
+      <text class="invalid-clear">清空失效商品 ›</text>
     </view>
-  </scroll-view>
+    <view wx:for="{{invalidList}}" wx:key="id" class="cart-item invalid">
+      <view class="check disabled"></view>
+      <safe-image class="ci-pic" img-class="ci-pic" src="{{item.pic}}" mode="aspectFill" />
+      <view class="ci-info">
+        <view class="ci-name ellipsis-2">{{item.name}}</view>
+        <view class="ci-spec sub">{{item.specText}}</view>
+        <view class="ci-bottom">
+          <text class="ci-price">¥{{fmt.fixed(item.price)}}</text>
+          <view class="invalid-tag">已失效</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空态 -->
+  <empty wx:if="{{!validList.length && !invalidList.length && !loading}}"
+    image="/image/cry.png" text="购物车还是空的" subText="快去挑选心仪的零食吧"
+    btnText="去逛逛" bindbutton="goShopping" top="180rpx" />
+
+  <!-- 猜你喜欢 -->
+  <view wx:if="{{!validList.length && guessList.length}}" class="guess">
+    <view class="guess-title">—— 猜你喜欢 ——</view>
+    <view class="guess-grid">
+      <goods-card wx:for="{{guessList}}" wx:key="id" goods="{{item}}" mode="grid" />
+    </view>
+  </view>
+
+  <view wx:if="{{validList.length}}" style="height:140rpx"></view>
+
+  <!-- 底部结算栏 -->
+  <view wx:if="{{validList.length}}" class="settle-bar">
+    <view class="check all {{allChecked ? 'on' : ''}}" bindtap="toggleAll">
+      <text wx:if="{{allChecked}}">✓</text>
+    </view>
+    <text class="all-text">全选</text>
+    <block wx:if="{{editMode}}">
+      <view class="btn-plain batch-btn" bindtap="batchDelete">删除所选</view>
+    </block>
+    <block wx:else>
+      <view class="total-box">
+        <view class="total-line">
+          合计：<text class="total-price">¥{{payAmount}}</text>
+        </view>
+        <view class="discount-line">
+          <text wx:if="{{discountAmount !== '0.00'}}" class="discount-text">已省 ¥{{discountAmount}}</text>
+          <text wx:elif="{{usableCouponCount > 0}}" class="coupon-tip">{{usableCouponCount}} 张券可用</text>
+          <text class="freight-text">{{freightText}}</text>
+        </view>
+        <view wx:if="{{couponTitle}}" class="coupon-apply">已最优使用：{{couponTitle}}</view>
+        <view wx:if="{{reduceTip}}" class="gap-tip reduce">⏫ {{reduceTip}}</view>
+        <view wx:if="{{freightTip}}" class="gap-tip freight">🚚 {{freightTip}}</view>
+      </view>
+      <view class="settle-btn" bindtap="checkout">结算{{checkedCount ? '(' + checkedCount + ')' : ''}}</view>
+    </block>
+  </view>
 </view>

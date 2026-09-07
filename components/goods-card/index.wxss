@@ -1,0 +1,102 @@
+/* grid */
+.g-card {
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.g-img-wrap { position: relative; }
+.g-img {
+  width: 100%;
+  height: 340rpx;
+  display: block;
+  background: #f5f6f7;
+}
+.g-extra {
+  position: absolute;
+  left: 0;
+  top: 16rpx;
+  background: rgba(180, 40, 45, .9);
+  color: #fff;
+  font-size: 20rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 0 999rpx 999rpx 0;
+}
+.g-info { padding: 14rpx 16rpx 18rpx; }
+.g-name {
+  font-size: 26rpx;
+  line-height: 1.35;
+  height: 70rpx;
+}
+.g-tags { margin-top: 10rpx; height: 32rpx; overflow: hidden; }
+.g-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 10rpx;
+}
+.g-price { color: #b4282d; font-weight: 700; display: flex; align-items: baseline; }
+.price-symbol { font-size: 20rpx; }
+.price-int { font-size: 32rpx; }
+.price-origin {
+  color: #b0b3b8;
+  font-size: 20rpx;
+  text-decoration: line-through;
+  font-weight: 400;
+  margin-left: 8rpx;
+}
+.g-add {
+  width: 44rpx;
+  height: 44rpx;
+  line-height: 40rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d34046, #b4282d);
+  color: #fff;
+  font-size: 36rpx;
+}
+.g-sales { color: #b0b3b8; font-size: 20rpx; margin-top: 6rpx; }
+
+/* list */
+.l-card {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+.l-img {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 12rpx;
+  background: #f5f6f7;
+  flex-shrink: 0;
+}
+.l-info {
+  flex: 1;
+  min-width: 0;
+  margin-left: 20rpx;
+  display: flex;
+  flex-direction: column;
+}
+.l-sub { margin-top: 8rpx; }
+
+/* mini */
+.m-card {
+  width: 200rpx;
+  flex-shrink: 0;
+  margin-right: 16rpx;
+}
+.m-img {
+  width: 200rpx;
+  height: 200rpx;
+  border-radius: 12rpx;
+  background: #f5f6f7;
+}
+.m-name {
+  font-size: 22rpx;
+  margin-top: 8rpx;
+  height: 58rpx;
+  line-height: 1.3;
+}
+.m-price { font-size: 26rpx; margin-top: 4rpx; }

@@ -1,15 +1,28 @@
 <!--pages/list/list.wxml-->
-<view class="main">
-  <view class="banner">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + pic}}"></image>
-    </view>
-  <view class="list-box">
-    <view class="newest-list" wx:for="{{products}}">
-      <navigator url="../detail/detail?product_id={{item.id}}">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
-        <view class="newest-text"><text>{{item.name}}</text></view>
-        <view class="newest-text"><text>{{item.price}}</text></view>
-      </navigator>
+<view class="theme-page">
+  <!-- 头部主题图 -->
+  <view wx:if="{{header}}" class="theme-header">
+    <safe-image class="th-img" img-class="th-img" src="{{header.topicImg || header.pic}}" mode="aspectFill" />
+    <view class="th-mask">
+      <view class="th-name">{{header.name}}</view>
+      <view class="th-desc">{{header.description}}</view>
     </view>
   </view>
+
+  <!-- 骨架 -->
+  <view wx:if="{{loading}}" class="sk-grid">
+    <view class="sk-goods" wx:for="{{[1,2,3,4]}}" wx:key="*this">
+      <view class="sk sk-goods-img"></view>
+      <view class="sk sk-line l1"></view>
+      <view class="sk sk-line l2"></view>
+    </view>
+  </view>
+
+  <block wx:else>
+    <view wx:if="{{products.length}}" class="goods-grid">
+      <goods-card wx:for="{{products}}" wx:key="id" goods="{{item}}" mode="grid" bindadd="onAddCart" />
+    </view>
+    <empty wx:else image="/image/cry.png" text="主题商品即将上线" />
+    <loading-more status="{{loadStatus}}" />
+  </block>
 </view>

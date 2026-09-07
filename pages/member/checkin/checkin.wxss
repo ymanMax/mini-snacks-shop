@@ -1,0 +1,124 @@
+/* pages/member/checkin/checkin.wxss */
+page { background: #f5f6f7; }
+
+.ck-head {
+  background: linear-gradient(135deg, #d34046, #b4282d);
+  color: #fff;
+  padding: 40rpx 32rpx 56rpx;
+  text-align: center;
+  position: relative;
+}
+.ck-title { font-size: 34rpx; font-weight: 800; }
+.ck-points {
+  margin: 20rpx 0 8rpx;
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+}
+.cp-num { font-size: 64rpx; font-weight: 800; }
+.cp-label { font-size: 24rpx; opacity: .85; margin-left: 12rpx; }
+.ck-continuous { font-size: 24rpx; opacity: .9; }
+
+.card {
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 24rpx;
+  padding: 28rpx 24rpx;
+}
+
+/* 奖励梯度 */
+.rc-title { font-size: 28rpx; font-weight: 700; margin-bottom: 24rpx; }
+.rc-list { display: flex; justify-content: space-between; }
+.rc-item { display: flex; flex-direction: column; align-items: center; width: 14%; }
+.rc-medal {
+  width: 72rpx;
+  height: 72rpx;
+  line-height: 72rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: #f2f3f5;
+  color: #999;
+  font-size: 24rpx;
+  font-weight: 700;
+}
+.rc-medal.big { background: #fff1db; color: #e88a00; }
+.rc-day { font-size: 20rpx; color: #999; margin-top: 8rpx; }
+.rc-item.done .rc-medal { background: #f5d6d7; color: #b4282d; }
+.rc-item.cur .rc-medal {
+  background: linear-gradient(135deg, #d34046, #b4282d);
+  color: #fff;
+  box-shadow: 0 0 0 8rpx #fdecec;
+}
+.rc-item.cur .rc-day { color: #b4282d; font-weight: 700; }
+
+/* 日历 */
+.cal-title { text-align: center; font-size: 28rpx; font-weight: 700; margin-bottom: 20rpx; }
+.cal-week { display: flex; }
+.cal-w {
+  width: 14.28%;
+  text-align: center;
+  font-size: 22rpx;
+  color: #999;
+  padding-bottom: 12rpx;
+}
+.cal-grid { display: flex; flex-wrap: wrap; }
+.cal-cell {
+  width: 14.28%;
+  height: 96rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.cell-day { font-size: 28rpx; color: #333; }
+.cal-cell.signed .cell-day {
+  width: 64rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: #fdecec;
+  color: #b4282d;
+  font-weight: 700;
+}
+.cell-flag { font-size: 16rpx; color: #b4282d; line-height: 1; margin-top: -50rpx; }
+.cell-today { font-size: 16rpx; color: #ff6b00; line-height: 1.2; margin-top: 2rpx; }
+.cal-cell.today .cell-day { color: #ff6b00; font-weight: 800; }
+
+/* 签到按钮 */
+.sign-area { padding: 12rpx 48rpx 0; text-align: center; }
+.sign-btn {
+  height: 92rpx;
+  line-height: 92rpx;
+  border-radius: 999rpx;
+  color: #fff;
+  font-size: 32rpx;
+  font-weight: 800;
+  background: linear-gradient(135deg, #d34046, #b4282d);
+  box-shadow: 0 10rpx 24rpx rgba(180, 40, 45, .3);
+}
+.sign-btn.done { background: #c9ccd1; box-shadow: none; }
+.sign-tip { margin-top: 18rpx; font-size: 22rpx; }
+
+.block-title { font-size: 28rpx; font-weight: 700; margin-bottom: 16rpx; }
+.rule-item { font-size: 24rpx; color: #666; line-height: 1.9; }
+
+/* 积分动画 */
+.point-anim {
+  position: fixed;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 80rpx;
+  font-weight: 800;
+  color: #ffb400;
+  text-shadow: 0 4rpx 16rpx rgba(0, 0, 0, .2);
+  z-index: 200;
+  animation: fly-up 1.6s ease-out forwards;
+  pointer-events: none;
+}
+@keyframes fly-up {
+  0% { opacity: 0; transform: translate(-50%, 60rpx) scale(.6); }
+  30% { opacity: 1; transform: translate(-50%, 0) scale(1.15); }
+  100% { opacity: 0; transform: translate(-50%, -160rpx) scale(1); }
+}

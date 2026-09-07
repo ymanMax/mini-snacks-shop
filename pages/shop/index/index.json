@@ -1,0 +1,7 @@
+{
+  "navigationBarTitleText": "店铺主页",
+  "usingComponents": {
+    "safe-image": "/components/safe-image/index",
+    "loading-more": "/components/loading-more/index"
+  }
+}

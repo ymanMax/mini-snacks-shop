@@ -1,40 +1,43 @@
-<scroll-view class="scroll" scroll-y="true">
+<!--pages/address/address.wxml-->
+<wxs src="../../utils/format.wxs" module="fmt" />
+<view class="addr-list-page">
+  <!-- 标签筛选 -->
+  <scroll-view scroll-x class="tag-bar" enhanced show-scrollbar="{{false}}">
+    <view wx:for="{{tags}}" wx:key="*this"
+      class="tag-item {{activeTag === item ? 'on' : ''}}"
+      data-tag="{{item}}" bindtap="switchTag">{{item}}</view>
+  </scroll-view>
 
-<view wx:for="{{addressList}}" wx:for-index="index">
-
-  <view class="product-name-wrap" bindtap="selectAddress" data-index="{{index}}">
-
-    <view class="ui-list-item-info">{{item.consignee}}
-
-      <text decode="{{true}}" space="{{true}}">  </text> {{item.mobile}}
-
+  <view wx:for="{{filtered}}" wx:key="id" class="addr-card"
+    data-id="{{item.id}}" bindtap="selectAddress" hover-class="card-hover">
+    <view class="addr-main">
+      <view class="addr-line1">
+        <text class="a-name">{{item.name}}</text>
+        <text class="a-phone">{{item.phone}}</text>
+        <text wx:if="{{item.tag}}" class="a-tag">{{item.tag}}</text>
+        <text wx:if="{{item.isDefault}}" class="a-default">默认</text>
+        <text wx:if="{{item.distanceKm > 20}}" class="a-unsupported">暂不支持配送</text>
+      </view>
+      <view class="addr-line2">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</view>
+      <view class="addr-line3 sub">
+        <text>距店铺约 {{item.distanceKm}}km</text>
+      </view>
     </view>
-
-    <view class="ui-list-item-address">
-
-      {{item.address}}
-
+    <view class="addr-ops" catchtap="noop">
+      <view wx:if="{{!item.isDefault}}" class="a-op" catchtap="setDefault" data-id="{{item.id}}">设默认</view>
+      <view class="a-op" catchtap="edit" data-id="{{item.id}}">编辑</view>
+      <view class="a-op danger" catchtap="remove" data-id="{{item.id}}">删除</view>
     </view>
-
-    <view class="ui-list-item-time">
-
-      <p>{{item.transportDay}}</p>
-
-      <p class="ui-list-item-del" data-id="{{index}}" bindtap="delAddress">删除</p>
-
-    </view>
-
-    <view class="separate"></view>
-
   </view>
 
-</view>
+  <empty wx:if="{{!loading && !filtered.length}}" image="/image/cry.png"
+    text="{{activeTag === '全部' ? '还没有收货地址' : '该标签下暂无地址'}}"
+    btnText="新增地址" bindbutton="add" top="120rpx" />
 
-</scroll-view>
+  <view style="height:260rpx"></view>
 
-<view class="add-address" bindtap="addAddress">
-
-<image class="add-img"  src="../../image/add.png"></image>
-<text>新增地址</text>
-
+  <view class="add-bar">
+    <view class="add-btn map" bindtap="chooseOnMap">🗺 地图选点</view>
+    <view class="add-btn" bindtap="add">＋ 新增收货地址</view>
+  </view>
 </view>

@@ -1,0 +1,52 @@
+<!--pages/member/points/points.wxml-->
+<view class="pt-page">
+  <!-- 积分卡 -->
+  <view class="pt-head">
+    <view class="pt-label">我的积分</view>
+    <view class="pt-num">{{points}}</view>
+    <view class="pt-rules-btn" bindtap="toggleRules">积分规则 ›</view>
+  </view>
+
+  <!-- 兑换专区 -->
+  <view class="card ex-card">
+    <view class="block-title">积分兑换专区</view>
+    <scroll-view scroll-x class="ex-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="ex-inner">
+        <view wx:for="{{exchangeItems}}" wx:key="id" class="ex-item">
+          <safe-image class="ex-img" img-class="ex-img" src="{{item.pic}}" mode="aspectFill" />
+          <view class="ex-name ellipsis-2">{{item.name}}</view>
+          <view class="ex-bottom">
+            <text class="ex-points">{{item.points}} 积分</text>
+          </view>
+          <view class="ex-btn {{points < item.points ? 'disabled' : ''}}"
+            data-id="{{item.id}}" bindtap="doExchange">兑换</view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 明细 -->
+  <view class="card record-card">
+    <view class="block-title">积分明细</view>
+    <view wx:for="{{records}}" wx:key="desc" class="rc-item">
+      <view class="rc-info">
+        <view class="rc-desc">{{item.desc}}</view>
+        <view class="light">{{item.createTime}}</view>
+      </view>
+      <view class="rc-points {{item.points > 0 ? 'plus' : 'minus'}}">
+        {{item.points > 0 ? '+' : ''}}{{item.points}}
+      </view>
+      <view class="rc-type">{{item.typeText}}</view>
+    </view>
+    <empty wx:if="{{!loading && !records.length}}" text="还没有积分记录" top="40rpx" />
+    <loading-more status="{{loadStatus}}" />
+  </view>
+
+  <!-- 规则弹层 -->
+  <view wx:if="{{showRules}}" class="mask" bindtap="toggleRules"></view>
+  <view wx:if="{{showRules}}" class="sheet rule-sheet" catchtap="noop">
+    <view class="pop-title">积分规则</view>
+    <view wx:for="{{rules}}" wx:key="*this" class="rule-line">{{index + 1}}. {{item}}</view>
+    <view class="btn-primary pop-btn" bindtap="toggleRules">我知道了</view>
+  </view>
+</view>

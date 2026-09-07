@@ -1,0 +1,9 @@
+<view wx:if="{{status === 'loading'}}" class="load-status">
+  <view class="loading-dot"></view>
+  <text>{{text}}</text>
+</view>
+<view wx:elif="{{status === 'nomore'}}" class="load-status">
+  <view class="end-line"></view>
+  <text>{{endText}}</text>
+  <view class="end-line"></view>
+</view>
