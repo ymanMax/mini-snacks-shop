@@ -1,0 +1,65 @@
+<view class="sr-page">
+  <!-- 搜索头 -->
+  <view class="search-head">
+    <view class="input-box">
+      <text class="s-icon">🔍</text>
+      <input class="s-input" value="{{keyword}}" placeholder="搜索零食名称、标签、产地"
+        confirm-type="search" focus bindinput="onInput" bindconfirm="doSearch" />
+      <text class="s-clear" wx:if="{{keyword}}" bindtap="onClear">✕</text>
+    </view>
+    <text class="s-cancel" bindtap="onCancel">取消</text>
+  </view>
+
+  <!-- 历史 + 热门 -->
+  <view wx:if="{{phase === 'home'}}">
+    <view class="block" wx:if="{{history.length}}">
+      <view class="block-head">
+        <text class="block-title">搜索历史</text>
+        <text class="block-action" bindtap="clearHistory">🗑 清空</text>
+      </view>
+      <view class="chips">
+        <view wx:for="{{history}}" wx:key="*this" class="chip">
+          <text class="chip-text" data-kw="{{item}}" bindtap="doSearch">{{item}}</text>
+          <text class="chip-x" data-kw="{{item}}" catchtap="removeHistory">✕</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="block">
+      <view class="block-head"><text class="block-title">🔥 热门搜索</text></view>
+      <view class="hot-grid">
+        <view wx:for="{{hot}}" wx:key="*this" class="hot-item" data-kw="{{item}}" bindtap="doSearch">
+          <text class="hot-rank {{index < 3 ? 'top' : ''}}">{{index + 1}}</text>
+          <text>{{item}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 联想 -->
+  <view wx:elif="{{phase === 'suggest'}}" class="suggest">
+    <view wx:for="{{suggests}}" wx:key="id" class="sg-item" data-kw="{{item.name}}" bindtap="pickSuggest">
+      <text class="sg-icon">🔍</text>
+      <text class="sg-name">{{item.name}}</text>
+      <text class="sg-price">￥{{item.priceText}}</text>
+    </view>
+    <view wx:if="{{!suggests.length}}" class="sg-empty">没有找到「{{keyword}}」相关商品，回车直接搜索</view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <block wx:else>
+    <scroll-view scroll-x class="sort-bar" enhanced show-scrollbar="{{false}}">
+      <view wx:for="{{sorts}}" wx:key="key" data-key="{{item.key}}" bindtap="switchSort"
+        class="sort {{sort === item.key ? 'on' : ''}}">{{item.label}}</view>
+    </scroll-view>
+
+    <view class="result-list" wx:if="{{results.length}}">
+      <goods-card wx:for="{{results}}" wx:key="id" mode="list" item="{{item}}" bindadd="onAdd"></goods-card>
+    </view>
+
+    <empty-state wx:if="{{total === 0 && loadStatus !== 'loading'}}" img="/static/images/empty_search.png"
+      text="没有找到「{{searchedWord}}」相关商品" sub="换个关键词试试吧" btnText="去分类逛逛" bindbtn="goHome"></empty-state>
+
+    <load-more status="{{loadStatus}}" bind:retry="onRetry"></load-more>
+  </block>
+</view>

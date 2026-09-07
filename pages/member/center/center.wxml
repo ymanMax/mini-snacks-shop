@@ -1,0 +1,83 @@
+<view class="mc-page" wx:if="{{info}}">
+  <!-- 会员卡 -->
+  <view class="member-card level-{{info.user.level}}">
+    <view class="mc-top">
+      <safe-image class="mc-avatar" src="{{info.user.avatar}}" mode="aspectFill"></safe-image>
+      <view class="mc-user">
+        <view class="mc-name">{{info.user.nickName}}</view>
+        <view class="mc-level">{{info.levelInfo.name}}</view>
+      </view>
+      <view class="mc-no">NO.{{info.user.id}}</view>
+    </view>
+    <view class="mc-progress">
+      <view class="mc-progress-label">
+        <text>成长值 {{info.user.growthValue}}</text>
+        <text wx:if="{{info.nextLevel}}">距{{info.nextLevel.name}}还差 {{info.needGrowth}}</text>
+        <text wx:else>已解锁全部等级</text>
+      </view>
+      <view class="mc-bar">
+        <view class="mc-bar-in" style="width: {{info.growthPct}}%"></view>
+      </view>
+    </view>
+    <view class="mc-stats">
+      <view class="mc-stat" data-url="/pages/member/points/points" bindtap="go">
+        <text class="num">{{info.user.points}}</text><text class="lab">积分</text>
+      </view>
+      <view class="mc-stat" data-url="/pages/coupon/mine/mine" bindtap="go">
+        <text class="num">{{info.couponCount}}</text><text class="lab">优惠券</text>
+      </view>
+      <view class="mc-stat" data-url="/pages/member/checkin/checkin" bindtap="go">
+        <text class="num">签到</text><text class="lab">每日领分</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 生日礼包 -->
+  <view class="card birthday-card">
+    <view class="bc-left">
+      <view class="bc-title">🎂 生日礼包</view>
+      <view class="bc-desc" wx:if="{{info.isBirthdayMonth && !info.birthdayClaimed}}">
+        生日月福利已就绪，点击领取升级礼包
+      </view>
+      <view class="bc-desc" wx:elif="{{info.birthdayClaimed}}">今年的生日礼包已领取，明年生日月再见～</view>
+      <view class="bc-desc" wx:else>生日为 {{info.user.birthday}}，生日当月可领取对应等级礼包</view>
+    </view>
+    <view class="bc-btn {{info.isBirthdayMonth && !info.birthdayClaimed ? '' : 'disabled'}}" bindtap="claimBirthday">
+      {{info.birthdayClaimed ? '已领取' : '立即领取'}}
+    </view>
+  </view>
+
+  <!-- 等级体系 -->
+  <view class="section-head"><text class="title">成长体系与特权</text></view>
+  <view class="level-list">
+    <view wx:for="{{levels}}" wx:key="level" class="level-item {{item.current ? 'current' : ''}}">
+      <view class="li-head">
+        <view class="li-badge lvl-{{item.level}}">L{{item.level}}</view>
+        <view class="li-name">{{item.name}}</view>
+        <view class="li-threshold">{{item.level === 1 ? '注册即享' : '成长值 ≥ ' + item.minGrowth}}</view>
+      </view>
+      <view class="li-body">
+        <view class="li-row">专属折扣：{{item.discount / 10}} 折 · 免配送费门槛 ￥{{item.freeThreshold}}</view>
+        <view class="li-privileges">
+          <text class="tag" wx:for="{{item.privileges}}" wx:for-item="p" wx:key="*this">{{p}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 快捷入口 -->
+  <view class="card quick-card">
+    <view class="quick" data-url="/pages/member/checkin/checkin" bindtap="go">
+      <text class="q-emoji">📅</text><text>每日签到</text><text class="q-arrow">›</text>
+    </view>
+    <view class="quick" data-url="/pages/member/points/points" bindtap="go">
+      <text class="q-emoji">🎁</text><text>积分明细与兑换</text><text class="q-arrow">›</text>
+    </view>
+    <view class="quick" data-url="/pages/coupon/coupon" bindtap="go">
+      <text class="q-emoji">🎫</text><text>领券中心</text><text class="q-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="demo-tip">成长值可通过购物、签到、评价与生日礼包获得，演示数据仅保存在本机。</view>
+  <view style="height: 40rpx;"></view>
+</view>

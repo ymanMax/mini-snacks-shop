@@ -1,0 +1,70 @@
+<wxs module="u">
+  function has(arr, v) { return arr && arr.indexOf(v) > -1; }
+  function lt(a, b) { return a < b; }
+  module.exports = { has: has, lt: lt };
+</wxs>
+
+<view class="rv-page" wx:if="{{order}}">
+  <view class="tip">订单完成，晒图评价可得 20 积分奖励～</view>
+
+  <!-- 逐商品评价 -->
+  <view class="goods-block" wx:for="{{goodsReviews}}" wx:key="key">
+    <view class="gb-head">
+      <safe-image class="gb-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+      <text class="gb-name ellipsis">{{item.name}}</text>
+    </view>
+
+    <view class="gb-row">
+      <text class="gb-label">商品评分</text>
+      <view class="gb-stars">
+        <text wx:for="{{starsArr}}" wx:for-item="s" wx:for-index="si" wx:key="*this"
+          class="star {{item.score >= s ? 'on' : ''}}"
+          data-index="{{index}}" data-star="{{s}}" catchtap="pickStar">★</text>
+      </view>
+    </view>
+
+    <view class="gb-row align-top">
+      <text class="gb-label">快捷标签</text>
+      <view class="gb-tags">
+        <text wx:for="{{tagsArr}}" wx:for-item="t" wx:for-index="ti" wx:key="*this"
+          class="gb-tag {{u.has(item.tags, t) ? 'on' : ''}}"
+          data-index="{{index}}" data-tag="{{t}}" catchtap="toggleTag">{{t}}</text>
+      </view>
+    </view>
+
+    <textarea class="gb-textarea" placeholder="说说口感、包装、物流，给小伙伴们参考吧～"
+      value="{{item.content}}" data-index="{{index}}" bindinput="onContent"
+      maxlength="300" auto-height></textarea>
+
+    <view class="img-grid">
+      <view class="img-item" wx:for="{{item.images}}" wx:for-item="img" wx:for-index="ii" wx:key="*this">
+        <safe-image class="img" src="{{img}}" mode="aspectFill"
+          data-index="{{index}}" data-url="{{img}}" bindtap="previewImg"></safe-image>
+        <view class="img-del" data-index="{{index}}" data-img-index="{{ii}}" catchtap="removeImg">✕</view>
+      </view>
+      <view wx:if="{{u.lt(item.images.length, 6)}}" class="img-add"
+        data-index="{{index}}" bindtap="chooseImg">
+        <text class="plus">＋</text>
+        <text class="add-text">晒图</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 店铺评价 -->
+  <view class="shop-block">
+    <view class="sb-title">店铺评分</view>
+    <view class="sb-row" wx:for="{{shopDims}}" wx:key="key">
+      <text class="sb-label">{{item.label}}</text>
+      <view class="gb-stars">
+        <text wx:for="{{starsArr}}" wx:for-item="s" wx:for-index="si" wx:key="*this"
+          class="star {{shop[item.key] >= s ? 'on' : ''}}"
+          data-key="{{item.key}}" data-star="{{s}}" catchtap="pickShopStar">★</text>
+      </view>
+    </view>
+    <textarea class="gb-textarea" placeholder="对店铺服务满意吗？欢迎补充～"
+      value="{{shop.content}}" bindinput="onShopContent" maxlength="200" auto-height></textarea>
+  </view>
+
+  <button class="submit-btn" bindtap="submit" disabled="{{submitting}}">提交评价 · 领 20 积分</button>
+  <view style="height: 40rpx;"></view>
+</view>

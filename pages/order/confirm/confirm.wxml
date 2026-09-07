@@ -1,0 +1,108 @@
+<view class="confirm-page">
+  <view class="demo-tip">演示环境，下单支付均为模拟，不产生真实交易</view>
+
+  <!-- 超范围提示 -->
+  <view class="range-tip" wx:if="{{outRange}}">
+    ⚠️ 该地址距店铺 {{address.distanceKm}}km，超出配送范围，暂不支持配送，请更换地址
+  </view>
+
+  <!-- 地址 -->
+  <view wx:if="{{address}}" class="address-card" bindtap="chooseAddress">
+    <view class="ac-icon">📍</view>
+    <view class="ac-info">
+      <view class="ac-row">
+        <text class="ac-name">{{address.name}}</text>
+        <text class="ac-phone">{{address.phone}}</text>
+        <text class="tag orange" wx:if="{{address.tag}}">{{address.tag}}</text>
+      </view>
+      <view class="ac-detail">{{address.province}}{{address.city}}{{address.district}}{{address.detail}}</view>
+      <view class="ac-distance">距店铺 {{address.distanceKm}} km</view>
+    </view>
+    <text class="cell-arrow"></text>
+  </view>
+  <view wx:else class="address-card empty" bindtap="addAddress">
+    <text class="ac-add">＋ 请添加收货地址</text>
+    <text class="cell-arrow"></text>
+  </view>
+
+  <!-- 商品 -->
+  <view class="goods-card">
+    <view class="cf-row" wx:for="{{items}}" wx:key="goodsId">
+      <safe-image class="cf-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+      <view class="cf-info">
+        <view class="cf-name ellipsis-2">{{item.name}}</view>
+        <view class="cf-spec">{{item.specText}}</view>
+        <view class="cf-bottom">
+          <text class="price">{{item.priceText}}</text>
+          <text class="cf-count">x{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 配送/券/备注 -->
+  <view class="opt-card">
+    <view class="opt-row" bindtap="chooseSlot">
+      <text class="opt-label">配送时间</text>
+      <text class="opt-val">{{slots[slotIndex]}}</text>
+      <text class="cell-arrow"></text>
+    </view>
+    <view class="opt-row" bindtap="chooseCoupon">
+      <text class="opt-label">优惠券</text>
+      <text class="opt-val {{coupon ? 'coupon-on' : ''}}">
+        <block wx:if="{{coupon}}">{{coupon.name}}{{autoCoupon ? '（已自动选优）' : ''}}</block>
+        <block wx:else>不使用优惠券</block>
+      </text>
+      <text class="opt-clear" wx:if="{{coupon}}" catchtap="clearCoupon">✕</text>
+      <text class="cell-arrow"></text>
+    </view>
+    <view class="opt-row">
+      <text class="opt-label">订单备注</text>
+      <input class="opt-input" placeholder="口味偏好、忌口等（选填）" value="{{remark}}" bindinput="onRemark" />
+    </view>
+  </view>
+
+  <!-- 支付方式 -->
+  <view class="opt-card">
+    <view class="opt-row" data-type="1" bindtap="pickPay">
+      <text class="opt-label">支付方式</text>
+      <text class="opt-val">微信支付（模拟）</text>
+      <view class="radio {{payType === 1 ? 'on' : ''}}"></view>
+    </view>
+    <view class="opt-row" data-type="2" bindtap="pickPay">
+      <text class="opt-label"></text>
+      <text class="opt-val">货到付款（送达后付款）</text>
+      <view class="radio {{payType === 2 ? 'on' : ''}}"></view>
+    </view>
+  </view>
+
+  <!-- 金额明细 -->
+  <view class="amount-card">
+    <view class="am-row"><text>商品总额</text><text>{{goodsTotalText}}</text></view>
+    <view class="am-row" wx:if="{{pricing.fullReduce}}">
+      <text>满减优惠</text><text class="discount">-{{fullReduceText}}</text>
+    </view>
+    <view class="am-row" wx:if="{{pricing.couponDiscount}}">
+      <text>优惠券抵扣</text><text class="discount">-{{couponDiscountText}}</text>
+    </view>
+    <view class="am-row">
+      <text>配送费</text>
+      <text class="{{pricing.freight === 0 ? 'free' : ''}}">{{freightText}}</text>
+    </view>
+    <view class="am-tip" wx:if="{{pricing && pricing.freight > 0}}">
+      💡 满 ￥{{pricing.freeThreshold}} 免基础配送费
+    </view>
+  </view>
+
+  <view style="height: 160rpx;"></view>
+
+  <!-- 底部提交 -->
+  <view class="cf-footer">
+    <view class="cf-total">
+      合计：<text class="price big">{{payText}}</text>
+    </view>
+    <button class="cf-submit" bindtap="submit" disabled="{{submitting}}">
+      {{payType === 1 ? '提交订单并支付' : '货到付款下单'}}
+    </button>
+  </view>
+</view>

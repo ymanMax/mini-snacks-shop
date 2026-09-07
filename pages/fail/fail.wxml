@@ -1,12 +1,9 @@
-<view class="first">
-  <view class='header'>
-    <image src='https://636c-cloud1-1g8ynlo793b33c64-1309106795.tcb.qcloud.la/%E9%94%99%E8%AF%AF.png?sign=5d1a500838a13ca108a5faaed3798e47&t=1658220580'></image>
+<view class="fail-page">
+  <view class="fail-emoji">😢</view>
+  <view class="fail-title">支付未完成</view>
+  <view class="fail-sub">演示环境支付可能被取消，您可以重新发起支付</view>
+  <view class="fail-actions">
+    <button class="f-btn plain" bindtap="goHome">回首页</button>
+    <button class="f-btn primary" bindtap="toOrderList">查看待付款订单</button>
   </view>
-  <view class='content'>
-    <view>支付失败</view>
-    <text>请稍后再进行尝试</text>
-  </view>
-  <button class='bottom' type='warn' lang="zh_CN" bindtap="toOrderDetail">
-    查看订单
-  </button>
 </view>

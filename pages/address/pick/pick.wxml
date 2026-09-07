@@ -1,0 +1,51 @@
+<view class="pick-page">
+  <view class="search-row">
+    <input class="poi-search" placeholder="搜索地点、楼宇或街道" value="{{keyword}}" bindinput="onSearch" />
+    <view class="locate-btn {{locating ? 'loading' : ''}}" bindtap="locate">
+      {{locating ? '定位中' : '📍 定位'}}
+    </view>
+  </view>
+
+  <!-- 模拟地图 -->
+  <view class="map">
+    <view class="map-grid"></view>
+    <view class="map-road h1"></view>
+    <view class="map-road h2"></view>
+    <view class="map-road v1"></view>
+    <view class="map-road v2"></view>
+    <view class="map-shop">🏪 零食商城</view>
+    <view class="map-range"></view>
+    <view wx:for="{{filtered}}" wx:key="id" class="map-poi {{selected.id === item.id ? 'on' : ''}} {{item.outRange ? 'off' : ''}}"
+      style="left: {{item.x}}%; top: {{item.y}}%;" data-id="{{item.id}}" bindtap="selectPoi">
+      {{item.outRange ? '🚫' : '📍'}}
+    </view>
+    <view class="map-center" style="left: {{marker.x}}%; top: {{marker.y}}%;">
+      <view class="pulse"></view>
+    </view>
+    <view class="map-tip">模拟地图 · 实际项目接入微信地图选点 wx.chooseLocation</view>
+  </view>
+
+  <!-- 附近地点 -->
+  <view class="poi-head">
+    <text>附近地点</text>
+    <text class="poi-count">{{filtered.length}} 个可选点</text>
+  </view>
+  <view class="poi-list">
+    <view wx:for="{{filtered}}" wx:key="id" class="poi-item {{selected.id === item.id ? 'on' : ''}}"
+      data-id="{{item.id}}" bindtap="selectPoi">
+      <view class="poi-info">
+        <view class="poi-name">
+          {{item.name}}
+          <text class="tag" wx:if="{{selected.id === item.id}}">已选择</text>
+        </view>
+        <view class="poi-addr">{{item.address}} · {{item.distanceKm}}km</view>
+        <view class="poi-freight {{item.outRange ? 'off' : ''}}">{{item.freightText}}</view>
+      </view>
+      <view class="poi-radio {{selected.id === item.id ? 'on' : ''}}"></view>
+    </view>
+  </view>
+
+  <view class="pick-bar">
+    <button class="pick-confirm" bindtap="confirm">确定选点</button>
+  </view>
+</view>

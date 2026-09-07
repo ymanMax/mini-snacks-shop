@@ -1,100 +1,74 @@
-page {
-
+.addr-page { padding-bottom: 30rpx; }
+.filter-bar { display: flex; padding: 20rpx 24rpx 0; }
+.filter-chip {
+  padding: 10rpx 36rpx;
+  background: #fff;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+  color: #555;
+  margin-right: 18rpx;
+}
+.filter-chip.on { background: #b4282d; color: #fff; }
+.addr-item.out-range { opacity: 0.7; }
+.range-warn { color: #b4282d; }
+.addr-list { padding: 24rpx; }
+.addr-item {
   display: flex;
-
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 28rpx 24rpx;
+  margin-bottom: 20rpx;
+}
+.addr-radio {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 2rpx solid #c8c9cc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24rpx;
+  margin: 8rpx 20rpx 0 0;
+  flex-shrink: 0;
+}
+.addr-radio.on { background: #b4282d; border-color: #b4282d; }
+.addr-content { flex: 1; min-width: 0; }
+.addr-line1 { display: flex; align-items: center; flex-wrap: wrap; }
+.addr-name { font-size: 30rpx; font-weight: 700; margin-right: 18rpx; }
+.addr-phone { color: #666; font-size: 26rpx; margin-right: 12rpx; }
+.addr-line2 { font-size: 26rpx; color: #444; margin-top: 12rpx; line-height: 1.5; }
+.addr-distance { font-size: 20rpx; color: #969799; margin-top: 10rpx; }
+.addr-ops {
+  display: flex;
   flex-direction: column;
-
-  height: 100%;
-
+  justify-content: center;
+  margin-left: 12rpx;
 }
-
-.product-name-wrap {
-
-  margin: 0px 10px;
-
-  font-size: 14px;
-
-  color: #404040;
-
-  height: 120rpx;
-
-}
-
-.ui-list-item-info {
-
-  margin: 5px 0px;
-
-}
-
-.ui-list-item-address {
-
-  color: #585c64;
-
-}
-
-.ui-list-item-time {
-
-  margin: 5px 0px;
-
-}
-
-.ui-list-item-del {
-
-  position: absolute;
-
-  right: 10px;
-
-  color: #585c64;
-
-}
-
-/* 分割线 */
-
-.separate {
-
-  margin: 5px 0px;
-
-  height: 2rpx;
-
-  background-color: #f2f2f2;
-
-}
-
-.add-address {
-
-  margin: 0 auto;
-
-  margin-top: 30px;
-
-  width: 150px;
-
-  height: 35px;
-
-  border: 1px #000 solid;
-
-  line-height: 35px;
-
+.op-btn {
+  font-size: 22rpx;
+  color: #666;
+  border: 1rpx solid #dcdee0;
+  border-radius: 999rpx;
+  padding: 6rpx 22rpx;
+  margin: 8rpx 0;
   text-align: center;
-
-  color: #000;
-
-  border-radius: 5rpx;
-
-  display: block;
-
 }
+.op-btn.del { color: #b4282d; border-color: #f1b4b6; }
 
-.add-img {
-  padding-top: 10rpx;
-  margin-right: 15rpx;
-
-  width: 15px;
-
-  height: 15px;
-
+.add-bar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  box-shadow: 0 -4rpx 16rpx rgba(0,0,0,0.05);
 }
-
-.add-address text {
-  position: relative;
-  top: -5rpx;
+.add-btn {
+  background: linear-gradient(90deg, #d8443a, #b4282d);
+  color: #fff;
+  border-radius: 999rpx;
+  font-size: 30rpx;
+  height: 84rpx;
+  line-height: 84rpx;
 }
+.add-btn::after { border: none; }

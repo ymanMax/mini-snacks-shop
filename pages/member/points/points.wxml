@@ -1,0 +1,49 @@
+<view class="pt-page">
+  <!-- 积分卡 -->
+  <view class="pt-hero">
+    <view class="pt-label">我的积分</view>
+    <view class="pt-balance">{{balance}}</view>
+    <view class="pt-sub">积分可兑换优惠券与零食好物</view>
+  </view>
+
+  <!-- 兑换专区 -->
+  <view class="section-head"><text class="title">积分兑换专区</text></view>
+  <view class="ex-grid">
+    <view class="ex-item" wx:for="{{exchange}}" wx:key="id">
+      <safe-image class="ex-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+      <view class="ex-name ellipsis-2">{{item.name}}</view>
+      <view class="ex-bottom">
+        <text class="ex-points">{{item.points}}积分</text>
+        <view class="ex-btn {{balance < item.points ? 'disabled' : ''}}" data-id="{{item.id}}" bindtap="exchange">兑换</view>
+      </view>
+      <view class="ex-redeemed">已兑{{item.redeemed}}份</view>
+    </view>
+  </view>
+
+  <!-- 明细 -->
+  <view class="section-head"><text class="title">积分明细</text></view>
+  <view class="tab-bar">
+    <view wx:for="{{tabs}}" wx:key="key" data-key="{{item.key}}" bindtap="switchTab"
+      class="tab {{activeTab === item.key ? 'on' : ''}}">{{item.label}}</view>
+  </view>
+  <view class="record-card">
+    <view class="record" wx:for="{{records}}" wx:key="id">
+      <view class="rc-left">
+        <view class="rc-title">{{item.desc}}</view>
+        <view class="rc-time">{{item.createTime}} · {{item.typeText}}</view>
+      </view>
+      <view class="rc-points {{item.positive ? 'plus' : 'minus'}}">
+        {{item.positive ? '+' : ''}}{{item.points}}
+      </view>
+    </view>
+    <empty-state wx:if="{{!records.length}}" top="40rpx" img="/static/images/empty_coupon.png"
+      text="暂无积分记录" sub="签到、购物、评价都可以获得积分"></empty-state>
+  </view>
+
+  <!-- 规则 -->
+  <view class="card rules-card">
+    <view class="card-title">积分规则</view>
+    <view class="rule" wx:for="{{rules}}" wx:key="*this">{{index + 1}}. {{item}}</view>
+  </view>
+  <view style="height: 40rpx;"></view>
+</view>

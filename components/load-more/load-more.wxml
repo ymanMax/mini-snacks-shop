@@ -1,0 +1,14 @@
+<view class="load-more" wx:if="{{status !== 'hidden'}}">
+  <block wx:if="{{status === 'loading'}}">
+    <view class="lm-dot"></view>
+    <text>正在加载更多...</text>
+  </block>
+  <view wx:elif="{{status === 'nomore'}}" class="lm-end">
+    <view class="lm-line"></view>
+    <text>{{text || '没有更多了'}}</text>
+    <view class="lm-line"></view>
+  </view>
+  <view wx:elif="{{status === 'error'}}" class="lm-retry" bindtap="retry">
+    <text>加载失败，点击重试</text>
+  </view>
+</view>

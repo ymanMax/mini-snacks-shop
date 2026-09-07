@@ -1,0 +1,130 @@
+<view wx:if="{{order}}" class="od-page">
+  <!-- 状态头部 -->
+  <view class="status-header" style="background: linear-gradient(135deg, {{order.status === 5 || order.status === 6 ? '#9aa0a6' : statusColor}}, #8e1f23);">
+    <view class="sh-title">{{statusText}}</view>
+    <view class="sh-sub" wx:if="{{order.status === 1}}">请在 30 分钟内完成支付，超时订单将自动取消</view>
+    <view class="sh-sub" wx:elif="{{order.status === 2}}">商家已收到订单，正在精心备货中</view>
+    <view class="sh-sub" wx:elif="{{order.status === 3}}">骑手已取货，正在飞奔配送中</view>
+    <view class="sh-sub" wx:elif="{{order.status === 4}}">骑手已到达您附近，请保持电话畅通</view>
+    <view class="sh-sub" wx:elif="{{order.status === 5}}">订单已完成，期待再次光临～</view>
+    <view class="sh-sub" wx:else>订单已取消，欢迎再次选购</view>
+  </view>
+
+  <!-- 配送时间线（已付款后展示） -->
+  <view class="card timeline-card" wx:if="{{order.status >= 2}}">
+    <view class="card-title">配送跟踪</view>
+    <view class="step" wx:for="{{steps}}" wx:key="time">
+      <view class="step-left">
+        <view class="step-dot {{item.current ? 'current' : ''}} {{item.state === 'cancel' ? 'cancel' : ''}}"></view>
+        <view class="step-line" wx:if="{{!item.last}}"></view>
+      </view>
+      <view class="step-body {{item.current ? 'current' : ''}}">
+        <view class="step-title">{{item.title}}</view>
+        <view class="step-remark">{{item.remark}}</view>
+        <view class="step-time">{{item.time}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 骑手卡片 -->
+  <view class="card rider-card" wx:if="{{order.rider}}">
+    <view class="rider-emoji">🏍️</view>
+    <view class="rider-info">
+      <view class="rider-name">配送骑手：{{order.rider.name}}</view>
+      <view class="rider-phone">{{order.rider.phone}}</view>
+    </view>
+    <view class="rider-call" bindtap="callRider">联系骑手</view>
+  </view>
+
+  <!-- 演示：模拟配送进度 -->
+  <view class="demo-card" wx:if="{{order.status === 2 || order.status === 3}}">
+    <text>🎬 演示入口</text>
+    <view class="demo-btn" bindtap="advance">
+      {{order.status === 2 ? '模拟发货 → 配送中' : '模拟送达 → 待收货'}}
+    </view>
+  </view>
+
+  <!-- 地址 -->
+  <view class="card addr-card">
+    <view class="addr-emoji">📍</view>
+    <view class="addr-info">
+      <view class="addr-row">
+        <text class="addr-name">{{order.addressSnapshot.name}}</text>
+        <text class="addr-phone">{{order.addressSnapshot.phone}}</text>
+        <text class="tag orange" wx:if="{{order.addressSnapshot.tag}}">{{order.addressSnapshot.tag}}</text>
+      </view>
+      <view class="addr-detail">{{order.addressSnapshot.fullAddress}}</view>
+      <view class="addr-distance">距店铺 {{order.addressSnapshot.distanceKm}} km · {{order.deliverySlot}}</view>
+    </view>
+  </view>
+
+  <!-- 商品 -->
+  <view class="card goods-card">
+    <view class="goods-row" wx:for="{{order.items}}" wx:key="goodsId">
+      <safe-image class="goods-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+      <view class="goods-info">
+        <view class="goods-name ellipsis-2">{{item.name}}</view>
+        <view class="goods-spec">{{item.specText}}</view>
+        <view class="goods-bottom">
+          <text class="price">{{item.priceText}}</text>
+          <text class="goods-count">x{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 金额明细 -->
+  <view class="card amount-card">
+    <view class="am-row"><text>商品总额</text><text>{{goodsTotalText}}</text></view>
+    <view class="am-row" wx:if="{{order.fullReduce}}">
+      <text>满减优惠</text><text class="discount">-￥{{order.fullReduce}}</text>
+    </view>
+    <view class="am-row" wx:if="{{order.couponTitle}}">
+      <text>{{order.couponTitle}}</text><text class="discount">-￥{{order.couponDiscount}}</text>
+    </view>
+    <view class="am-row">
+      <text>配送费</text>
+      <text class="{{order.freight === 0 ? 'free' : ''}}">{{freightText}}</text>
+    </view>
+    <view class="am-row total">
+      <text>实付款</text>
+      <text class="price big">{{payAmountText}}</text>
+    </view>
+    <view class="pay-type">支付方式：{{order.payType === 1 ? '微信支付（模拟）' : '货到付款'}}</view>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="card info-card">
+    <view class="card-title">订单信息</view>
+    <view class="info-row">
+      <text class="info-label">订单编号</text>
+      <text class="info-val">{{order.orderNo}}</text>
+      <text class="copy-btn" bindtap="copyOrderNo">复制</text>
+    </view>
+    <view class="info-row"><text class="info-label">下单时间</text><text class="info-val">{{order.createTime}}</text></view>
+    <view class="info-row"><text class="info-label">配送日期</text><text class="info-val">{{order.deliveryDate}}</text></view>
+    <view class="info-row"><text class="info-label">配送时段</text><text class="info-val">{{order.deliverySlot}}</text></view>
+    <view class="info-row" wx:if="{{order.remark}}"><text class="info-label">订单备注</text><text class="info-val">{{order.remark}}</text></view>
+  </view>
+
+  <view class="demo-tip">演示环境，配送进度与支付均为模拟，不产生真实交易</view>
+  <view style="height: 140rpx;"></view>
+
+  <!-- 底部操作 -->
+  <view class="od-footer">
+    <view wx:if="{{order.status === 1}}" class="f-btn plain" bindtap="cancelOrder">取消订单</view>
+    <view wx:if="{{order.status === 1}}" class="f-btn primary" bindtap="payOrder">立即支付</view>
+    <view wx:if="{{order.status === 2}}" class="f-btn primary" bindtap="advance">模拟发货</view>
+    <view wx:if="{{order.status === 3}}" class="f-btn primary" bindtap="advance">查看配送进度</view>
+    <view wx:if="{{order.status === 4}}" class="f-btn plain" bindtap="callRider">联系骑手</view>
+    <view wx:if="{{order.status === 4}}" class="f-btn plain" bindtap="applyAftersale">申请售后</view>
+    <view wx:if="{{order.status === 4}}" class="f-btn primary" bindtap="confirmOrder">确认收货</view>
+    <block wx:if="{{order.status === 5}}">
+      <view class="f-btn plain" bindtap="applyAftersale">申请售后</view>
+      <view wx:if="{{!order.isReviewed}}" class="f-btn primary" bindtap="goReview">去评价</view>
+      <view class="f-btn plain" bindtap="reorder">再来一单</view>
+    </block>
+    <view wx:if="{{order.status === 3}}" class="f-btn plain" bindtap="applyAftersale">申请售后</view>
+    <view wx:if="{{order.status === 6}}" class="f-btn plain" bindtap="goList">查看订单</view>
+  </view>
+</view>

@@ -1,0 +1,62 @@
+<view class="apply-page" wx:if="{{order}}">
+  <view class="demo-tip">演示环境，售后退款均为模拟流程，不产生真实交易</view>
+
+  <!-- 售后类型 -->
+  <view class="card">
+    <view class="block-title">售后类型</view>
+    <view class="type-list">
+      <view wx:for="{{types}}" wx:key="type" data-type="{{item.type}}" bindtap="pickType"
+        class="type-item {{activeType === item.type ? 'on' : ''}}">
+        <view class="type-icon">{{item.icon}}</view>
+        <view class="type-name">{{item.name}}</view>
+        <view class="type-desc">{{item.desc}}</view>
+        <view class="type-check" wx:if="{{activeType === item.type}}">✓</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 申请原因 -->
+  <view class="card">
+    <view class="block-title">申请原因</view>
+    <view class="reason-list">
+      <view wx:for="{{reasons}}" wx:key="*this" data-index="{{index}}" bindtap="pickReason"
+        class="reason-item {{reasonIndex === index ? 'on' : ''}}">{{item}}</view>
+    </view>
+  </view>
+
+  <!-- 问题描述 -->
+  <view class="card">
+    <view class="block-title">问题描述（选填）</view>
+    <textarea class="desc-input" placeholder="请描述具体问题，如破损程度、口味异常等，最多 200 字"
+      maxlength="200" value="{{desc}}" bindinput="onDesc" auto-height></textarea>
+    <view class="upload-tip">📷 凭证照片可在客服会话中发送（演示）</view>
+  </view>
+
+  <!-- 订单商品 -->
+  <view class="card">
+    <view class="block-title">订单商品</view>
+    <view class="goods-row" wx:for="{{goods}}" wx:key="goodsId">
+      <safe-image class="g-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+      <view class="g-info">
+        <view class="g-name ellipsis-2">{{item.name}}</view>
+        <view class="g-spec">{{item.specText}}</view>
+      </view>
+      <view class="g-count">x{{item.count}}</view>
+    </view>
+    <view class="refund-amount" wx:if="{{activeType !== 3}}">
+      <text>退款金额</text>
+      <text class="price big">{{amountText}}</text>
+    </view>
+    <view class="refund-amount" wx:else>
+      <text>换货运费</text>
+      <text class="free">商家承担</text>
+    </view>
+  </view>
+
+  <view style="height: 150rpx;"></view>
+
+  <view class="bottom-bar">
+    <view class="service-btn" bindtap="contactService">联系客服</view>
+    <button class="submit-btn" bindtap="submit" disabled="{{submitting}}">提交申请</button>
+  </view>
+</view>

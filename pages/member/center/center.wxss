@@ -1,0 +1,102 @@
+.mc-page { padding-bottom: 30rpx; }
+
+/* 会员卡 */
+.member-card {
+  margin: 24rpx;
+  border-radius: 20rpx;
+  padding: 36rpx 32rpx 28rpx;
+  color: #fff;
+  background: linear-gradient(135deg, #4a4a68, #2f2f44);
+  box-shadow: 0 10rpx 30rpx rgba(0,0,0,0.18);
+  position: relative;
+  overflow: hidden;
+}
+.member-card::after {
+  content: '';
+  position: absolute;
+  right: -60rpx;
+  top: -60rpx;
+  width: 240rpx;
+  height: 240rpx;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+}
+.level-2 { background: linear-gradient(135deg, #9aa3b8, #6b7385); }
+.level-3 { background: linear-gradient(135deg, #e0a64b, #b8801f); }
+.level-4 { background: linear-gradient(135deg, #6b8fd4, #3d5a99); }
+.level-5 { background: linear-gradient(135deg, #5e57e8, #8a5cf0); }
+.mc-top { display: flex; align-items: center; }
+.mc-avatar { width: 100rpx; height: 100rpx; border-radius: 50%; border: 3rpx solid rgba(255,255,255,0.6); }
+.mc-user { flex: 1; margin-left: 20rpx; }
+.mc-name { font-size: 36rpx; font-weight: 700; }
+.mc-level { font-size: 22rpx; background: rgba(255,255,255,0.2); display: inline-block; padding: 2rpx 18rpx; border-radius: 999rpx; margin-top: 8rpx; }
+.mc-no { font-size: 20rpx; opacity: 0.7; }
+.mc-progress { margin-top: 30rpx; }
+.mc-progress-label { display: flex; justify-content: space-between; font-size: 22rpx; opacity: 0.9; }
+.mc-bar { height: 12rpx; background: rgba(255,255,255,0.25); border-radius: 999rpx; margin-top: 10rpx; overflow: hidden; }
+.mc-bar-in { height: 100%; background: linear-gradient(90deg, #ffd98a, #fff0c4); border-radius: 999rpx; }
+.mc-stats { display: flex; margin-top: 28rpx; }
+.mc-stat { flex: 1; text-align: center; }
+.mc-stat .num { display: block; font-size: 34rpx; font-weight: 700; }
+.mc-stat .lab { font-size: 20rpx; opacity: 0.8; }
+
+/* 生日礼包 */
+.birthday-card { display: flex; align-items: center; }
+.bc-left { flex: 1; }
+.bc-title { font-size: 30rpx; font-weight: 700; }
+.bc-desc { font-size: 22rpx; color: #969799; margin-top: 10rpx; line-height: 1.5; }
+.bc-btn {
+  background: linear-gradient(90deg, #d8443a, #b4282d);
+  color: #fff;
+  font-size: 24rpx;
+  padding: 14rpx 28rpx;
+  border-radius: 999rpx;
+  margin-left: 20rpx;
+}
+.bc-btn.disabled { background: #dcdee0; }
+
+/* 等级 */
+.level-list { padding: 0 24rpx; }
+.level-item {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  border: 2rpx solid transparent;
+}
+.level-item.current { border-color: #b4282d; box-shadow: 0 6rpx 20rpx rgba(180,40,45,0.12); }
+.li-head { display: flex; align-items: center; }
+.li-badge {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 64rpx;
+  font-weight: 700;
+  color: #fff;
+  font-size: 26rpx;
+  margin-right: 18rpx;
+}
+.lvl-1 { background: #9aa3b8; }
+.lvl-2 { background: #8b95a9; }
+.lvl-3 { background: #d3952e; }
+.lvl-4 { background: #4d73bf; }
+.lvl-5 { background: #745ee8; }
+.li-name { font-size: 30rpx; font-weight: 700; flex: 1; }
+.li-threshold { font-size: 22rpx; color: #969799; }
+.li-body { margin-top: 16rpx; }
+.li-row { font-size: 24rpx; color: #b4282d; margin-bottom: 12rpx; }
+.li-privileges { display: flex; flex-wrap: wrap; }
+.li-privileges .tag { margin-bottom: 10rpx; }
+
+.quick-card { padding: 0 24rpx; }
+.quick {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+  font-size: 28rpx;
+}
+.quick:last-child { border-bottom: none; }
+.q-emoji { font-size: 34rpx; margin-right: 16rpx; }
+.q-arrow { margin-left: auto; color: #c0c4cc; font-size: 34rpx; }

@@ -1,0 +1,62 @@
+<view class="gp-page">
+  <view class="gp-banner">
+    <view class="gb-title">👥 拼团专区</view>
+    <view class="gb-sub">多人拼单更划算，24 小时未成团自动退款</view>
+  </view>
+
+  <view class="tabs">
+    <view class="tab {{tab === 'active' ? 'on' : ''}}" data-tab="active" bindtap="switchTab">可参与拼团</view>
+    <view class="tab {{tab === 'mine' ? 'on' : ''}}" data-tab="mine" bindtap="switchTab">我的拼团</view>
+  </view>
+
+  <!-- 可参与 -->
+  <view wx:if="{{tab === 'active'}}">
+    <view class="gp-card" wx:for="{{groups}}" wx:key="id" data-id="{{item.id}}" bindtap="goGroupDetail">
+      <safe-image class="gp-img" src="{{item.pic}}" mode="aspectFill" data-goods="{{item.goodsId}}" catchtap="goDetail"></safe-image>
+      <view class="gp-info">
+        <view class="gp-name ellipsis-2" data-goods="{{item.goodsId}}" bindtap="goDetail">{{item.name}}</view>
+        <view class="gp-price">
+          <text class="gp-group-price">{{item.groupText}}</text>
+          <text class="gp-orig">单买 ￥{{item.origText}}</text>
+        </view>
+        <view class="gp-members">
+          <block wx:for="{{item.slots}}" wx:for-item="m" wx:key="*this">
+            <image wx:if="{{!m.empty}}" class="gp-avatar" src="{{m.avatar}}"></image>
+            <view wx:else class="gp-avatar empty-add">+</view>
+          </block>
+          <text class="gp-rule">{{item.requiredCount}}人团 · 还差{{item.remain}}人</text>
+        </view>
+        <view class="gp-bottom">
+          <view class="gp-cd">⏱ {{item.cdText}}</view>
+          <view class="gp-btn" data-id="{{item.id}}" catchtap="join">去拼单</view>
+        </view>
+        <view class="gp-detail-link" data-id="{{item.id}}" catchtap="goGroupDetail">查看拼团详情 ›</view>
+      </view>
+    </view>
+
+    <empty-state wx:if="{{!groups.length}}" img="/static/images/empty_order.png"
+      text="暂无可参与的拼团" sub="稍后再来看看吧"></empty-state>
+  </view>
+
+  <!-- 我的拼团 -->
+  <view wx:else>
+    <view class="gp-card" wx:for="{{mine}}" wx:key="id" data-id="{{item.id}}" bindtap="goGroupDetail">
+      <safe-image class="gp-img" src="{{item.pic}}" mode="aspectFill" data-goods="{{item.goodsId}}" catchtap="goDetail"></safe-image>
+      <view class="gp-info">
+        <view class="gp-name ellipsis-2" data-goods="{{item.goodsId}}" bindtap="goDetail">{{item.name}}</view>
+        <view class="gp-price">
+          <text class="gp-group-price">{{item.groupText}}</text>
+          <text class="gp-status {{item.status === 2 ? 'ok' : ''}} {{item.status === 3 ? 'fail' : ''}}">{{item.status === 2 ? '已成团' : (item.status === 3 ? '未成团·已退款' : '拼团中')}}</text>
+        </view>
+        <view class="gp-members">
+          <image wx:for="{{item.members}}" wx:for-item="m" wx:key="name" class="gp-avatar" src="{{m.avatar}}"></image>
+          <text class="gp-rule" wx:if="{{item.status === 2}}">成团时间 {{item.successTime}}</text>
+          <text class="gp-rule" wx:else>{{item.rules}}</text>
+        </view>
+      </view>
+    </view>
+    <empty-state wx:if="{{!mine.length}}" img="/static/images/empty_order.png"
+      text="还没有拼团记录" sub="拉上好友一起拼更划算" btnText="去拼团" bindbtn="switchTab" data-tab="active"></empty-state>
+  </view>
+  <view style="height: 30rpx;"></view>
+</view>

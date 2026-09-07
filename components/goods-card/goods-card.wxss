@@ -1,0 +1,99 @@
+:host { display: block; }
+.card-hover { opacity: 0.85; }
+
+/* 网格卡片 */
+.g-card {
+  width: 340rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+}
+.g-img-wrap { position: relative; width: 100%; height: 340rpx; }
+.g-img { width: 100%; height: 340rpx; }
+.g-video {
+  position: absolute;
+  right: 12rpx;
+  top: 12rpx;
+  width: 44rpx;
+  height: 44rpx;
+  line-height: 44rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 22rpx;
+}
+.g-soldout {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.55);
+  color: #969799;
+  font-size: 34rpx;
+  font-weight: 600;
+}
+.g-info { padding: 14rpx 16rpx 18rpx; }
+.g-name {
+  font-size: 27rpx;
+  color: #222;
+  line-height: 1.35;
+  height: 74rpx;
+}
+.g-tags { margin-top: 10rpx; height: 32rpx; overflow: hidden; white-space: nowrap; }
+.g-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12rpx;
+}
+.g-price { display: flex; align-items: baseline; }
+.g-price .int { font-size: 36rpx; }
+.price-text { font-size: 36rpx; }
+.price-text.lg { font-size: 42rpx; }
+.g-add {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d8443a, #b4282d);
+  color: #fff;
+  font-size: 44rpx;
+  text-align: center;
+  line-height: 44rpx;
+  box-shadow: 0 4rpx 10rpx rgba(180, 40, 45, 0.3);
+}
+.g-add.sm {
+  width: auto;
+  height: 48rpx;
+  padding: 0 22rpx;
+  border-radius: 999rpx;
+  font-size: 22rpx;
+  line-height: 48rpx;
+}
+.g-sales { margin-top: 8rpx; font-size: 20rpx; color: #969799; }
+
+/* 横向列表卡片 */
+.l-card {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+.l-img-wrap { position: relative; width: 220rpx; height: 220rpx; margin-right: 20rpx; flex-shrink: 0; }
+.l-img { width: 220rpx; height: 220rpx; border-radius: 12rpx; }
+.l-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.l-name { font-size: 30rpx; line-height: 1.35; height: 80rpx; color: #222; }
+.l-desc { font-size: 22rpx; color: #969799; margin-top: 8rpx; }
+.l-bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.l-bottom .g-price .int { font-size: 40rpx; }

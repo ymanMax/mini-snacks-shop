@@ -1,81 +1,31 @@
-const {
-  getBanner,
-  getThemeInfo
-} = require('../../api/api.js');
-
-// 获取应用实例
-const app = getApp()
+// pages/list/list.js —— 主题商品列表
+const homeApi = require('../../api/home.js')
+const { quickAdd } = require('../../utils/cart.js')
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    products: [],
-    pic: ""
+    theme: null,
+    goods: [],
+    loading: true
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    const that = this;
-    let item = options.item
+  onLoad(options) {
+    const id = options.item || options.id || 1
+    homeApi.getThemeDetail(id).then((theme) => {
+      wx.setNavigationBarTitle({ title: theme.name })
+      this.setData({ theme: theme, goods: theme.goods, loading: false })
+    }).catch(() => this.setData({ loading: false }))
+  },
 
-    getThemeInfo(item).then(res => {
-      that.setData({
-        products: res.products,
-        pic: res.head_img.url
-      })
+  onPullDownRefresh() {
+    if (!this.data.theme) return
+    homeApi.getThemeDetail(this.data.theme.id).then((theme) => {
+      this.setData({ theme: theme, goods: theme.goods })
+      wx.stopPullDownRefresh()
     })
   },
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
 
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
-  onReachBottom() {
-
-  },
-
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
-
+  onAdd(e) {
+    quickAdd(e.detail.item)
   }
 })

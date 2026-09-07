@@ -1,0 +1,119 @@
+.confirm-page { padding-bottom: 20rpx; }
+.range-tip {
+  margin: 16rpx 24rpx 0;
+  padding: 16rpx 20rpx;
+  background: #fdecec;
+  color: #b4282d;
+  font-size: 24rpx;
+  border-radius: 12rpx;
+}
+
+/* 地址卡 */
+.address-card {
+  position: relative;
+  background: linear-gradient(135deg, #d8443a, #b4282d);
+  margin: 24rpx;
+  border-radius: 16rpx;
+  padding: 30rpx 60rpx 30rpx 84rpx;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+.address-card.empty { padding: 40rpx 60rpx 40rpx 40rpx; justify-content: space-between; }
+.ac-icon { position: absolute; left: 28rpx; top: 34rpx; font-size: 40rpx; }
+.ac-info { flex: 1; }
+.ac-row { display: flex; align-items: center; }
+.ac-name { font-size: 32rpx; font-weight: 700; margin-right: 20rpx; }
+.ac-phone { font-size: 26rpx; opacity: 0.9; }
+.ac-row .tag { margin-left: 16rpx; }
+.ac-detail { font-size: 26rpx; margin-top: 12rpx; line-height: 1.5; }
+.ac-distance { font-size: 22rpx; opacity: 0.8; margin-top: 8rpx; }
+.address-card .cell-arrow::after { border-color: #fff; }
+.ac-add { font-size: 30rpx; flex: 1; }
+
+/* 商品 */
+.goods-card { background: #fff; margin: 0 24rpx 20rpx; border-radius: 16rpx; padding: 10rpx 24rpx; }
+.cf-row { display: flex; padding: 20rpx 0; border-bottom: 1rpx solid #f5f5f5; }
+.cf-row:last-child { border-bottom: none; }
+.cf-img { width: 150rpx; height: 150rpx; border-radius: 12rpx; margin-right: 20rpx; }
+.cf-info { flex: 1; min-width: 0; }
+.cf-name { font-size: 28rpx; line-height: 1.35; }
+.cf-spec {
+  display: inline-block;
+  background: #f5f6f7;
+  color: #666;
+  font-size: 20rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+  margin-top: 10rpx;
+}
+.cf-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 14rpx; }
+.cf-bottom .int { font-size: 32rpx; }
+.cf-count { color: #969799; font-size: 26rpx; }
+
+/* 选项卡 */
+.opt-card { background: #fff; margin: 0 24rpx 20rpx; border-radius: 16rpx; }
+.opt-row {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 24rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+  min-height: 40rpx;
+}
+.opt-row:last-child { border-bottom: none; }
+.opt-label { width: 160rpx; color: #666; font-size: 28rpx; flex-shrink: 0; }
+.opt-val { flex: 1; font-size: 28rpx; color: #333; text-align: right; margin-right: 10rpx; }
+.opt-val.coupon-on { color: #b4282d; }
+.opt-clear { color: #c0c4cc; padding: 0 10rpx; }
+.opt-input { flex: 1; text-align: right; font-size: 28rpx; }
+.radio {
+  width: 36rpx;
+  height: 36rpx;
+  border: 2rpx solid #c8c9cc;
+  border-radius: 50%;
+  position: relative;
+  flex-shrink: 0;
+}
+.radio.on { border-color: #b4282d; }
+.radio.on::after {
+  content: '';
+  position: absolute;
+  top: 7rpx;
+  right: 7rpx;
+  bottom: 7rpx;
+  left: 7rpx;
+  border-radius: 50%;
+  background: #b4282d;
+}
+
+/* 金额 */
+.amount-card { background: #fff; margin: 0 24rpx 20rpx; border-radius: 16rpx; padding: 10rpx 24rpx; }
+.am-row { display: flex; justify-content: space-between; font-size: 26rpx; color: #555; padding: 16rpx 0; }
+.am-row .discount { color: #b4282d; }
+.am-tip { font-size: 22rpx; color: #ff9900; padding-bottom: 16rpx; }
+
+/* 底部 */
+.cf-footer {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  height: calc(110rpx + env(safe-area-inset-bottom));
+  padding: 10rpx 24rpx env(safe-area-inset-bottom);
+  background: #fff;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 -4rpx 16rpx rgba(0,0,0,0.05);
+  z-index: 50;
+}
+.cf-total { flex: 1; font-size: 26rpx; }
+.cf-total .int { font-size: 40rpx; }
+.cf-submit {
+  background: linear-gradient(90deg, #d8443a, #b4282d);
+  color: #fff;
+  font-size: 30rpx;
+  border-radius: 999rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  padding: 0 60rpx;
+}
+.cf-submit::after { border: none; }
+.cf-submit[disabled] { background: #f1b4b6; color: #fff; }

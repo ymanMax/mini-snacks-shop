@@ -1,0 +1,59 @@
+<view class="sk-page">
+  <!-- 头部 -->
+  <view class="sk-hero">
+    <view class="hero-title">⚡ 限时抢购 · 每日三场</view>
+    <view class="hero-sub">10:00 / 14:00 / 20:00 准时开抢，低至 6.2 折</view>
+    <view class="hero-cd">
+      <text class="cd-label">{{cdLabel}}</text>
+      <text class="cd-num">{{cdH}}</text>:<text class="cd-num">{{cdM}}</text>:<text class="cd-num">{{cdS}}</text>
+    </view>
+  </view>
+
+  <!-- 场次 -->
+  <view class="session-tabs">
+    <view wx:for="{{sessions}}" wx:key="id" data-id="{{item.id}}" bindtap="switchTab"
+      class="st-item {{tabId === item.id ? 'on' : ''}} {{item.status === 1 ? 'live' : ''}}">
+      <view class="st-time">{{item.label}}</view>
+      <view class="st-state">
+        <text wx:if="{{item.status === 1}}">抢购中</text>
+        <text wx:elif="{{item.status === 0}}">即将开始</text>
+        <text wx:else>已结束</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 商品 -->
+  <block wx:for="{{sessions}}" wx:key="id">
+    <view wx:if="{{item.id === tabId}}" class="goods-list">
+      <view class="sk-row" wx:for="{{item.goods}}" wx:for-item="g" wx:key="goodsId">
+        <safe-image class="sk-img" src="{{g.pic}}" mode="aspectFill" data-id="{{g.goodsId}}" bindtap="buy"></safe-image>
+        <view class="sk-info">
+          <view class="sk-name ellipsis-2" data-id="{{g.goodsId}}" bindtap="buy">{{g.name}}</view>
+          <view class="sk-prices">
+            <text class="sk-now">{{g.seckillText}}</text>
+            <text class="sk-orig">{{g.origText}}</text>
+            <text class="tag">限购{{g.limit}}件</text>
+          </view>
+          <view class="sk-bar">
+            <view class="sk-bar-in" style="width: {{g.soldPercent}}%"></view>
+            <text class="sk-bar-text">已抢 {{g.soldPercent}}%</text>
+          </view>
+        </view>
+        <view class="sk-action">
+          <block wx:if="{{item.status === 1}}">
+            <view class="sk-buy" data-id="{{g.goodsId}}" bindtap="buy">立即抢购</view>
+          </block>
+          <block wx:elif="{{item.status === 0}}">
+            <view wx:if="{{reminded[item.id]}}" class="sk-reminded">已提醒</view>
+            <view wx:else class="sk-remind" data-id="{{item.id}}" bindtap="remind">开抢提醒</view>
+          </block>
+          <block wx:else>
+            <view class="sk-end">已结束</view>
+          </block>
+        </view>
+      </view>
+    </view>
+  </block>
+
+  <view class="sk-tip">⚠️ 演示环境，秒杀价格与进度均为模拟，不产生真实交易</view>
+</view>

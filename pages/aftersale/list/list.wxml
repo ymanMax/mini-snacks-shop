@@ -1,0 +1,27 @@
+<view class="as-page">
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="key" data-key="{{item.key}}" bindtap="switchTab"
+      class="tab {{active === item.key ? 'on' : ''}}">{{item.label}}</view>
+  </view>
+
+  <view wx:if="{{list.length}}" class="ticket-list">
+    <view class="ticket" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+      <view class="tk-head">
+        <text class="tk-no">售后单号 {{item.id}}</text>
+        <text class="tk-status status-{{item.status}}">{{item.statusText}}</text>
+      </view>
+      <view class="tk-goods" wx:for="{{item.goods}}" wx:for-item="g" wx:key="goodsId">
+        <safe-image class="tk-img" src="{{g.pic}}" mode="aspectFill"></safe-image>
+        <view class="tk-name ellipsis">{{g.name}}</view>
+        <view class="tk-count">x{{g.count}}</view>
+      </view>
+      <view class="tk-foot">
+        <text class="tk-type">{{item.typeText}} · {{item.reason}}</text>
+        <text class="tk-amount" wx:if="{{item.amount > 0}}">退款 ￥{{item.amount}}</text>
+      </view>
+    </view>
+  </view>
+
+  <empty-state wx:elif="{{!loading}}" img="/static/images/empty_order.png"
+    text="还没有售后工单" sub="商品有问题可以在订单详情申请售后" btnText="去订单看看" bindbtn="goOrder"></empty-state>
+</view>

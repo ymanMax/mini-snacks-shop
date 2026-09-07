@@ -1,3 +1,5 @@
 {
+  "navigationBarTitleText": "精选主题",
+  "enablePullDownRefresh": true,
   "usingComponents": {}
 }

@@ -1,0 +1,45 @@
+<!-- 双列网格卡片 -->
+<view wx:if="{{mode === 'grid'}}" class="g-card custom-class" hover-class="card-hover" bindtap="goDetail">
+  <view class="g-img-wrap">
+    <safe-image class="g-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+    <view class="g-video" wx:if="{{item.videoUrl}}">▶</view>
+    <view wx:if="{{item.stock === 0}}" class="g-soldout">已售罄</view>
+  </view>
+  <view class="g-info">
+    <view class="g-name ellipsis-2">{{item.name}}</view>
+    <view class="g-tags">
+      <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:if="{{index < 2}}">{{item}}</text>
+    </view>
+    <view class="g-bottom">
+      <view class="g-price">
+        <text class="price price-text">{{priceText}}</text>
+        <text class="price-orig" wx:if="{{origText}}">￥{{origText}}</text>
+      </view>
+      <view wx:if="{{showAdd && item.stock > 0}}" class="g-add" catchtap="onAdd">+</view>
+    </view>
+    <view class="g-sales">已售 {{salesText}} · {{item.origin}}</view>
+  </view>
+</view>
+
+<!-- 横向列表卡片 -->
+<view wx:else class="l-card custom-class" hover-class="card-hover" bindtap="goDetail">
+  <view class="l-img-wrap">
+    <safe-image class="l-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+    <view wx:if="{{item.stock === 0}}" class="g-soldout">已售罄</view>
+  </view>
+  <view class="l-info">
+    <view class="l-name ellipsis-2">{{item.name}}</view>
+    <view class="g-tags">
+      <text class="tag" wx:for="{{item.tags}}" wx:key="*this" wx:if="{{index < 2}}">{{item}}</text>
+      <text class="tag green" wx:if="{{item.videoUrl}}">实拍视频</text>
+    </view>
+    <view class="l-desc ellipsis">{{item.categoryName}} · {{item.origin}} · 已售{{salesText}}</view>
+    <view class="l-bottom">
+      <view class="g-price">
+        <text class="price price-text lg">{{priceText}}</text>
+        <text class="price-orig" wx:if="{{origText}}">￥{{origText}}</text>
+      </view>
+      <view wx:if="{{showAdd && item.stock > 0}}" class="g-add sm" catchtap="onAdd">加入购物车</view>
+    </view>
+  </view>
+</view>

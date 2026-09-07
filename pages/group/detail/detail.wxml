@@ -1,0 +1,125 @@
+<view class="gd-page" wx:if="{{group}}">
+  <!-- 状态条 -->
+  <view class="gd-head {{group.status === 2 ? 'done' : ''}} {{group.status === 3 ? 'fail' : ''}}">
+    <block wx:if="{{group.status === 1}}">
+      <view class="gd-title">{{group.mine ? '快邀请好友参团' : '该团还差 ' + group.remain + ' 人'}}</view>
+      <view class="gd-cd">
+        <text class="cd-label">距结束</text>
+        <text class="cd-text">{{cdText}}</text>
+      </view>
+    </block>
+    <block wx:elif="{{group.status === 2}}">
+      <view class="gd-title">🎉 拼团成功，商品即将发出</view>
+      <view class="gd-sub">商家正在备货，请留意配送消息</view>
+    </block>
+    <block wx:else>
+      <view class="gd-title">拼团未成功，款项已退回</view>
+      <view class="gd-sub">24 小时内未成团，系统自动原路退款（演示）</view>
+    </block>
+  </view>
+
+  <!-- 商品 -->
+  <view class="goods-card">
+    <safe-image class="g-img" src="{{group.pic}}" mode="aspectFill"></safe-image>
+    <view class="g-info">
+      <view class="g-name ellipsis-2">{{group.name}}</view>
+      <view class="g-prices">
+        <text class="g-group">拼团价 {{group.groupText}}</text>
+        <text class="g-orig">单买 ￥{{group.origText}}</text>
+      </view>
+      <view class="g-rule">{{group.requiredCount}} 人团 · 24 小时未成团自动退款</view>
+    </view>
+  </view>
+
+  <!-- 成员 -->
+  <view class="member-card">
+    <view class="mc-title">
+      <text>{{group.requiredCount}} 人拼团</text>
+      <text class="mc-progress">{{group.joinedCount}}/{{group.requiredCount}}</text>
+    </view>
+    <view class="mc-bar">
+      <view class="mc-bar-in" style="width: {{group.joinedCount / group.requiredCount * 100}}%"></view>
+    </view>
+    <view class="mc-list">
+      <block wx:for="{{group.slots}}" wx:key="*this">
+        <view wx:if="{{!item.empty}}" class="mc-item">
+          <safe-image class="mc-avatar" src="{{item.avatar}}" mode="aspectFill"></safe-image>
+          <view class="mc-name">
+            <text wx:if="{{item.isLeader}}" class="leader">团长</text>
+            <text wx:else>已参团</text>
+          </view>
+        </view>
+        <view wx:else class="mc-item">
+          <view class="mc-avatar empty">＋</view>
+          <view class="mc-name wait">等待参团</view>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 步骤 -->
+  <view class="card steps-card">
+    <view class="step-item" wx:for="{{steps}}" wx:key="title">
+      <view class="step-col">
+        <view class="step-dot {{item.done ? 'on' : ''}}">✓</view>
+        <view class="step-line" wx:if="{{index < steps.length - 1}}"></view>
+      </view>
+      <view class="step-text">
+        <view class="st-title">{{item.title}}</view>
+        <view class="st-desc">{{item.desc}}</view>
+      </view>
+    </view>
+  </view>
+
+  <view class="rules-card">
+    <view class="rc-title">拼团规则</view>
+    <view class="rc-line">1. 达到 {{group.requiredCount}} 人即拼团成功，按拼团价发货；</view>
+    <view class="rc-line">2. 24 小时内未成团，系统自动原路退款（演示不产生真实交易）；</view>
+    <view class="rc-line">3. 分享给好友参团成团后，团长可领邀请奖励（50 积分 + 5 元券）。</view>
+  </view>
+
+  <view style="height: 150rpx;"></view>
+
+  <!-- 底部操作 -->
+  <view class="gd-footer">
+    <block wx:if="{{group.status === 1}}">
+      <block wx:if="{{group.mine}}">
+        <button class="f-half plain" open-type="share">邀请好友</button>
+        <view class="f-half primary" bindtap="simulateJoin">模拟好友参团</view>
+      </block>
+      <block wx:else>
+        <view class="f-go" bindtap="join">一键参团 · {{group.groupText}}</view>
+      </block>
+    </block>
+    <block wx:elif="{{group.status === 3}}">
+      <view class="f-half plain" bindtap="goGoods">查看商品</view>
+      <view class="f-go" bindtap="goHome">去拼团专区</view>
+    </block>
+    <block wx:else>
+      <view class="f-half plain" bindtap="goGoods">再逛逛</view>
+      <view wx:if="{{group.inviterRewarded}}" class="f-half disabled">奖励已领取</view>
+      <view wx:else class="f-half primary" bindtap="claimReward">领取邀请奖励</view>
+    </block>
+  </view>
+
+  <!-- 成团成功弹层 -->
+  <view wx:if="{{successVisible}}" class="sheet-mask" bindtap="closeSuccess">
+    <view class="success-sheet" catchtap="noop">
+      <view class="ss-emoji">🎉</view>
+      <view class="ss-title">拼团成功</view>
+      <view class="ss-sub">{{group.name}} 已成团，商家将尽快发货</view>
+      <view class="ss-reward" wx:if="{{rewardVisible && !group.inviterRewarded}}">
+        <view class="ssr-title">🎁 邀请奖励</view>
+        <view class="ssr-desc">50 积分 + 5 元无门槛券</view>
+      </view>
+      <view class="ss-actions">
+        <button class="btn btn-gray" bindtap="goHome">回首页</button>
+        <button class="btn btn-primary" style="margin-left:20rpx;" wx:if="{{rewardVisible && !group.inviterRewarded}}" bindtap="claimReward">领取奖励</button>
+        <button class="btn btn-primary" style="margin-left:20rpx;" wx:else bindtap="closeSuccess">知道了</button>
+      </view>
+    </view>
+  </view>
+</view>
+
+<empty-state wx:elif="{{!loading}}" img="/static/images/empty_order.png"
+  text="拼团不存在或已结束" btnText="去拼团专区" bindbtn="goHome"></empty-state>

@@ -1,0 +1,6 @@
+<view class="empty custom-class" style="padding-top: {{top}};">
+  <safe-image class="empty-img" src="{{img}}" mode="aspectFit"></safe-image>
+  <view class="empty-text">{{text}}</view>
+  <view class="empty-sub" wx:if="{{sub}}">{{sub}}</view>
+  <button wx:if="{{btnText}}" class="empty-btn" hover-class="btn-hover" bindtap="onBtn">{{btnText}}</button>
+</view>

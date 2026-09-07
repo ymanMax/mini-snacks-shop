@@ -1,0 +1,92 @@
+.cf-page { padding-bottom: 40rpx; }
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  background: #fff;
+  height: 88rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  line-height: 88rpx;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+}
+.tab.on { color: #b4282d; font-weight: 700; }
+.tab.on::after {
+  content: '';
+  position: absolute;
+  bottom: 10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  border-radius: 3rpx;
+  background: #b4282d;
+}
+
+/* 收藏左滑 */
+.swipe-list { padding: 20rpx 0; }
+.swipe-wrap {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 20rpx;
+}
+.swipe-row {
+  position: relative;
+  z-index: 2;
+  background: #f5f6f7;
+  transition: transform 0.22s ease;
+}
+.swipe-row goods-card { display: block; margin: 0 24rpx; }
+.swipe-row .l-card { margin-bottom: 0; }
+.heart {
+  position: absolute;
+  right: 36rpx;
+  top: 16rpx;
+  font-size: 38rpx;
+  z-index: 5;
+}
+.swipe-del {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 140rpx;
+  background: #b4282d;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  z-index: 1;
+}
+
+/* 足迹 */
+.fp-head {
+  display: flex;
+  justify-content: space-between;
+  padding: 24rpx 30rpx 6rpx;
+  color: #969799;
+  font-size: 24rpx;
+}
+.fp-clear { color: #b4282d; }
+.fp-date {
+  padding: 16rpx 30rpx 8rpx;
+  font-size: 24rpx;
+  color: #969799;
+}
+.fp-list { background: #fff; margin: 0 24rpx 20rpx; border-radius: 16rpx; overflow: hidden; }
+.fp-item { padding: 20rpx 24rpx; border-bottom: 1rpx solid #f5f5f5; }
+.fp-item:last-child { border-bottom: none; }
+.fp-nav { display: flex; }
+.fp-img { width: 150rpx; height: 150rpx; border-radius: 12rpx; margin-right: 20rpx; }
+.fp-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.fp-name { font-size: 28rpx; line-height: 1.4; }
+.fp-price { margin-top: auto; display: flex; justify-content: space-between; align-items: baseline; }
+.fp-price .int { font-size: 34rpx; }
+.fp-time { font-size: 20rpx; color: #c0c4cc; }

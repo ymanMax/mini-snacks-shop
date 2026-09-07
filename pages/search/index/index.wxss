@@ -1,0 +1,92 @@
+.sr-page { min-height: 100vh; }
+
+.search-head {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  background: #fff;
+}
+.input-box {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f5f6f7;
+  border-radius: 999rpx;
+  height: 72rpx;
+  padding: 0 24rpx;
+}
+.s-icon { margin-right: 12rpx; }
+.s-input { flex: 1; font-size: 27rpx; }
+.s-clear { color: #c0c4cc; padding: 10rpx; }
+.s-cancel { margin-left: 20rpx; color: #666; font-size: 28rpx; }
+
+.block { margin: 20rpx 24rpx; background: #fff; border-radius: 16rpx; padding: 24rpx; }
+.block-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20rpx; }
+.block-title { font-size: 30rpx; font-weight: 700; }
+.block-action { font-size: 24rpx; color: #969799; }
+
+.chips { display: flex; flex-wrap: wrap; }
+.chip {
+  display: flex;
+  align-items: center;
+  background: #f5f6f7;
+  border-radius: 999rpx;
+  margin: 0 16rpx 16rpx 0;
+  overflow: hidden;
+}
+.chip-text { font-size: 24rpx; padding: 10rpx 6rpx 10rpx 22rpx; color: #444; }
+.chip-x { font-size: 18rpx; color: #b0b3ba; padding: 10rpx 20rpx 10rpx 0; }
+
+.hot-grid { display: flex; flex-wrap: wrap; }
+.hot-item {
+  width: 50%;
+  display: flex;
+  align-items: center;
+  font-size: 27rpx;
+  padding: 14rpx 0;
+  color: #333;
+}
+.hot-rank {
+  width: 40rpx;
+  font-weight: 700;
+  color: #969799;
+  font-size: 24rpx;
+}
+.hot-rank.top { color: #b4282d; }
+
+/* 联想 */
+.suggest { background: #fff; min-height: 400rpx; }
+.sg-item {
+  display: flex;
+  align-items: center;
+  padding: 26rpx 32rpx;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.sg-icon { color: #c0c4cc; margin-right: 20rpx; }
+.sg-name { flex: 1; font-size: 28rpx; }
+.sg-price { color: #b4282d; font-size: 26rpx; }
+.sg-empty { text-align: center; color: #969799; font-size: 26rpx; padding: 100rpx 0; }
+
+/* 结果 */
+.sort-bar {
+  white-space: nowrap;
+  background: #fff;
+  height: 80rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+  position: sticky;
+  top: 104rpx;
+  z-index: 20;
+}
+.sort {
+  display: inline-block;
+  padding: 0 30rpx;
+  line-height: 80rpx;
+  font-size: 26rpx;
+  color: #555;
+}
+.sort.on { color: #b4282d; font-weight: 700; }
+.result-list { padding: 20rpx 24rpx 0; }
+.result-list goods-card { display: block; }

@@ -1,101 +1,184 @@
-@import '../../pages/list/list.wxss';
+.page { padding-bottom: 40rpx; }
 
-/* 轮播图 */
-.swiperContainer {
-  margin-top: 15rpx;
-  bottom: 8rpx;
-  position: relative;
-  margin-bottom: 12rpx;
+/* 搜索栏 */
+.search-bar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  padding: 16rpx 24rpx;
+  background: linear-gradient(180deg, #b4282d 0%, #b4282d 60%, #f5f6f7 100%);
 }
-
-.imageContainer {
-  width: 100%;
-  margin-top: 10rpx;
-  height: 350rpx;
-}
-
-.turnItem {
-  height: 340rpx;
-}
-
-.itemImg {
-  position: absolute;
-  width: 99%;
-  height: 300rpx;
-  margin-top: 20rpx;
-  border-radius: 15rpx;
-}
-
-.imgActive {
-  opacity: 1;
-  height: 340rpx;
-  margin-top: 0rpx;
-  transition: all .2s ease-in 0s;
-}
-
-/* 指示点修饰 */
-.dots {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 25rpx;
+.search-pill {
+  height: 68rpx;
+  border-radius: 999rpx;
+  background: #fff;
   display: flex;
-  justify-content: center;
+  align-items: center;
+  padding: 0 28rpx;
 }
+.search-icon { font-size: 30rpx; margin-right: 14rpx; }
+.search-ph { color: #969799; font-size: 27rpx; }
 
-.dot {
+/* 轮播 */
+.banner {
+  height: 300rpx;
+  margin: 8rpx 24rpx 0;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+.banner-img { width: 100%; height: 300rpx; border-radius: 16rpx; }
+
+/* 分类 */
+.cats {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 20rpx 0 4rpx;
+}
+.cat-item {
+  width: 25%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 0;
+}
+.cat-icon { width: 84rpx; height: 84rpx; }
+.cat-name { font-size: 24rpx; color: #333; margin-top: 10rpx; }
+
+/* 秒杀 */
+.seckill {
+  background: linear-gradient(135deg, #ffefe0, #fff);
+  margin: 24rpx;
+  border-radius: 16rpx;
+  padding: 20rpx 0 24rpx;
+}
+.seckill-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24rpx 16rpx;
+}
+.seckill-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #e6432d;
+  display: flex;
+  align-items: center;
+}
+.sk-fire { margin-right: 8rpx; }
+.sk-more { font-size: 22rpx; font-weight: 400; margin-left: 12rpx; color: #e6432d; }
+.sk-go { margin-left: 8rpx; color: #e6432d; }
+.sk-cd { display: flex; align-items: center; font-size: 22rpx; color: #969799; }
+.sk-cd-label { margin-right: 8rpx; }
+.sk-cd-num {
+  background: #333;
+  color: #fff;
+  border-radius: 6rpx;
+  padding: 2rpx 8rpx;
+  font-size: 22rpx;
+  margin: 0 2rpx;
+}
+.sk-scroll { white-space: nowrap; padding: 0 16rpx; }
+.sk-item {
+  display: inline-block;
+  width: 200rpx;
   margin: 0 8rpx;
-  width: 18rpx;
-  height: 18rpx;
-  background-color: rgb(233, 255, 247);
-  border-radius: 8rpx;
-  transition: all .5s;
+  vertical-align: top;
+  white-space: normal;
 }
-
-.dot.active {
-  width: 24rpx;
-  background: #15eda3;
+.sk-img { width: 200rpx; height: 200rpx; border-radius: 12rpx; }
+.sk-name { font-size: 24rpx; margin-top: 8rpx; color: #333; }
+.sk-prices { display: flex; align-items: baseline; margin-top: 4rpx; }
+.sk-prices .int { font-size: 32rpx; }
+.sk-bar {
+  position: relative;
+  height: 28rpx;
+  border-radius: 999rpx;
+  background: #ffe2d9;
+  margin-top: 8rpx;
+  overflow: hidden;
 }
-
-/* 轮播图到这里结束 */
-
-/* 精选 */
-.select-title{
-  width: 100%;
-  padding: 0 0 30rpx 0;
-  height: 30rpx;
-  color: #127780;
+.sk-bar-in {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  background: linear-gradient(90deg, #ff8a65, #e6432d);
+  border-radius: 999rpx;
+}
+.sk-bar-text {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   text-align: center;
+  line-height: 28rpx;
+  font-size: 18rpx;
+  color: #fff;
 }
-.newest-title {
-  width: 100%;
-  padding: 30rpx 0 0rpx 0;
-  height: 40rpx;
-  color: #127780;
+.sk-btn {
+  margin-top: 10rpx;
+  height: 44rpx;
+  line-height: 44rpx;
   text-align: center;
-}
-.newest-title text,
-.select-title text{
-  font-family:Arial, Helvetica, sans-serif;
-  font-weight:normal;
-}
-.select-top-small {
-  width: 375rpx;
-  height: 375rpx;
-  float: left;
-}
-.select-bottom,
-.select-top {
-  width: 100%;
-  height: 375rpx;
-}
-.select-top-small image,
-.select-bottom image,
-.select-top-small navigator,
-.select-bottom navigator {
-  display: block;
-  width: 100%;
-  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #ff7043, #e6432d);
+  color: #fff;
+  font-size: 22rpx;
 }
 
-/* 精选结束 */
+/* 主题 */
+.theme-scroll { white-space: nowrap; padding: 0 24rpx; }
+.theme-item {
+  position: relative;
+  display: inline-block;
+  width: 460rpx;
+  height: 260rpx;
+  margin-right: 20rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+.theme-img { width: 460rpx; height: 260rpx; }
+.theme-mask {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  padding: 30rpx 24rpx 20rpx;
+  background: linear-gradient(transparent, rgba(0,0,0,0.55));
+  color: #fff;
+}
+.theme-name { font-size: 32rpx; font-weight: 700; }
+.theme-desc { font-size: 22rpx; opacity: 0.9; margin-top: 6rpx; }
+
+/* 推荐网格 */
+.goods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 24rpx;
+}
+.goods-grid goods-card { width: 340rpx; }
+.page-end-tip {
+  text-align: center;
+  color: #c0c4cc;
+  font-size: 22rpx;
+  padding: 10rpx 0 30rpx;
+}
+
+/* 悬浮购物车 */
+.float-cart {
+  position: fixed;
+  right: 28rpx;
+  bottom: 150rpx;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #d8443a, #b4282d);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(180, 40, 45, 0.4);
+  z-index: 50;
+}
+.fc-icon { font-size: 48rpx; }
+.float-cart .badge-dot {
+  top: -6rpx;
+  right: -10rpx;
+}

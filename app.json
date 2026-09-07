@@ -1,27 +1,51 @@
 {
   "pages": [
     "pages/index/index",
-    "pages/logs/logs",
-    "pages/mine/mine",
-    "pages/cart/cart",
     "pages/classic/classic",
-    "pages/list/list",
+    "pages/cart/cart",
+    "pages/mine/mine",
     "pages/detail/detail",
-    "pages/orders/orders",
+    "pages/list/list",
+    "pages/seckill/seckill",
+    "pages/search/index/index",
+    "pages/order/confirm/confirm",
+    "pages/order/list/list",
+    "pages/order/detail/detail",
+    "pages/order/review/review",
+    "pages/order/slot/slot",
     "pages/address/address",
+    "pages/address/picker/picker",
+    "pages/address/pick/pick",
     "pages/newAddress/newAddress",
-    "pages/fail/fail"
-    
+    "pages/service/chat/chat",
+    "pages/aftersale/list/list",
+    "pages/aftersale/apply/apply",
+    "pages/aftersale/detail/detail",
+    "pages/member/center/center",
+    "pages/member/checkin/checkin",
+    "pages/member/points/points",
+    "pages/coupon/coupon",
+    "pages/coupon/mine/mine",
+    "pages/collect/collect",
+    "pages/group/group",
+    "pages/group/detail/detail",
+    "pages/shop/shop",
+    "pages/message/message",
+    "pages/orders/orders",
+    "pages/fail/fail",
+    "pages/logs/logs"
   ],
   "window": {
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#0ea47a",
-    "navigationBarTitleText": "购物商城",
+    "backgroundTextStyle": "dark",
+    "backgroundColor": "#f5f6f7",
+    "navigationBarBackgroundColor": "#b4282d",
+    "navigationBarTitleText": "零食商城",
     "navigationBarTextStyle": "white"
   },
   "tabBar": {
-    "color": "#a9b7b7",
-    "selectedColor": "#127780",
+    "color": "#838383",
+    "selectedColor": "#b4282d",
+    "backgroundColor": "#ffffff",
     "borderStyle": "white",
     "list": [
       {
@@ -49,6 +73,14 @@
         "selectedIconPath": "/image/active_mine.png"
       }
     ]
+  },
+  "usingComponents": {
+    "safe-image": "/components/safe-image/safe-image",
+    "empty-state": "/components/empty/empty",
+    "skeleton": "/components/skeleton/skeleton",
+    "goods-card": "/components/goods-card/goods-card",
+    "stepper": "/components/stepper/stepper",
+    "load-more": "/components/load-more/load-more"
   },
   "style": "v2",
   "sitemapLocation": "sitemap.json"

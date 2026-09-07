@@ -1,52 +1,197 @@
-<!--pages/mine/mine.wxml-->
-<view wx:if="{{!isLogined}}" class="first">
-  <view class='header'>
-    <image src='https://636c-cloud1-1g8ynlo793b33c64-1309106795.tcb.qcloud.la/wx_login.png?sign=1eac53668a2446a318f1bf108115d134&t=1657608211'></image>
-  </view>
-  <view class='content'>
-    <view>申请获取以下权限</view>
-    <text>获得你的公开信息(昵称，头像等)</text>
-  </view>
-  <button class='bottom' type='primary' lang="zh_CN" bindtap="login">
-    授权登录
-  </button>
-</view>
-
-<view class="main" wx:else>
-  <view class="header-new">
-    <image src="{{avatarUrl}}" class="thumb"></image>
-    <text class="nickname">{{nickName}}</text>
-    <text class="about">关于我们</text>
-  </view>
-
-  <view class="address-box">
-    <view class="address-manage">
-      <navigator url="/pages/address/address">地址管理</navigator>
-    </view>
-    <view wx:if="{{hasAddress}}" class="address-list">
-      <view>{{address.consignee}}</view>
-      <view>{{address.mobile}}</view>
-      <view>{{address.address}}</view>
-    </view>
-  </view>
-  <view class="orders-box">
-    <view class="orders">我的订单</view>
-    <scroll-view scroll-y="true" bindscrolltolower="searchScrollLower" class="newsListView"  style="height: {{scrollHeight}}rpx;">
-      <view class="orders-list" wx:for="{{orders}}" wx:key="index">
-        <view class="orders-number">订单编号：{{item.order_no}}</view>
-        <view class="orders-detail">
-          <image src="{{'https://hanmashanghu.qiaomai365.com' + item.snap_img}}"></image>
-          <view class="">{{item.snap_name}}</view>
-          <view class="">{{item.total_count}}</view>
-          <text class="orders-status">未付款</text>
+<view class="mine-page">
+  <!-- ========== 顶部会员卡 ========== -->
+  <view class="hero">
+    <view class="hero-row">
+      <safe-image class="avatar" src="{{member.user.avatar}}" mode="aspectFill" bindtap="changeAvatar"></safe-image>
+      <view class="hero-info" wx:if="{{!isGuest}}">
+        <view class="name-row">
+          <text class="nickname">{{member.user.nickName}}</text>
+          <text class="level-chip" data-url="/pages/member/center/center" bindtap="navigate">{{member.levelInfo.name}} ›</text>
         </view>
-        <view class="orders-footer">
-          <text>实付：￥{{item.total_price}}</text>
-          <button size="mini" class="orders-btn" bindtap="payOrders">付款</button>
+        <view class="phone">{{member.user.phone}}</view>
+        <view class="growth">
+          <view class="growth-bar">
+            <view class="growth-in" style="width: {{member.growthPct}}%"></view>
+          </view>
+          <text class="growth-text" wx:if="{{member.nextLevel}}">
+            距{{member.nextLevel.name}}还差 {{member.needGrowth}} 成长值
+          </text>
+          <text class="growth-text" wx:else>已达最高等级，尊享全部特权</text>
         </view>
       </view>
-      <view class="loading" hidden="{{!searchLoading}}">正在载入更多...</view>
-      <view class="loading complete" hidden="{{!searchLoadingComplete}}">已加载全部</view>
-    </scroll-view>
+      <view class="hero-info" wx:else>
+        <view class="name-row"><text class="nickname">游客</text></view>
+        <button class="login-btn" bindtap="login">一键登录领新人礼包</button>
+      </view>
+    </view>
+
+    <view class="stat-row" wx:if="{{!isGuest}}">
+      <view class="stat" data-url="/pages/member/points/points" bindtap="navigate">
+        <text class="stat-num">{{member.user.points}}</text>
+        <text class="stat-label">我的积分</text>
+      </view>
+      <view class="stat" data-url="/pages/coupon/mine/mine" bindtap="navigate">
+        <text class="stat-num">{{member.couponCount}}</text>
+        <text class="stat-label">优惠券</text>
+      </view>
+      <view class="stat" data-url="/pages/member/center/center" bindtap="navigate">
+        <text class="stat-num">{{member.user.growthValue}}</text>
+        <text class="stat-label">成长值</text>
+      </view>
+      <view class="stat" data-url="/pages/member/checkin/checkin" bindtap="navigate">
+        <text class="stat-num">签到</text>
+        <text class="stat-label">每日领积分</text>
+      </view>
+    </view>
   </view>
+
+  <!-- ========== 我的订单 ========== -->
+  <view class="card order-card">
+    <view class="card-head">
+      <text class="card-title">我的订单</text>
+      <view class="card-more" data-status="0" bindtap="goOrderList">全部订单 ›</view>
+    </view>
+    <view class="order-icons">
+      <view class="oi" data-status="1" bindtap="goOrderList">
+        <text class="oi-emoji">💰</text>
+        <text class="oi-label">待付款</text>
+        <view class="badge-dot" wx:if="{{counts.pay}}">{{counts.pay}}</view>
+      </view>
+      <view class="oi" data-status="2" bindtap="goOrderList">
+        <text class="oi-emoji">📦</text>
+        <text class="oi-label">待发货</text>
+        <view class="badge-dot" wx:if="{{counts.send}}">{{counts.send}}</view>
+      </view>
+      <view class="oi" data-status="3" bindtap="goOrderList">
+        <text class="oi-emoji">🛵</text>
+        <text class="oi-label">配送中</text>
+        <view class="badge-dot" wx:if="{{counts.delivery}}">{{counts.delivery}}</view>
+      </view>
+      <view class="oi" data-status="4" bindtap="goOrderList">
+        <text class="oi-emoji">📬</text>
+        <text class="oi-label">待收货</text>
+        <view class="badge-dot" wx:if="{{counts.receive}}">{{counts.receive}}</view>
+      </view>
+      <view class="oi" data-status="5" bindtap="goOrderList">
+        <text class="oi-emoji">✍️</text>
+        <text class="oi-label">待评价</text>
+        <view class="badge-dot" wx:if="{{counts.review}}">{{counts.review}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 会员权益 ========== -->
+  <view class="card menu-card">
+    <view class="card-head"><text class="card-title">会员权益</text></view>
+    <view class="menu-row" data-url="/pages/member/center/center" bindtap="navigate">
+      <text class="m-emoji">👑</text><text class="m-label">会员中心</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/member/checkin/checkin" bindtap="navigate">
+      <text class="m-emoji">📅</text><text class="m-label">每日签到</text>
+      <view class="m-red-dot" wx:if="{{checkinRed}}"></view>
+      <text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/member/points/points" bindtap="navigate">
+      <text class="m-emoji">🎁</text><text class="m-label">我的积分</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/coupon/coupon" bindtap="navigate">
+      <text class="m-emoji">🎫</text><text class="m-label">领券中心</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/coupon/mine/mine" bindtap="navigate">
+      <text class="m-emoji">🎟</text><text class="m-label">我的优惠券</text>
+      <text class="m-value" wx:if="{{member.couponCount}}">{{member.couponCount}}张可用</text>
+      <text class="m-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- ========== 我的服务 ========== -->
+  <view class="card menu-card">
+    <view class="card-head"><text class="card-title">我的服务</text></view>
+    <view class="menu-row" data-url="/pages/address/address" bindtap="navigate">
+      <text class="m-emoji">📍</text><text class="m-label">收货地址</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/cart/cart" data-type="tab" bindtap="navigate">
+      <text class="m-emoji">🛒</text><text class="m-label">购物车</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/collect/collect?type=collect" bindtap="navigate">
+      <text class="m-emoji">❤️</text><text class="m-label">收藏记录</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/collect/collect?type=footprint" bindtap="navigate">
+      <text class="m-emoji">👣</text><text class="m-label">浏览足迹</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/group/group" bindtap="navigate">
+      <text class="m-emoji">👥</text><text class="m-label">我的拼团</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/aftersale/list/list" bindtap="navigate">
+      <text class="m-emoji">🛠</text><text class="m-label">退款/售后</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/service/chat/chat" bindtap="navigate">
+      <text class="m-emoji">🎧</text><text class="m-label">客服中心</text><text class="m-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- ========== 店铺与配送 ========== -->
+  <view class="card menu-card">
+    <view class="card-head"><text class="card-title">店铺与配送</text></view>
+    <view class="menu-row" data-url="/pages/shop/shop" bindtap="navigate">
+      <text class="m-emoji">🏪</text><text class="m-label">店铺主页</text>
+      <text class="m-value">综合评分 4.8</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/shop/shop?tab=review" bindtap="navigate">
+      <text class="m-emoji">⭐</text><text class="m-label">店铺评价</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="openDelivery">
+      <text class="m-emoji">🚚</text><text class="m-label">配送说明</text><text class="m-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- ========== 其他 ========== -->
+  <view class="card menu-card">
+    <view class="card-head"><text class="card-title">其他</text></view>
+    <view class="menu-row" data-url="/pages/message/message" bindtap="navigate">
+      <text class="m-emoji">🔔</text><text class="m-label">消息中心</text>
+      <view class="badge-dot m-badge" wx:if="{{unread}}">{{unread > 99 ? '99+' : unread}}</view>
+      <text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" data-url="/pages/service/chat/chat" bindtap="navigate">
+      <text class="m-emoji">💬</text><text class="m-label">联系客服</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="openAbout">
+      <text class="m-emoji">ℹ️</text><text class="m-label">关于我们</text><text class="m-arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="openSettings">
+      <text class="m-emoji">⚙️</text><text class="m-label">设置</text><text class="m-arrow">›</text>
+    </view>
+  </view>
+
+  <view class="version">零食商城 小程序 V1.0（演示环境）</view>
+  <view style="height: 30rpx;"></view>
+
+  <!-- ========== 配送说明弹层 ========== -->
+  <view wx:if="{{deliveryVisible}}" class="sheet-mask" bindtap="closeMask">
+    <view class="pop-sheet" catchtap="noop">
+      <view class="pop-title">配送说明</view>
+      <view class="pop-body" wx:if="{{deliveryRule}}">
+        <view class="pop-line">· 起步配送费 ￥{{deliveryRule.baseFee}}，含 {{deliveryRule.baseKm}}km 距离；</view>
+        <view class="pop-line">· 超出部分每公里加收 ￥{{deliveryRule.perKmFee}}；</view>
+        <view class="pop-line">· 订单满 ￥{{deliveryRule.freeThreshold}} 免基础配送费（高等级会员门槛更低）；</view>
+        <view class="pop-line">· 营业时间 08:00-22:00，支持尽快送达与预约时段；</view>
+        <view class="pop-line">· 演示环境，配送费为模拟计算，不产生真实交易。</view>
+      </view>
+      <view class="pop-btn" bindtap="closeMask">我知道了</view>
+    </view>
+  </view>
+
+  <!-- ========== 关于我们弹层 ========== -->
+  <view wx:if="{{aboutVisible}}" class="sheet-mask" bindtap="closeMask">
+    <view class="pop-sheet" catchtap="noop">
+      <view class="pop-title">关于我们</view>
+      <view class="pop-body">
+        <view class="pop-line">零食商城·直营店，主打网红零食、坚果炒货、糖果巧克力与进口好物，顺丰包邮当日发货，坏损包赔。</view>
+        <view class="pop-line">本小程序为原生微信小程序演示项目，全部数据来自本地 Mock，下单、支付、签到、拼团等操作均为模拟，不产生真实交易。</view>
+      </view>
+      <view class="pop-btn" bindtap="closeMask">我知道了</view>
+    </view>
+  </view>
+
 </view>

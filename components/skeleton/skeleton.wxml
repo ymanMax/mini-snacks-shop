@@ -1,0 +1,82 @@
+<!-- 首页骨架 -->
+<block wx:if="{{type === 'home'}}">
+  <view class="sk-banner sk"></view>
+  <view class="sk-cats">
+    <view class="sk-cat" wx:for="{{list}}" wx:key="*this" wx:if="{{index < 8}}">
+      <view class="sk sk-cat-icon"></view>
+      <view class="sk sk-cat-text"></view>
+    </view>
+  </view>
+  <view class="sk-section sk"></view>
+  <view class="sk-grid">
+    <view class="sk-goods" wx:for="{{list}}" wx:key="*this" wx:if="{{index < 4}}">
+      <view class="sk sk-goods-img"></view>
+      <view class="sk sk-line w80"></view>
+      <view class="sk sk-line w50"></view>
+    </view>
+  </view>
+</block>
+
+<!-- 双列网格骨架 -->
+<view class="sk-grid" wx:elif="{{type === 'grid'}}">
+  <view class="sk-goods" wx:for="{{list}}" wx:key="*this" wx:if="{{index < count * 2}}">
+    <view class="sk sk-goods-img"></view>
+    <view class="sk sk-line w80"></view>
+    <view class="sk sk-line w50"></view>
+  </view>
+</view>
+
+<!-- 列表行骨架 -->
+<block wx:elif="{{type === 'list'}}">
+  <view class="sk-rows card" wx:for="{{list}}" wx:key="*this" wx:if="{{index < count}}">
+    <view class="sk sk-row-img"></view>
+    <view class="flex-1">
+      <view class="sk sk-line w90"></view>
+      <view class="sk sk-line w60"></view>
+      <view class="sk sk-line w40"></view>
+    </view>
+  </view>
+</block>
+
+<!-- 购物车骨架 -->
+<block wx:elif="{{type === 'cart'}}">
+  <view class="sk-cart card" wx:for="{{list}}" wx:key="*this" wx:if="{{index < 3}}">
+    <view class="sk sk-circle"></view>
+    <view class="sk sk-row-img"></view>
+    <view class="flex-1">
+      <view class="sk sk-line w80"></view>
+      <view class="sk sk-line w50"></view>
+    </view>
+  </view>
+</block>
+
+<!-- 订单骨架 -->
+<block wx:elif="{{type === 'order'}}">
+  <view class="sk-order card" wx:for="{{list}}" wx:key="*this" wx:if="{{index < count}}">
+    <view class="flex-between">
+      <view class="sk sk-line w30"></view>
+      <view class="sk sk-line w20"></view>
+    </view>
+    <view class="flex-start" style="margin-top:20rpx;">
+      <view class="sk sk-order-img" wx:for="{{[1,2]}}" wx:key="*this" wx:for-item="n"></view>
+      <view class="flex-1">
+        <view class="sk sk-line w70"></view>
+        <view class="sk sk-line w40"></view>
+      </view>
+    </view>
+  </view>
+</block>
+
+<!-- 详情骨架 -->
+<block wx:elif="{{type === 'detail'}}">
+  <view class="sk sk-swiper"></view>
+  <view class="card">
+    <view class="sk sk-line w50 big"></view>
+    <view class="sk sk-line w80" style="margin-top:24rpx;"></view>
+    <view class="sk sk-line w90"></view>
+  </view>
+  <view class="card">
+    <view class="sk sk-line w30"></view>
+    <view class="sk sk-block" wx:for="{{list}}" wx:key="*this" wx:if="{{index < 2}}"></view>
+  </view>
+</block>

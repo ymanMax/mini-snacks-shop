@@ -1,0 +1,58 @@
+<view class="chat-page">
+  <view class="chat-tip">智能客服 7×24 在线，人工服务时间 09:00-22:00</view>
+
+  <scroll-view class="chat-body" scroll-y scroll-into-view="{{scrollToId}}" scroll-with-animation>
+    <view wx:for="{{messages}}" wx:key="index" id="msg-{{index + 1}}" class="msg-row {{item.me ? 'me' : ''}}">
+      <safe-image wx:if="{{!item.me}}" class="msg-avatar shop" src="/static/mock/logo.png" mode="aspectFill"></safe-image>
+      <view class="msg-bubble {{item.typing ? 'typing' : ''}}">
+        <text wx:if="{{item.typing}}">● ● ●</text>
+        <block wx:else>{{item.text}}</block>
+      </view>
+      <safe-image wx:if="{{item.me}}" class="msg-avatar me" src="/static/mock/avatar/av01.png" mode="aspectFill"></safe-image>
+    </view>
+  </scroll-view>
+
+  <!-- 快捷问题 -->
+  <scroll-view scroll-x class="quick-bar" enhanced show-scrollbar="{{false}}">
+    <view class="quick-chip" wx:for="{{quickQuestions}}" wx:key="*this" data-q="{{item}}" bindtap="pickQuick">{{item}}</view>
+  </scroll-view>
+
+  <!-- 工具栏 -->
+  <view class="tool-bar">
+    <view class="tool-item" bindtap="goAftersale">🛠 售后</view>
+    <view class="tool-item" bindtap="openRate" wx:if="{{!rate}}">⭐ 评价客服</view>
+    <view class="tool-item done" wx:else>✓ 已评价 {{rate.solved}}星</view>
+  </view>
+
+  <!-- 输入栏 -->
+  <view class="input-bar">
+    <input class="chat-input" placeholder="请输入您的问题" value="{{input}}" bindinput="onInput"
+      confirm-type="send" bindconfirm="send" adjust-position="{{true}}" />
+    <view class="send-btn {{input ? 'on' : ''}}" bindtap="send">发送</view>
+  </view>
+
+  <!-- 客服评价弹层 -->
+  <view wx:if="{{rateVisible}}" class="sheet-mask" bindtap="closeRate">
+    <view class="rate-sheet" catchtap="noop">
+      <view class="rate-title">客服服务评价</view>
+      <view class="rate-row">
+        <text class="rate-label">响应速度</text>
+        <view class="rate-stars">
+          <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this"
+            class="star {{speed >= s ? 'on' : ''}}" data-key="speed" data-star="{{s}}" bindtap="pickStar">★</text>
+        </view>
+      </view>
+      <view class="rate-row">
+        <text class="rate-label">问题解决</text>
+        <view class="rate-stars">
+          <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this"
+            class="star {{solved >= s ? 'on' : ''}}" data-key="solved" data-star="{{s}}" bindtap="pickStar">★</text>
+        </view>
+      </view>
+      <view class="rate-actions">
+        <button class="btn btn-gray" bindtap="closeRate">取消</button>
+        <button class="btn btn-primary" style="margin-left:24rpx;" bindtap="submitRate">提交评价</button>
+      </view>
+    </view>
+  </view>
+</view>

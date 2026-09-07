@@ -1,0 +1,41 @@
+<view class="picker-page">
+  <skeleton wx:if="{{loading}}" type="list" count="{{4}}"></skeleton>
+  <block wx:else>
+    <view class="tip">配送费按收货地址距离实时试算，满额或会员可免基础配送费</view>
+
+    <view class="addr-list">
+      <view wx:for="{{list}}" wx:key="id" class="addr-item {{item.outRange ? 'disabled' : ''}}"
+        data-id="{{item.id}}" bindtap="select">
+        <view class="addr-main">
+          <view class="addr-line1">
+            <text class="addr-name">{{item.name}}</text>
+            <text class="addr-phone">{{item.phone}}</text>
+            <text class="tag orange" wx:if="{{item.tag}}">{{item.tag}}</text>
+            <text class="tag green" wx:if="{{item.isDefault}}">默认</text>
+          </view>
+          <view class="addr-line2">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</view>
+          <view class="addr-line3">
+            <text class="{{item.outRange ? 'freight-off' : (item.freightText === '免配送费' ? 'freight-free' : 'freight')}}">
+              {{item.freightText}}
+            </text>
+            <text class="distance">距店铺 {{item.distanceKm}}km</text>
+          </view>
+        </view>
+        <view class="addr-arrow">
+          <text wx:if="{{item.outRange}}">🚫</text>
+          <text wx:else class="cell-arrow"></text>
+        </view>
+      </view>
+    </view>
+
+    <empty-state wx:if="{{!list.length}}" img="/static/images/empty_address.png"
+      text="还没有收货地址" btnText="新增收货地址" bindbtn="add"></empty-state>
+
+    <view style="height: 160rpx;"></view>
+
+    <view class="bottom-bar">
+      <view class="manage" bindtap="manage">管理地址</view>
+      <button class="add-btn" bindtap="add">＋ 新增地址</button>
+    </view>
+  </block>
+</view>

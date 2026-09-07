@@ -1,0 +1,39 @@
+<view class="cm-page">
+  <!-- Tab -->
+  <view class="tabs">
+    <view wx:for="{{tabs}}" wx:key="status" data-status="{{item.status}}" bindtap="switchTab"
+      class="tab {{active === item.status ? 'on' : ''}}">{{item.label}}</view>
+  </view>
+
+  <view class="coupon-list">
+    <view wx:for="{{list}}" wx:key="instanceId"
+      class="coupon {{item.status !== 1 ? 'gray' : ''}} {{item.disabled ? 'disabled' : ''}} {{item.selectable ? 'selectable' : ''}}"
+      data-id="{{item.instanceId}}" data-status="{{item.status}}" bindtap="choose">
+      <view class="c-left">
+        <view class="c-value">
+          <text wx:if="{{!item.isDiscount}}" class="c-unit">￥</text>
+          <text class="c-num">{{item.valueText}}</text>
+          <text wx:if="{{item.isDiscount}}" class="c-unit">折</text>
+        </view>
+        <view class="c-rule">{{item.ruleText}}</view>
+      </view>
+      <view class="c-right">
+        <view class="c-name">{{item.name}}</view>
+        <view class="c-scope">{{item.scopeLabel}}</view>
+        <view class="c-expire">有效期至 {{item.expireTime}}　·　{{item.source}}</view>
+        <view class="c-status" wx:if="{{item.status === 2}}">已使用</view>
+        <view class="c-status" wx:elif="{{item.status === 3}}">已过期</view>
+        <view class="c-go" wx:elif="{{from !== 'confirm'}}">去使用 ›</view>
+        <view class="c-go usable" wx:elif="{{item.selectable}}">点击使用</view>
+        <view class="c-go unusable" wx:else>不可用</view>
+      </view>
+    </view>
+  </view>
+
+  <empty-state wx:if="{{!loading && !list.length}}" img="/static/images/empty_coupon.png"
+    text="{{active === 1 ? '暂无可用优惠券' : (active === 2 ? '还没有使用过优惠券' : '暂无过期优惠券')}}"
+    btnText="{{active === 1 ? '去领券中心看看' : ''}}" bindbtn="goCenter"></empty-state>
+
+  <view wx:if="{{from === 'confirm' && active === 1}}" class="none-btn" bindtap="useNone">不使用优惠券</view>
+  <view style="height: 40rpx;"></view>
+</view>

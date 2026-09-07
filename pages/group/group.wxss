@@ -1,0 +1,91 @@
+.gp-page { padding-bottom: 40rpx; }
+.gp-banner {
+  margin: 24rpx;
+  padding: 36rpx 32rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #e3544b, #b4282d);
+  color: #fff;
+}
+.gb-title { font-size: 36rpx; font-weight: 700; }
+.gb-sub { font-size: 22rpx; opacity: 0.9; margin-top: 10rpx; }
+
+.tabs {
+  display: flex;
+  background: #fff;
+  margin: 0 24rpx;
+  border-radius: 16rpx 16rpx 0 0;
+  height: 84rpx;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  line-height: 84rpx;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+}
+.tab.on { color: #b4282d; font-weight: 700; }
+.tab.on::after {
+  content: '';
+  position: absolute;
+  bottom: 10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  border-radius: 3rpx;
+  background: #b4282d;
+}
+
+.gp-card {
+  display: flex;
+  background: #fff;
+  margin: 0 24rpx 20rpx;
+  border-radius: 16rpx;
+  padding: 20rpx;
+}
+.gp-img { width: 220rpx; height: 220rpx; border-radius: 12rpx; margin-right: 20rpx; }
+.gp-info { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.gp-name { font-size: 28rpx; line-height: 1.35; }
+.gp-price { display: flex; align-items: baseline; margin-top: 10rpx; }
+.gp-group-price { color: #b4282d; font-size: 38rpx; font-weight: 800; margin-right: 14rpx; }
+.gp-orig { color: #b0b3ba; font-size: 22rpx; text-decoration: line-through; }
+.gp-status { font-size: 22rpx; color: #0ea47a; border: 1rpx solid #0ea47a; padding: 2rpx 14rpx; border-radius: 999rpx; }
+.gp-status.fail { color: #969799; border-color: #dcdee0; }
+.gp-members { display: flex; align-items: center; margin-top: 12rpx; }
+.gp-avatar {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  margin-right: 8rpx;
+  border: 2rpx solid #fff;
+}
+.gp-avatar.empty-add {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2rpx dashed #c8c9cc;
+  color: #c0c4cc;
+  font-size: 30rpx;
+  background: #f7f8fa;
+}
+.gp-rule { font-size: 20rpx; color: #969799; margin-left: 10rpx; }
+.gp-bottom {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.gp-cd { font-size: 22rpx; color: #ff5722; }
+.gp-btn {
+  background: linear-gradient(90deg, #ff8a65, #e6432d);
+  color: #fff;
+  font-size: 24rpx;
+  padding: 10rpx 30rpx;
+  border-radius: 999rpx;
+}
+.gp-detail-link {
+  font-size: 20rpx;
+  color: #b0b3ba;
+  margin-top: 10rpx;
+}

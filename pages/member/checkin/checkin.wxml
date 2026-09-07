@@ -1,0 +1,70 @@
+<view class="ck-page" wx:if="{{info}}">
+  <!-- 顶部卡 -->
+  <view class="ck-hero">
+    <view class="ck-row">
+      <view class="ck-stat">
+        <text class="ck-num">{{info.state.continuousDays}}</text>
+        <text class="ck-lab">连续签到（天）</text>
+      </view>
+      <view class="ck-stat">
+        <text class="ck-num">{{points}}</text>
+        <text class="ck-lab">我的积分</text>
+      </view>
+      <view class="ck-stat">
+        <text class="ck-num">{{info.state.records.length}}</text>
+        <text class="ck-lab">本月签到（天）</text>
+      </view>
+    </view>
+    <view class="ck-sign {{info.state.todaySigned ? 'signed' : ''}}" bindtap="doSign">
+      {{info.state.todaySigned ? '今日已签到' : '立即签到'}}
+    </view>
+    <view class="ck-tip" wx:if="{{!info.state.todaySigned}}">
+      今日签到可得 {{info.nextReward.points}} 积分
+    </view>
+  </view>
+
+  <!-- 连签奖励 -->
+  <view class="card">
+    <view class="card-title">连续签到奖励（7 天一循环）</view>
+    <view class="reward-row">
+      <view wx:for="{{info.rule.rewards}}" wx:key="day"
+        class="reward {{item.state === 'done' ? 'done' : ''}} {{item.state === 'current' ? 'current' : ''}} {{item.day === 7 ? 'big' : ''}}">
+        <view class="rw-day">第{{item.day}}天</view>
+        <view class="rw-points">+{{item.points}}</view>
+        <view class="rw-mark" wx:if="{{item.state === 'done'}}">✓</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 签到日历 -->
+  <view class="card">
+    <view class="card-title">{{info.year}}年{{info.month}}月 签到日历</view>
+    <view class="calendar">
+      <view class="cal-week" wx:for="{{weekdays}}" wx:key="*this">{{item}}</view>
+      <block wx:for="{{cells}}" wx:key="key">
+        <view wx:if="{{item.blank}}" class="cal-cell blank"></view>
+        <view wx:else class="cal-cell {{item.signed ? 'signed' : ''}} {{item.isToday ? 'today' : ''}}">
+          <text class="cal-day">{{item.day}}</text>
+          <text class="cal-mark" wx:if="{{item.signed}}">✓</text>
+          <text class="cal-today" wx:elif="{{item.isToday}}">今天</text>
+        </view>
+      </block>
+    </view>
+  </view>
+
+  <!-- 规则 -->
+  <view class="card">
+    <view class="card-title">签到规则</view>
+    <view class="rule" wx:for="{{info.rule.rules}}" wx:key="*this">{{index + 1}}. {{item}}</view>
+  </view>
+
+  <view style="height: 40rpx;"></view>
+
+  <!-- 积分动画 -->
+  <view wx:if="{{pop}}" class="point-pop">
+    <view class="pp-inner pop">
+      <view class="pp-plus">+{{popPoints}}</view>
+      <view class="pp-text">积分到账</view>
+    </view>
+  </view>
+</view>

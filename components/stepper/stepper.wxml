@@ -1,0 +1,5 @@
+<view class="stepper {{small ? 'sm' : ''}} {{disabled ? 'disabled' : ''}}">
+  <view class="step-btn" bindtap="minus">−</view>
+  <input class="step-num" type="number" value="{{value}}" bindblur="onInput" disabled="{{disabled}}" />
+  <view class="step-btn" bindtap="plus">+</view>
+</view>

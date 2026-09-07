@@ -1,0 +1,149 @@
+.od-page { padding-bottom: 20rpx; }
+
+/* 状态头 */
+.status-header {
+  padding: 44rpx 32rpx 40rpx;
+  color: #fff;
+}
+.sh-title { font-size: 40rpx; font-weight: 700; }
+.sh-sub { font-size: 24rpx; opacity: 0.9; margin-top: 12rpx; }
+
+.card-title { font-size: 30rpx; font-weight: 700; margin-bottom: 20rpx; }
+
+/* 时间线 */
+.step { display: flex; }
+.step-left { width: 40rpx; display: flex; flex-direction: column; align-items: center; }
+.step-dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background: #b4282d;
+  margin-top: 8rpx;
+  flex-shrink: 0;
+}
+.step-dot.current {
+  background: #b4282d;
+  box-shadow: 0 0 0 8rpx rgba(180, 40, 45, 0.15);
+  animation: pulse 1.4s infinite;
+}
+.step-dot.cancel { background: #969799; }
+@keyframes pulse {
+  50% { box-shadow: 0 0 0 14rpx rgba(180, 40, 45, 0.08); }
+}
+.step-line { width: 2rpx; flex: 1; background: #e5e6eb; margin: 6rpx 0; min-height: 56rpx; }
+.step-body { padding: 0 0 30rpx 20rpx; flex: 1; }
+.step-body .step-title { font-size: 28rpx; font-weight: 600; color: #333; }
+.step-body.current .step-title { color: #b4282d; }
+.step-remark { font-size: 24rpx; color: #888; margin-top: 8rpx; line-height: 1.5; }
+.step-time { font-size: 22rpx; color: #b0b3ba; margin-top: 6rpx; }
+
+/* 骑手 */
+.rider-card { display: flex; align-items: center; }
+.rider-emoji {
+  width: 84rpx; height: 84rpx;
+  background: #e8f1fe;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 84rpx;
+  font-size: 44rpx;
+  margin-right: 20rpx;
+}
+.rider-info { flex: 1; }
+.rider-name { font-size: 30rpx; font-weight: 600; }
+.rider-phone { font-size: 24rpx; color: #969799; margin-top: 6rpx; }
+.rider-call {
+  background: #fdecec;
+  color: #b4282d;
+  font-size: 24rpx;
+  padding: 12rpx 28rpx;
+  border-radius: 999rpx;
+}
+
+/* 演示推进 */
+.demo-card {
+  margin: 0 24rpx 20rpx;
+  background: #fff8e6;
+  border-radius: 16rpx;
+  padding: 20rpx 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #a8741a;
+  font-size: 24rpx;
+}
+.demo-btn {
+  background: #b4282d;
+  color: #fff;
+  padding: 10rpx 24rpx;
+  border-radius: 999rpx;
+  font-size: 24rpx;
+}
+
+/* 地址 */
+.addr-card { display: flex; align-items: flex-start; }
+.addr-emoji { font-size: 40rpx; margin-right: 16rpx; }
+.addr-info { flex: 1; }
+.addr-row { display: flex; align-items: center; }
+.addr-name { font-size: 30rpx; font-weight: 700; margin-right: 20rpx; }
+.addr-phone { color: #666; font-size: 26rpx; }
+.addr-detail { font-size: 26rpx; color: #333; margin-top: 12rpx; line-height: 1.5; }
+.addr-distance { font-size: 22rpx; color: #969799; margin-top: 10rpx; }
+
+/* 商品 */
+.goods-row { display: flex; padding: 16rpx 0; }
+.goods-img { width: 140rpx; height: 140rpx; border-radius: 12rpx; margin-right: 20rpx; }
+.goods-info { flex: 1; min-width: 0; }
+.goods-name { font-size: 28rpx; }
+.goods-spec {
+  display: inline-block;
+  background: #f5f6f7;
+  color: #666;
+  font-size: 20rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 8rpx;
+  margin-top: 8rpx;
+}
+.goods-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: 12rpx; }
+.goods-bottom .int { font-size: 32rpx; }
+.goods-count { color: #969799; font-size: 26rpx; }
+
+/* 金额 */
+.amount-card .am-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 26rpx;
+  color: #666;
+  padding: 12rpx 0;
+}
+.am-row .discount { color: #b4282d; }
+.am-row.total { border-top: 1rpx solid #f5f5f5; margin-top: 8rpx; padding-top: 20rpx; align-items: baseline; }
+.am-row.total .int { font-size: 40rpx; }
+.pay-type { font-size: 22rpx; color: #969799; text-align: right; margin-top: 8rpx; }
+
+/* 订单信息 */
+.info-row { display: flex; padding: 12rpx 0; font-size: 24rpx; align-items: center; }
+.info-label { color: #969799; width: 140rpx; flex-shrink: 0; }
+.info-val { color: #555; flex: 1; word-break: break-all; }
+.copy-btn { color: #b4282d; font-size: 22rpx; border: 1rpx solid #b4282d; padding: 2rpx 14rpx; border-radius: 999rpx; }
+
+/* 底部 */
+.od-footer {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 12rpx 24rpx calc(12rpx + env(safe-area-inset-bottom));
+  background: #fff;
+  display: flex;
+  justify-content: flex-end;
+  box-shadow: 0 -4rpx 16rpx rgba(0,0,0,0.05);
+  z-index: 50;
+}
+.f-btn {
+  margin-left: 20rpx;
+  padding: 0 40rpx;
+  height: 76rpx;
+  line-height: 76rpx;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+}
+.f-btn.plain { border: 1rpx solid #c8c9cc; color: #555; }
+.f-btn.primary { background: linear-gradient(90deg, #d8443a, #b4282d); color: #fff; }

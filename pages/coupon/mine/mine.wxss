@@ -1,0 +1,95 @@
+.tabs {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  background: #fff;
+  height: 88rpx;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  line-height: 88rpx;
+  font-size: 28rpx;
+  color: #666;
+  position: relative;
+}
+.tab.on { color: #b4282d; font-weight: 700; }
+.tab.on::after {
+  content: '';
+  position: absolute;
+  bottom: 10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  border-radius: 3rpx;
+  background: #b4282d;
+}
+
+.coupon-list { padding: 24rpx; }
+.coupon {
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  margin-bottom: 20rpx;
+  overflow: hidden;
+  position: relative;
+}
+.coupon::before, .coupon::after {
+  content: '';
+  position: absolute;
+  width: 24rpx;
+  height: 24rpx;
+  background: #f5f6f7;
+  border-radius: 50%;
+  left: 200rpx;
+  transform: translateX(-50%);
+}
+.coupon::before { top: -12rpx; }
+.coupon::after { bottom: -12rpx; }
+.c-left {
+  width: 200rpx;
+  background: linear-gradient(135deg, #e3544b, #b4282d);
+  color: #fff;
+  text-align: center;
+  padding: 28rpx 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.c-num { font-size: 52rpx; font-weight: 800; }
+.c-unit { font-size: 24rpx; }
+.c-rule { font-size: 18rpx; opacity: 0.9; margin-top: 6rpx; }
+.c-right { flex: 1; padding: 24rpx; border-left: 2rpx dashed #eee; position: relative; }
+.c-name { font-size: 28rpx; font-weight: 700; }
+.c-scope { font-size: 22rpx; color: #969799; margin-top: 8rpx; }
+.c-expire { font-size: 19rpx; color: #c0c4cc; margin-top: 10rpx; }
+.c-status, .c-go {
+  position: absolute;
+  right: 24rpx;
+  bottom: 20rpx;
+  font-size: 22rpx;
+  padding: 6rpx 20rpx;
+  border-radius: 999rpx;
+}
+.c-status { color: #969799; border: 1rpx solid #dcdee0; }
+.c-go { color: #b4282d; border: 1rpx solid #b4282d; }
+.c-go.unusable { color: #c0c4cc; border-color: #dcdee0; }
+
+.coupon.gray .c-left { background: linear-gradient(135deg, #b6b9c0, #90959e); }
+.coupon.disabled { opacity: 0.55; }
+.coupon.selectable { box-shadow: 0 0 0 2rpx #b4282d; }
+
+.none-btn {
+  margin: 0 24rpx;
+  height: 84rpx;
+  line-height: 84rpx;
+  text-align: center;
+  background: #fff;
+  border-radius: 999rpx;
+  color: #666;
+  font-size: 28rpx;
+  border: 1rpx solid #dcdee0;
+}

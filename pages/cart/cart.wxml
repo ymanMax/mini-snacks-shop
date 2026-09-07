@@ -1,50 +1,143 @@
-<view class="J-shopping-cart-empty" hidden="{{iscart}}">
-  <view class="shopping-cart-empty">
-    <view class="bg"></view>
-    <image src="../../image/cry.png"></image>
-    <text class='empty-text'>购物车空空如也</text>
-  </view>
-</view>
+<view class="cart-page">
+  <skeleton wx:if="{{loading}}" type="cart" count="{{3}}"></skeleton>
 
-<view class="main" hidden="{{hidden}}">
-  <scroll-view class="scroll" scroll-y="true">
-    <view class="separate"></view>
-    <view class="cart-box">
-      <view class="cart-list" wx:for="{{carts}}" wx:key="{{index}}">
-        <view wx:if="{{!item.isSelect}}">
-          <icon class="cart-pro-select" bindtap="switchSelect" data-index="{{index}}" data-id="{{index}}" type="circle" size="20"></icon>
-        </view>
-        <view wx:elif="{{item.isSelect}}">
-          <icon class="cart-pro-select" bindtap="switchSelect" data-index="{{index}}" data-id="{{index}}" type="success" color="#f0145a" size="20"></icon>
-        </view>
-        <navigator url="../detail/detail?product_id={{item.id}}">
-          <image class="cart-thumb" src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
-        </navigator>
-        <text class="cart-pro-name">{{item.name}}</text>
-        <text class="cart-pro-price">￥{{item.price}}</text>
-        <view class="cart-count-box">
-          <text class="cart-count-down" bindtap="delCount" data-obj="{{obj}}" data-index="{{index}}">-</text>
-          <text class="cart-count-num">{{item.count}}</text>
-          <text class="cart-count-add" bindtap="addCount" data-index="{{index}}">+</text>
-        </view>
-        <image class="cart-del" bindtap="delGoods" data-index="{{index}}" src="/image/delete.png"></image>
-      </view>
-    </view>
+  <block wx:else>
+    <!-- 空购物车 -->
+    <block wx:if="{{!valid.length && !invalid.length}}">
+      <empty-state img="/static/images/empty_cart.png" text="购物车还是空的"
+        sub="美味零食等你来挑～" btnText="去逛逛 →" bindbtn="goShopping"></empty-state>
+    </block>
 
-    <view class="cart-footer">
-      <view wx:if="{{!isAllSelect}}">
-        <icon class="total-select" bindtap="allSelect" type="circle" size="20"></icon>
+    <block wx:else>
+      <!-- 顶部条 -->
+      <view class="top-bar">
+        <text class="tb-title">购物车（{{totalCount}}）</text>
+        <text class="tb-edit" bindtap="toggleEdit">{{editMode ? '完成' : '管理'}}</text>
       </view>
-      <view wx:elif="{{isAllSelect}}">
-        <icon class="total-select" bindtap="allSelect" type="success" color="#f0145a" size="20"></icon>
+
+      <!-- 有效商品 -->
+      <view class="list-card">
+        <view class="cart-row" wx:for="{{valid}}" wx:key="id">
+          <view class="check {{(editMode ? item.delChecked : item.checked) ? 'on' : ''}}"
+            data-id="{{item.id}}" bindtap="toggleItem">
+            <text wx:if="{{editMode ? item.delChecked : item.checked}}">✓</text>
+          </view>
+          <safe-image class="row-img" src="{{item.pic}}" mode="aspectFill" data-id="{{item.goodsId}}" bindtap="goDetail"></safe-image>
+          <view class="row-info">
+            <view class="row-name ellipsis-2" data-id="{{item.goodsId}}" bindtap="goDetail">{{item.name}}</view>
+            <view class="row-spec">{{item.specText}}</view>
+            <view class="row-bottom">
+              <text class="price">{{item.priceText}}</text>
+              <stepper small value="{{item.count}}" min="1" max="{{item.stock}}" data-id="{{item.id}}" bind:change="onCount"></stepper>
+            </view>
+          </view>
+          <view class="row-del" data-id="{{item.id}}" bindtap="removeOne">✕</view>
+        </view>
       </view>
-      <view class="order-icon">
-        <navigator  bindtap="goBuy">
-          <image src="/image/buy.png"></image>
-        </navigator>
+
+      <!-- 促销凑单进度 -->
+      <view class="promo-card" wx:if="{{promo}}">
+        <view class="promo-ladders">
+          <view wx:for="{{promo.steps}}" wx:key="threshold"
+            class="ladder {{item.reached ? 'reached' : ''}}">
+            <text class="ld-label">{{item.label}}</text>
+            <text class="ld-mark">{{item.reached ? '✓' : index + 1}}</text>
+          </view>
+        </view>
+        <view class="promo-gaps">
+          <view class="gap-item" wx:if="{{promo.next}}">🎯 {{promo.gapText}}</view>
+          <view class="gap-item {{promo.freeShipGap ? '' : 'done'}}">
+            🚚 {{promo.freeShipText}}
+          </view>
+          <view class="gap-item coupon" wx:if="{{promo.couponCount}}">
+            🎟 已为你匹配最优券，下单立减 {{promo.bestCouponText}}
+          </view>
+        </view>
       </view>
-      <text>全选</text>
-      <text class="cart-toatl-price">￥{{totalMoney}}</text>
+
+      <!-- 失效商品 -->
+      <view class="invalid-card" wx:if="{{invalid.length}}">
+        <view class="invalid-head">
+          <text class="ih-title">失效商品（{{invalid.length}}）</text>
+          <view class="ih-right">
+            <text class="ih-clear" bindtap="clearInvalid">一键清空</text>
+          </view>
+        </view>
+        <view class="invalid-list">
+          <view class="cart-row disabled" wx:for="{{invalid}}" wx:key="id">
+            <view class="inv-tag">已失效</view>
+            <safe-image class="row-img gray" src="{{item.pic}}" mode="aspectFill"></safe-image>
+            <view class="row-info">
+              <view class="row-name ellipsis-2">{{item.name}}</view>
+              <view class="row-spec">{{item.specText}}</view>
+              <view class="row-bottom">
+                <text class="inv-price">{{item.priceText}}</text>
+                <text class="inv-stock">库存不足</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 优惠明细弹层 -->
+      <view wx:if="{{showDetail && preview}}" class="detail-mask" bindtap="toggleDetail">
+        <view class="detail-pop" catchtap="noop">
+          <view class="dp-title">费用明细</view>
+          <view class="dp-row"><text>商品总额</text><text>{{checkedAmount}}</text></view>
+          <view class="dp-row" wx:if="{{preview.fullReduce}}"><text>满减优惠</text><text class="discount">-￥{{preview.fullReduce}}</text></view>
+          <view class="dp-row" wx:if="{{preview.couponDiscount}}">
+            <text>优惠券</text><text class="discount">-￥{{preview.couponDiscount}}</text>
+          </view>
+          <view class="dp-row">
+            <text>配送费</text>
+            <text class="{{preview.freight === 0 ? 'free' : ''}}">{{preview.freight === 0 ? '免配送费' : '￥' + preview.freight}}</text>
+          </view>
+          <view class="dp-row gap">
+            <text wx:if="{{gapText}}" class="gap-text">{{gapText}}</text>
+          </view>
+          <view class="dp-tip">演示环境，不产生真实交易</view>
+        </view>
+      </view>
+
+    </block>
+
+    <!-- 猜你喜欢（空购物车时也展示） -->
+    <view class="section-head" wx:if="{{recommend.length}}"><text class="title">猜你喜欢</text></view>
+    <scroll-view wx:if="{{recommend.length}}" scroll-x class="reco-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="reco-card" wx:for="{{recommend}}" wx:key="id">
+        <goods-card item="{{item}}" bindadd="goRecommend" show-add="{{true}}"></goods-card>
+      </view>
+    </scroll-view>
+
+    <view style="height: 180rpx;"></view>
+
+    <!-- 底部结算栏 -->
+    <view class="footer" wx:if="{{valid.length}}">
+      <view class="ft-select" bindtap="toggleAll">
+        <view class="check {{(editMode ? delAll : allChecked) ? 'on' : ''}}">
+          <text wx:if="{{editMode ? delAll : allChecked}}">✓</text>
+        </view>
+        <text>全选</text>
+      </view>
+
+      <block wx:if="{{!editMode}}">
+        <view class="ft-total" bindtap="toggleDetail">
+          <view class="ft-amount">
+            合计：<text class="price big">{{payAmountText}}</text>
+          </view>
+          <view class="ft-detail">优惠明细 <text class="arrow">▾</text></view>
+        </view>
+        <view class="ft-btn checkout {{checkedCount ? '' : 'disabled'}}" bindtap="goCheckout">
+          结算{{checkedCount ? '(' + checkedCount + ')' : ''}}
+        </view>
+      </block>
+
+      <block wx:else>
+        <view class="ft-total"></view>
+        <view class="ft-btn delete {{delIds.length ? '' : 'disabled'}}" bindtap="batchDelete">
+          删除{{delIds.length ? '(' + delIds.length + ')' : ''}}
+        </view>
+      </block>
     </view>
-  </scroll-view>
+  </block>
 </view>

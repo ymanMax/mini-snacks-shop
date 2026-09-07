@@ -1,0 +1,106 @@
+<view class="atd-page" wx:if="{{ticket}}">
+  <!-- 状态头 -->
+  <view class="status-header status-bg-{{ticket.status}}">
+    <view class="sh-title">{{ticket.statusText}}</view>
+    <view class="sh-sub" wx:if="{{ticket.status === 1}}">商家将尽快为您受理，请耐心等待</view>
+    <view class="sh-sub" wx:elif="{{ticket.status === 2}}">售后处理中，可在下方查看进度</view>
+    <view class="sh-sub" wx:elif="{{ticket.status === 3}}">本次售后已处理完成，感谢您的理解</view>
+    <view class="sh-sub" wx:else>您已撤销本次售后申请</view>
+  </view>
+
+  <!-- 进度时间线 -->
+  <view class="card">
+    <view class="card-title">处理进度</view>
+    <view class="step" wx:for="{{ticket.timeline}}" wx:key="time">
+      <view class="step-left">
+        <view class="step-dot {{index === ticket.timeline.length - 1 ? (ticket.status === 4 ? 'cancel' : 'current') : ''}}"></view>
+        <view class="step-line" wx:if="{{index < ticket.timeline.length - 1}}"></view>
+      </view>
+      <view class="step-body">
+        <view class="step-title">{{item.title}}</view>
+        <view class="step-remark">{{item.remark}}</view>
+        <view class="step-time">{{item.time}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 工单信息 -->
+  <view class="card">
+    <view class="card-title">售后信息</view>
+    <view class="info-row"><text class="info-label">售后类型</text><text class="info-val">{{ticket.typeText}}</text></view>
+    <view class="info-row"><text class="info-label">申请原因</text><text class="info-val">{{ticket.reason}}</text></view>
+    <view class="info-row" wx:if="{{ticket.desc}}"><text class="info-label">问题描述</text><text class="info-val">{{ticket.desc}}</text></view>
+    <view class="info-row"><text class="info-label">关联订单</text><text class="info-val link" bindtap="goOrder">{{ticket.orderNo}} ›</text></view>
+    <view class="info-row" wx:if="{{ticket.amount > 0}}">
+      <text class="info-label">退款金额</text>
+      <text class="info-val price">￥{{ticket.amount}}</text>
+    </view>
+    <view class="info-row"><text class="info-label">申请时间</text><text class="info-val">{{ticket.createTime}}</text></view>
+  </view>
+
+  <!-- 商品 -->
+  <view class="card">
+    <view class="card-title">售后商品</view>
+    <view class="g-row" wx:for="{{ticket.goods}}" wx:key="goodsId">
+      <safe-image class="g-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+      <view class="g-info">
+        <view class="g-name ellipsis-2">{{item.name}}</view>
+        <view class="g-spec">{{item.specText}}</view>
+      </view>
+      <view class="g-count">x{{item.count}}</view>
+    </view>
+  </view>
+
+  <!-- 客服评价 -->
+  <view class="card" wx:if="{{ticket.status === 3 && !ticket.rate}}">
+    <view class="rate-entry">
+      <text>本次售后处理还满意吗？</text>
+      <view class="rate-btn" bindtap="openRate">去评价</view>
+    </view>
+  </view>
+  <view class="card" wx:if="{{ticket.rate}}">
+    <view class="card-title">我的评价</view>
+    <view class="rate-line">响应速度：<text class="stars">{{ticket.rate.speedText}}</text></view>
+    <view class="rate-line">解决问题：<text class="stars">{{ticket.rate.solvedText}}</text></view>
+    <view class="rate-done">评价时间 {{ticket.rate.time}}</view>
+  </view>
+
+  <view class="demo-tip">🎬 演示入口：点击“模拟商家处理”可推进售后状态</view>
+  <view style="height: 140rpx;"></view>
+
+  <!-- 底部操作 -->
+  <view class="footer">
+    <view class="f-btn plain" bindtap="contact">联系客服</view>
+    <block wx:if="{{ticket.status === 1}}">
+      <view class="f-btn plain" bindtap="cancel">撤销申请</view>
+      <view class="f-btn primary" bindtap="advance">模拟商家受理</view>
+    </block>
+    <view wx:elif="{{ticket.status === 2}}" class="f-btn primary" bindtap="advance">模拟处理完成</view>
+    <view wx:elif="{{ticket.status === 3 && !ticket.rate}}" class="f-btn primary" bindtap="openRate">评价售后</view>
+  </view>
+
+  <!-- 评价弹层 -->
+  <view wx:if="{{rateVisible}}" class="sheet-mask" bindtap="closeRate">
+    <view class="rate-sheet" catchtap="noop">
+      <view class="rate-title">售后处理评价</view>
+      <view class="rate-row">
+        <text class="rate-label">响应速度</text>
+        <view class="rate-stars">
+          <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this"
+            class="star {{speed >= s ? 'on' : ''}}" data-key="speed" data-star="{{s}}" bindtap="pickStar">★</text>
+        </view>
+      </view>
+      <view class="rate-row">
+        <text class="rate-label">问题解决</text>
+        <view class="rate-stars">
+          <text wx:for="{{[1,2,3,4,5]}}" wx:for-item="s" wx:key="*this"
+            class="star {{solved >= s ? 'on' : ''}}" data-key="solved" data-star="{{s}}" bindtap="pickStar">★</text>
+        </view>
+      </view>
+      <view class="rate-actions">
+        <button class="btn btn-gray" bindtap="closeRate">取消</button>
+        <button class="btn btn-primary" style="margin-left:24rpx;" bindtap="submitRate">提交评价</button>
+      </view>
+    </view>
+  </view>
+</view>

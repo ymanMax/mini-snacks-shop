@@ -1,0 +1,53 @@
+<view class="cf-page">
+  <!-- Tab -->
+  <view class="tabs">
+    <view class="tab {{active === 'collect' ? 'on' : ''}}" data-type="collect" bindtap="switchTab">❤️ 收藏记录</view>
+    <view class="tab {{active === 'footprint' ? 'on' : ''}}" data-type="footprint" bindtap="switchTab">👣 浏览足迹</view>
+  </view>
+
+  <!-- 收藏 -->
+  <block wx:if="{{active === 'collect'}}">
+    <view class="swipe-list" wx:if="{{collects.length}}">
+      <view class="swipe-wrap" wx:for="{{collects}}" wx:key="id">
+        <view class="swipe-row"
+          style="transform: translateX({{openId === item.id ? -140 : 0}}rpx);"
+          data-id="{{item.id}}"
+          bindtouchstart="touchStart" bindtouchmove="touchMove" bindtouchend="touchEnd">
+          <goods-card item="{{item}}" mode="list" bindadd="onAdd">
+          </goods-card>
+          <view class="heart" data-id="{{item.id}}" catchtap="toggleCollect">❤️</view>
+        </view>
+        <view class="swipe-del" data-id="{{item.id}}" catchtap="toggleCollect">删除</view>
+      </view>
+    </view>
+    <empty-state wx:else img="/static/images/empty_collect.png"
+      text="还没有收藏任何商品" sub="看到喜欢的零食点个小心心吧" btnText="去逛逛" bindbtn="goShopping"></empty-state>
+  </block>
+
+  <!-- 足迹 -->
+  <block wx:else>
+    <view wx:if="{{groups.length}}" class="fp-head">
+      <text>共浏览 {{groups.length}} 天的美味</text>
+      <text class="fp-clear" bindtap="clearFootprint">清空足迹</text>
+    </view>
+    <block wx:for="{{groups}}" wx:key="date" wx:for-item="group">
+      <view class="fp-date">{{group.date}}</view>
+      <view class="fp-list">
+        <view class="fp-item" wx:for="{{group.items}}" wx:key="id" wx:for-item="g">
+          <navigator url="/pages/detail/detail?id={{g.id}}" hover-class="none" class="fp-nav">
+            <safe-image class="fp-img" src="{{g.pic}}" mode="aspectFill"></safe-image>
+            <view class="fp-info">
+              <view class="fp-name ellipsis-2">{{g.name}}</view>
+              <view class="fp-price">
+                <text class="price">{{g.priceText}}</text>
+                <text class="fp-time">{{g.viewTime}} 浏览</text>
+              </view>
+            </view>
+          </navigator>
+        </view>
+      </view>
+    </block>
+    <empty-state wx:if="{{!groups.length}}" img="/static/images/empty_footprint.png"
+      text="还没有浏览足迹" sub="去发现好吃的零食吧" btnText="去逛逛" bindbtn="goShopping"></empty-state>
+  </block>
+</view>

@@ -1,275 +1,239 @@
-// pages/cart/cart.js
-const {
-  setOrder,
-  verify
-} = require('../../api/api.js');
-const {
-  login
-} = require('../mine/mine.js')
-const app = getApp();
+// pages/cart/cart.js —— 购物车
+const cartApi = require('../../api/cart.js')
+const orderApi = require('../../api/order.js')
+const goodsApi = require('../../api/goods.js')
+const toast = require('../../utils/toast.js')
+const { formatPrice } = require('../../utils/format.js')
+
+const app = getApp()
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    carts: [], //数据 
-    iscart: false,
-    hidden: null,
-    isAllSelect: false,
-    totalMoney: 0,
-    order_id: 0
+    loading: true,
+    valid: [],
+    invalid: [],
+    totalCount: 0,
+    checkedCount: 0,
+    checkedAmount: '￥0.00',
+    allChecked: false,
+    editMode: false,
+    delIds: [],
+    delAll: false,
+    recommend: [],
+    // 优惠/配送费预告
+    preview: null,
+    showDetail: false,
+    payAmountText: '￥0.00',
+    gapText: '',
+    promo: null
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
   onShow() {
-    var arr = wx.getStorageSync('cart') || [];
-    // console.log("缓存数据：", arr);
-    if (arr.length > 0) {
-      // 更新数据  
+    this.loadCart()
+    if (!this._loadedHot) {
+      this._loadedHot = true
+      goodsApi.getHot(10).then((list) => this.setData({ recommend: list }))
+    }
+  },
+
+  withPriceText(list) {
+    return list.map((i) => Object.assign({}, i, {
+      priceText: formatPrice(i.price),
+      delChecked: this.data.delIds.indexOf(i.id) > -1
+    }))
+  },
+
+  loadCart() {
+    cartApi.getCart().then((view) => {
       this.setData({
-        carts: arr,
-        iscart: true,
-        hidden: false
-      });
-      // console.log("新缓存数据：", this.data.carts);
-    } else {
-      this.setData({
-        iscart: false,
-        hidden: true,
-      });
-      // console.info("缓存数据：啥也没有");
-    }
-  },
-
-  //勾选事件处理函数  
-  switchSelect: function (e) {
-    // 获取item项的id，和数组的下标值  
-    var Allprice = 0,
-      i = 0;
-    let id = e.target.dataset.id,
-      index = parseInt(e.target.dataset.index);
-    this.data.carts[index].isSelect = !this.data.carts[index].isSelect; //价钱统计
-    if (this.data.carts[index].isSelect) {
-      this.data.totalMoney = this.data.totalMoney + (this.data.carts[index].price * this.data.carts[index].count);
-    } else {
-      this.data.totalMoney = this.data.totalMoney - (this.data.carts[index].price * this.data.carts[index].count);
-    }
-    //是否全选判断
-    for (i = 0; i < this.data.carts.length; i++) {
-      Allprice = Allprice + (this.data.carts[index].price * this.data.carts[index].count);
-      // console.log(this.data.carts[i].isSelect);
-    }
-    if (Allprice == this.data.totalMoney) {
-      this.data.isAllSelect = true;
-    } else {
-      this.data.isAllSelect = false;
-    }
-    this.setData({
-      carts: this.data.carts,
-      totalMoney: this.data.totalMoney,
-      isAllSelect: this.data.isAllSelect,
-    })
-  },
-
-  allSelect: function (e) {
-    //处理全选逻辑
-    let i = 0;
-    if (!this.data.isAllSelect) {
-      this.data.totalMoney = 0;
-      for (i = 0; i < this.data.carts.length; i++) {
-        this.data.carts[i].isSelect = true;
-        this.data.totalMoney = this.data.totalMoney + (this.data.carts[i].price * this.data.carts[i].count);
-      }
-    } else {
-      for (i = 0; i < this.data.carts.length; i++) {
-        this.data.carts[i].isSelect = false;
-      }
-      this.data.totalMoney = 0;
-    }
-    this.setData({
-      carts: this.data.carts,
-      isAllSelect: !this.data.isAllSelect,
-      totalMoney: this.data.totalMoney,
-    })
-  },
-
-  /* 减数 */
-  delCount: function (e) {
-    var index = e.target.dataset.index;
-    // console.log("count--");
-    var count = this.data.carts[index].count; // 商品总数量-1
-    if (count > 1) {
-      this.data.carts[index].count--;
-    }
-    // 将数值与状态写回  
-    this.setData({
-      carts: this.data.carts
-    });
-    // console.log("carts:" + this.data.carts);
-    this.priceCount();
-  },
-  /* 加数 */
-  addCount: function (e) {
-    var index = e.target.dataset.index;
-    // console.log("count++");
-    var count = this.data.carts[index].count; // 商品总数量+1  
-    if (count < 10) {
-      this.data.carts[index].count++;
-    }
-    // 将数值与状态写回  
-    this.setData({
-      carts: this.data.carts
-    });
-    // console.log("carts:" + this.data.carts);
-    this.priceCount();
-  },
-  priceCount: function (e) {
-    this.data.totalMoney = 0;
-    for (var i = 0; i < this.data.carts.length; i++) {
-      if (this.data.carts[i].isSelect == true) {
-        this.data.totalMoney = this.data.totalMoney + (this.data.carts[i].price * this.data.carts[i].count);
-      }
-
-    }
-    this.setData({
-      totalMoney: this.data.totalMoney,
-    })
-  },
-  /* 删除item */
-  delGoods: function (e) {
-    this.data.carts.splice(e.target.id.substring(3), 1); // 更新data数据对象  
-    if (this.data.carts.length > 0) {
-      this.setData({
-        carts: this.data.carts
+        loading: false,
+        valid: this.withPriceText(view.valid),
+        invalid: this.withPriceText(view.invalid),
+        totalCount: view.totalCount,
+        checkedCount: view.checkedCount,
+        checkedAmount: formatPrice(view.checkedAmount),
+        allChecked: view.allChecked,
+        delIds: [],
+        delAll: false
       })
-      wx.setStorageSync('cart', this.data.carts);
-      this.priceCount();
-    } else {
+      this.refreshPreview(view)
+      app.refreshCartBadge()
+    }).catch(() => this.setData({ loading: false }))
+  },
+
+  // 优惠明细 / 配送费预告（基于默认地址实时试算）
+  refreshPreview(view) {
+    const items = (view || this.data).valid.filter((i) => i.checked)
+    if (!items.length) {
+      this.setData({ preview: null, payAmountText: '￥0.00', gapText: '' })
+      return
+    }
+    const payload = items.map((i) => ({
+      cartId: i.id,
+      goodsId: i.goodsId,
+      name: i.name,
+      pic: i.pic,
+      specText: i.specText,
+      price: i.price,
+      count: i.count
+    }))
+    orderApi.preview({ items: payload }).then((p) => {
+      const freeThreshold = p.freeThreshold
+      const gap = p.freight > 0 ? Math.max(0, freeThreshold - (p.goodsTotal - p.discountAmount)) : 0
+      // 满减阶梯进度
+      const promo = this.buildPromo(p)
       this.setData({
-        cart: this.data.carts,
-        iscart: false,
-        hidden: true,
+        preview: p,
+        payAmountText: formatPrice(p.payAmount),
+        gapText: gap > 0 ? '再买 ' + formatPrice(gap, false) + ' 元免基础配送费' : '已享免基础配送费',
+        promo: promo
       })
-      wx.setStorageSync('cart', []);
+    }).catch(() => {})
+  },
+
+  // 满减阶梯凑单进度
+  buildPromo(p) {
+    const rules = p.ladders.rules
+    const total = p.goodsTotal
+    const next = p.ladders.next
+    const steps = rules.map((r) => ({
+      threshold: r.threshold,
+      reduce: r.reduce,
+      reached: total >= r.threshold,
+      label: '满' + r.threshold + '减' + r.reduce
+    }))
+    return {
+      steps: steps,
+      next: next,
+      gapText: next ? '再买 ￥' + next.gap.toFixed(2) + ' 可减 ￥' + next.reduce : '已享最高满减',
+      bestCoupon: p.bestCoupon,
+      bestCouponText: p.bestCoupon ? '￥' + p.bestCoupon.amount.toFixed(2) : '',
+      couponCount: p.usableCoupons.length,
+      freeShipGap: p.freeShipGap,
+      freeShipText: p.freeShipGap > 0
+        ? '再买 ￥' + p.freeShipGap.toFixed(2) + ' 免基础配送费'
+        : '已享免基础配送费'
     }
   },
 
-  goBuy: function (e) {
-    var newProducts = [];
-    const that = this;
-    this.data.carts.forEach(item => {
-      if (item.isSelect == true) {
+  // ---- 选择 ----
+  toggleItem(e) {
+    const id = e.currentTarget.dataset.id
+    if (this.data.editMode) {
+      const delIds = this.data.delIds.slice()
+      const i = delIds.indexOf(id)
+      if (i > -1) delIds.splice(i, 1)
+      else delIds.push(id)
+      const valid = this.data.valid.map((it) => Object.assign({}, it, { delChecked: delIds.indexOf(it.id) > -1 }))
+      this.setData({
+        delIds: delIds,
+        delAll: delIds.length === this.data.valid.length,
+        valid: valid
+      })
+      return
+    }
+    const item = this.data.valid.find((x) => x.id === id)
+    cartApi.update({ id: id, checked: !item.checked }).then((view) => this.applyView(view))
+  },
 
-        newProducts.push({
-          product_id: item.id,
-          count: item.count,
-        })
-        // 删除选中进入订单的商品
-      }
-      newProducts.forEach(item_selected => {
-        var index = this.data.carts.indexOf(item_selected);
-        this.data.carts.splice(index, 1);
+  toggleAll() {
+    if (this.data.editMode) {
+      const all = !this.data.delAll
+      const delIds = all ? this.data.valid.map((i) => i.id) : []
+      const valid = this.data.valid.map((it) => Object.assign({}, it, { delChecked: all }))
+      this.setData({ delAll: all, delIds: delIds, valid: valid })
+      return
+    }
+    cartApi.toggleAll(!this.data.allChecked).then((view) => this.applyView(view))
+  },
+
+  // ---- 数量 ----
+  onCount(e) {
+    const id = e.currentTarget.dataset.id
+    cartApi.update({ id: id, count: e.detail.value }).then((view) => this.applyView(view))
+  },
+
+  applyView(view) {
+    this.setData({
+      valid: this.withPriceText(view.valid),
+      invalid: this.withPriceText(view.invalid),
+      totalCount: view.totalCount,
+      checkedCount: view.checkedCount,
+      checkedAmount: formatPrice(view.checkedAmount),
+      allChecked: view.allChecked
+    })
+    this.refreshPreview(view)
+    app.refreshCartBadge()
+  },
+
+  // ---- 删除 ----
+  removeOne(e) {
+    const id = e.currentTarget.dataset.id
+    toast.confirm('确定删除该商品吗？').then((ok) => {
+      if (!ok) return
+      cartApi.remove([id]).then((view) => {
+        toast.success('已删除')
+        this.applyView(view)
       })
     })
-    console.log(newProducts);
-    if (this.data.carts.length > 0) {
-      this.setData({
-        carts: this.data.carts
-      })
-      wx.setStorageSync('cart', this.data.carts);
-      this.priceCount();
-    } else {
-      this.setData({
-        cart: this.data.carts,
-        iscart: false,
-        hidden: true,
-      })
-      wx.setStorageSync('cart', []);
-    }
-
-
-    // console.log("app.globalData.token：   ", app.globalData.token);
-    let token = app.globalData.token.token;
-    // console.log("token：   ", token);
-
-    verify(token).then(res => {
-      if (res.data.isValid == true) {
-        console.log("2", newProducts)
-      } else {
-        // console.log(res.data.isValid)
-        const that = this;
-        let gbdata = app.globalData;
-        wx.login({
-          success: function (res) {
-            let code = res.code;
-            // console.log(res.code)
-            getApp().post('/token/user', {
-              code: code
-            }).then((e) => {
-              try {
-                wx.setStorageSync('token', e.data);
-                // console.log(wx.getStorageSync('token'))
-              } catch (e) {
-                // console.log('setTokenErr', e)
-              }
-              gbdata.token = e.data;
-              let isLogined = true;
-              that.setData({
-                isLogined
-              })
-              wx.setStorageSync('isLogined', isLogined);
-              // console.log(wx.getStorageSync('isLogined'))
-              wx.showToast({
-                title: '登陆成功',
-                icon: 'success'
-              })
-            })
-          }
-        })
-      }
-    })
-    wx.request({
-      url: 'https://hanmashanghu.qiaomai365.com/api/v1/order',
-      method: 'POST',
-      header: {
-        //修改
-        'content-type': 'application/json',
-        'token': token
-      },
-      data: {
-        products: newProducts
-      },
-      success: res => {
-        var order_id = res.data.data.order_id;
-        wx.setStorageSync('data', res.data.data)
-        console.log(res.data.data)
-        wx.setStorageSync('order_id', order_id)
-        wx.navigateTo({
-          url: '/pages/orders/orders?order_id=' + wx.getStorageSync('order_id')
-        })
-        console.log(wx.getStorageSync('order_id'))
-      }
-    })
-
-    // console.log(res.data.isValid)
-
   },
+
+  batchDelete() {
+    const ids = this.data.delIds
+    if (!ids.length) {
+      toast.showToast('请选择要删除的商品')
+      return
+    }
+    toast.confirm('确定删除选中的 ' + ids.length + ' 件商品吗？').then((ok) => {
+      if (!ok) return
+      cartApi.remove(ids).then((view) => {
+        toast.success('已删除')
+        this.setData({ editMode: false, delIds: [] })
+        this.applyView(view)
+      })
+    })
+  },
+
+  toggleEdit() {
+    this.setData({ editMode: !this.data.editMode, delIds: [], delAll: false, showDetail: false })
+  },
+
+  clearInvalid() {
+    if (!this.data.invalid.length) return
+    toast.confirm('确定清空失效商品吗？').then((ok) => {
+      if (!ok) return
+      cartApi.clearInvalid().then((view) => {
+        toast.success('已清空')
+        this.applyView(view)
+      })
+    })
+  },
+
+  toggleDetail() {
+    this.setData({ showDetail: !this.data.showDetail })
+  },
+
+  noop() {},
+
+  // ---- 跳转 ----
+  goDetail(e) {
+    const id = e.currentTarget.dataset.id
+    wx.navigateTo({ url: '/pages/detail/detail?id=' + id })
+  },
+  goShopping() {
+    wx.switchTab({ url: '/pages/classic/classic' })
+  },
+  goCheckout() {
+    if (!this.data.checkedCount) {
+      toast.showToast('请先选择要结算的商品')
+      return
+    }
+    wx.navigateTo({ url: '/pages/order/confirm/confirm?from=cart' })
+  },
+  goRecommend(e) {
+    wx.navigateTo({ url: '/pages/detail/detail?id=' + e.detail.item.id })
+  },
+  goCoupon() {
+    wx.navigateTo({ url: '/pages/coupon/mine/mine' })
+  }
 })

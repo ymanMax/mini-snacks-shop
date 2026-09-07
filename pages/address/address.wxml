@@ -1,40 +1,43 @@
-<scroll-view class="scroll" scroll-y="true">
-
-<view wx:for="{{addressList}}" wx:for-index="index">
-
-  <view class="product-name-wrap" bindtap="selectAddress" data-index="{{index}}">
-
-    <view class="ui-list-item-info">{{item.consignee}}
-
-      <text decode="{{true}}" space="{{true}}">  </text> {{item.mobile}}
-
-    </view>
-
-    <view class="ui-list-item-address">
-
-      {{item.address}}
-
-    </view>
-
-    <view class="ui-list-item-time">
-
-      <p>{{item.transportDay}}</p>
-
-      <p class="ui-list-item-del" data-id="{{index}}" bindtap="delAddress">删除</p>
-
-    </view>
-
-    <view class="separate"></view>
-
+<view class="addr-page">
+  <!-- 标签筛选 -->
+  <view class="filter-bar">
+    <view wx:for="{{filters}}" wx:key="label" data-tag="{{item.tag}}" bindtap="pickTag"
+      class="filter-chip {{activeTag === item.tag ? 'on' : ''}}">{{item.label}}</view>
   </view>
 
-</view>
+  <view wx:if="{{list.length}}" class="addr-list">
+    <view class="addr-item {{item.outRange ? 'out-range' : ''}}" wx:for="{{list}}" wx:key="id"
+      data-id="{{item.id}}" bindtap="select">
+      <view class="addr-radio {{item.isDefault ? 'on' : ''}}" catchtap="setDefault" data-id="{{item.id}}">
+        <text wx:if="{{item.isDefault}}">✓</text>
+      </view>
+      <view class="addr-content">
+        <view class="addr-line1">
+          <text class="addr-name">{{item.name}}</text>
+          <text class="addr-phone">{{item.phone}}</text>
+          <text class="tag orange" wx:if="{{item.tag}}">{{item.tag}}</text>
+          <text class="tag green" wx:if="{{item.isDefault}}">默认</text>
+          <text class="tag gray" wx:if="{{item.outRange}}">超出配送范围</text>
+        </view>
+        <view class="addr-line2">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</view>
+        <view class="addr-distance">
+          距店铺 {{item.distanceKm}} km
+          <text wx:if="{{item.outRange}}" class="range-warn">· 暂不支持配送（{{rangeKm}}km 内可达）</text>
+        </view>
+      </view>
+      <view class="addr-ops">
+        <view class="op-btn" catchtap="edit" data-id="{{item.id}}">编辑</view>
+        <view class="op-btn del" catchtap="remove" data-id="{{item.id}}">删除</view>
+      </view>
+    </view>
+  </view>
 
-</scroll-view>
+  <empty-state wx:else img="/static/images/empty_address.png"
+    text="该标签下还没有地址" sub="新增地址后下单更方便" btnText="新增收货地址" bindbtn="add"></empty-state>
 
-<view class="add-address" bindtap="addAddress">
+  <view style="height: 140rpx;"></view>
 
-<image class="add-img"  src="../../image/add.png"></image>
-<text>新增地址</text>
-
+  <view class="add-bar">
+    <button class="add-btn" bindtap="add">＋ 新增收货地址</button>
+  </view>
 </view>

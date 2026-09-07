@@ -1,0 +1,8 @@
+<image
+  class="custom-class"
+  style="{{customStyle}}"
+  src="{{failed || !src ? fallback : src}}"
+  mode="{{mode}}"
+  lazy-load="{{lazy}}"
+  binderror="onError"
+></image>

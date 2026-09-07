@@ -1,15 +1,18 @@
-<!--pages/list/list.wxml-->
-<view class="main">
-  <view class="banner">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + pic}}"></image>
+<view class="tl-page">
+  <skeleton wx:if="{{loading}}" type="list" count="{{5}}"></skeleton>
+
+  <block wx:elif="{{theme}}">
+    <view class="theme-banner">
+      <safe-image class="tb-img" src="{{theme.pic}}" mode="aspectFill"></safe-image>
+      <view class="tb-mask">
+        <view class="tb-name">{{theme.name}}</view>
+        <view class="tb-desc">{{theme.description}}</view>
+      </view>
     </view>
-  <view class="list-box">
-    <view class="newest-list" wx:for="{{products}}">
-      <navigator url="../detail/detail?product_id={{item.id}}">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
-        <view class="newest-text"><text>{{item.name}}</text></view>
-        <view class="newest-text"><text>{{item.price}}</text></view>
-      </navigator>
+
+    <view class="goods-wrap" wx:if="{{goods.length}}">
+      <goods-card wx:for="{{goods}}" wx:key="id" mode="list" item="{{item}}" bindadd="onAdd"></goods-card>
     </view>
-  </view>
+    <empty-state wx:else img="/static/images/empty_search.png" text="主题商品准备中"></empty-state>
+  </block>
 </view>

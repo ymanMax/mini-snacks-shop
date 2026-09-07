@@ -1,56 +1,96 @@
-<view class="main">
-  <!-- 轮播图 -->
-  <view class="swiperContainer">
-    <swiper class="imageContainer" bindchange="swiperChange" previous-margin="55rpx" next-margin="50rpx" circular autoplay>
-      <block wx:for="{{items}}" wx:key="index">
-        <swiper-item class="turnItem">
-          <image class="itemImg {{index == swiperCurrent ? 'imgActive': ''}}" src="{{'https://hanmashanghu.qiaomai365.com' + item.img.url}}"></image>
-        </swiper-item>
-      </block>
+<view class="page">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="search-pill" bindtap="goSearch">
+      <text class="search-icon">🔍</text>
+      <text class="search-ph">搜索零食名称、标签、产地</text>
+    </view>
+  </view>
+
+  <!-- 骨架屏 -->
+  <skeleton wx:if="{{loading}}" type="home"></skeleton>
+
+  <block wx:else>
+    <!-- 轮播图 -->
+    <swiper class="banner" circular autoplay interval="4000" duration="500" indicator-dots
+      indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#ffffff">
+      <swiper-item wx:for="{{banners}}" wx:key="id" data-link="{{item.link}}" bindtap="goBanner">
+        <safe-image class="banner-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+      </swiper-item>
     </swiper>
-    <!-- 指示点的修饰 -->
-    <view class="dots">
-      <block wx:for="{{items}}" wx:key="index">
-        <view class="dot{{index == swiperCurrent ? ' active' : ''}}"></view>
-      </block>
-    </view>
-  </view>
 
-  <view class="selected">
-    <view class="select-title">
-      <text>精选主题</text>
-    </view>
-    <view class="select-top">
-      <view class="select-top-small">
-        <navigator url="../list/list?item=1">
-          <image src="{{'https://hanmashanghu.qiaomai365.com' + theme_1.topic_img.url}}"></image>
-        </navigator>
-      </view>
-      <view class="select-top-small">
-        <navigator url="../list/list?item=2">
-          <image src="{{'https://hanmashanghu.qiaomai365.com' + theme_2.topic_img.url}}"></image>
-        </navigator>
+    <!-- 分类导航 -->
+    <view class="cats card">
+      <view class="cat-item" wx:for="{{categories}}" wx:key="id" data-id="{{item.id}}" bindtap="goCategory">
+        <safe-image class="cat-icon" src="{{item.icon}}" mode="aspectFit"></safe-image>
+        <text class="cat-name">{{item.name}}</text>
       </view>
     </view>
-    <view class="select-bottom">
-      <navigator url="../list/list?item=3">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + theme_3.topic_img.url}}"></image>
-      </navigator>
-    </view>
-  </view>
 
-  <view class="newest">
-    <view class="newest-title">
-      <text>最近新品</text>
+    <!-- 限时抢购 -->
+    <view class="seckill" wx:if="{{seckill}}">
+      <view class="seckill-head">
+        <view class="seckill-title" bindtap="goSeckillPage">
+          <text class="sk-fire">⚡</text>
+          <text>限时抢购</text>
+          <text class="sk-more">每日三场 ›</text>
+        </view>
+        <view class="sk-cd" bindtap="goSeckillPage">
+          <text class="sk-cd-label">距结束</text>
+          <text class="sk-cd-num">{{cdH}}</text>:<text class="sk-cd-num">{{cdM}}</text>:<text class="sk-cd-num">{{cdS}}</text>
+          <text class="sk-go">›</text>
+        </view>
+      </view>
+      <scroll-view scroll-x class="sk-scroll" enhanced show-scrollbar="{{false}}">
+        <view class="sk-item" wx:for="{{seckillList}}" wx:key="goodsId" data-id="{{item.goodsId}}" bindtap="goSeckill">
+          <safe-image class="sk-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+          <view class="sk-name ellipsis">{{item.name}}</view>
+          <view class="sk-prices">
+            <text class="price">{{item.seckillText}}</text>
+            <text class="price-orig">{{item.priceText}}</text>
+          </view>
+          <view class="sk-bar">
+            <view class="sk-bar-in" style="width: {{item.soldPercent}}%"></view>
+            <text class="sk-bar-text">已抢{{item.soldPercent}}%</text>
+          </view>
+          <view class="sk-btn">马上抢</view>
+        </view>
+      </scroll-view>
     </view>
-    <view class="list-box">
-    <view class="newest-list" wx:for="{{products}}" wx:key="id">
-      <navigator url="../detail/detail?product_id={{item.id}}">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
-        <view class="newest-text"><text>{{item.name}}</text></view>
-        <view class="newest-text"><text>{{item.price}}</text></view>
-      </navigator>
+
+    <!-- 精选主题 -->
+    <view class="section-head">
+      <text class="title">精选主题</text>
     </view>
-  </view>
+    <scroll-view scroll-x class="theme-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="theme-item" wx:for="{{themes}}" wx:key="id" data-id="{{item.id}}" bindtap="goTheme">
+        <safe-image class="theme-img" src="{{item.pic}}" mode="aspectFill"></safe-image>
+        <view class="theme-mask">
+          <view class="theme-name">{{item.name}}</view>
+          <view class="theme-desc">{{item.description}}</view>
+        </view>
+      </view>
+    </scroll-view>
+
+    <!-- 为你推荐 -->
+    <view class="section-head">
+      <text class="title">为你推荐</text>
+      <text class="more">根据你的口味精选</text>
+    </view>
+
+    <view class="goods-grid" wx:if="{{goods.length}}">
+      <goods-card wx:for="{{goods}}" wx:key="id" item="{{item}}" bindadd="onAdd"></goods-card>
+    </view>
+    <empty-state wx:if="{{!goods.length && loadStatus !== 'loading'}}" img="/static/images/empty_search.png"
+      text="没有找到相关商品" sub="换个分类看看吧"></empty-state>
+
+    <load-more status="{{loadStatus}}" bind:retry="onRetry"></load-more>
+    <view class="page-end-tip" wx:if="{{loadStatus === 'nomore'}}">— 零食千万种，先尝这几种 —</view>
+  </block>
+
+  <!-- 悬浮购物车 -->
+  <view class="float-cart" bindtap="goCart">
+    <view class="fc-icon">🛒</view>
+    <view class="badge-dot" wx:if="{{cartCount > 0}}">{{cartCount > 99 ? '99+' : cartCount}}</view>
   </view>
 </view>

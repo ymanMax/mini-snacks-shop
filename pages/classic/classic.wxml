@@ -1,29 +1,70 @@
-
-<view class="main">
-    <view class="categroy-left">
-        <view wx:for="{{detail}}" wx:key="index" data-id="{{item.id}}" data-index="{{index}}"
-            bindtap="switchTab"
-            class="cate-list {{curIndex === index?'on':''}}">{{item.name}}</view>
+<view class="classic">
+  <!-- 左侧分类导航 -->
+  <scroll-view class="left" scroll-y>
+    <view wx:for="{{cats}}" wx:key="id" data-id="{{item.id}}" bindtap="selectCat"
+      class="left-item {{activeCat === item.id ? 'on' : ''}}">
+      <view wx:if="{{activeCat === item.id}}" class="on-bar"></view>
+      <safe-image class="left-icon" src="{{item.icon}}" mode="aspectFit"></safe-image>
+      <text class="left-name">{{item.name}}</text>
     </view>
-    <scroll-view class="categroy-right" scroll-y="{{isScroll}}" scroll-into-view="{{toView}}" scroll-with-animation="true">
-         <block wx:for="{{detail}}" wx:for-index wx:key="idx">
-            <view id="{{'s'+item.id}}" class="cate-box">
-                <view class="cate-banner">
-                    <image src="{{'https://hanmashanghu.qiaomai365.com' + item.img.url}}"></image>
-                </view>
-                <view class="cate-title">
-                    <text>{{item.name}}</text>
-                </view>
-                <view class="product">
-                    <view class="product-list" wx:for="{{classs[index]}}" wx:key="index" wx:for-item="val">
-                        <navigator url="../detail/detail?product_id={{val.id}}">
-                            <image src="{{'https://hanmashanghu.qiaomai365.com' + val.main_img_url}}"></image>
-                            <view class="classname"><text>{{val.name}}</text></view>
-                        </navigator>
-                    </view>
-                </view>
-            </view>
-        </block> 
-    </scroll-view>
+  </scroll-view>
 
+  <!-- 右侧商品 -->
+  <view class="right">
+    <!-- 吸顶筛选栏 -->
+    <view class="filter-bar">
+      <view wx:for="{{sorts}}" wx:key="key" data-key="{{item.key}}" bindtap="switchSort"
+        class="fb-item {{sort === item.key ? 'on' : ''}}">{{item.label}}</view>
+      <view class="fb-item filter-btn {{filterCount > 0 ? 'on' : ''}}" bindtap="openFilter">
+        筛选
+        <text class="fb-dot" wx:if="{{filterCount > 0}}">{{filterCount}}</text>
+      </view>
+    </view>
+
+    <skeleton wx:if="{{loading}}" type="list" count="{{6}}"></skeleton>
+
+    <block wx:else>
+      <view class="goods-list" wx:if="{{goods.length}}">
+        <goods-card wx:for="{{goods}}" wx:key="id" mode="list" item="{{item}}" bindadd="onAdd"></goods-card>
+      </view>
+
+      <empty-state wx:if="{{total === 0}}" img="/static/images/empty_search.png"
+        text="没有符合条件的商品" sub="换个筛选条件试试" btnText="清除筛选" bindbtn="clearFilter"></empty-state>
+
+      <load-more status="{{loadStatus}}" bind:retry="onRetry"></load-more>
+    </block>
+  </view>
+</view>
+
+<!-- 筛选面板 -->
+<view wx:if="{{filterVisible}}" class="sheet-mask" bindtap="closeFilter">
+  <view class="sheet" catchtap="noop">
+    <view class="sheet-title">商品筛选</view>
+
+    <view class="sheet-group">
+      <view class="sheet-label">价格区间</view>
+      <view class="sheet-tags">
+        <view wx:for="{{priceRanges}}" wx:key="label" data-index="{{index}}" bindtap="pickPrice"
+          class="sheet-tag {{tempPriceIndex === index ? 'on' : ''}}">{{item.label}}</view>
+      </view>
+    </view>
+
+    <view class="sheet-group">
+      <view class="sheet-label">产地</view>
+      <view class="sheet-tags">
+        <view wx:for="{{originOptions}}" wx:key="name" data-index="{{index}}" bindtap="toggleOrigin"
+          class="sheet-tag {{item.selected ? 'on' : ''}}">{{item.name}}</view>
+      </view>
+    </view>
+
+    <view class="sheet-group row-group">
+      <view class="sheet-label">仅看有货</view>
+      <switch checked="{{tempOnlyStock}}" color="#b4282d" bindchange="toggleOnlyStock"></switch>
+    </view>
+
+    <view class="sheet-actions">
+      <button class="btn btn-gray" bindtap="resetFilter">重置</button>
+      <button class="btn btn-primary" style="margin-left:24rpx;" bindtap="confirmFilter">确定</button>
+    </view>
+  </view>
 </view>

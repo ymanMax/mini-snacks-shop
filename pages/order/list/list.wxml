@@ -1,0 +1,67 @@
+<view class="ol-page">
+  <!-- 状态 Tab -->
+  <scroll-view scroll-x class="tabs" enhanced show-scrollbar="{{false}}">
+    <view wx:for="{{tabs}}" wx:key="status" data-status="{{item.status}}" bindtap="switchTab"
+      class="tab {{activeStatus === item.status ? 'on' : ''}}">{{item.text}}</view>
+  </scroll-view>
+
+  <skeleton wx:if="{{loading}}" type="order" count="{{4}}"></skeleton>
+
+  <block wx:else>
+    <view class="order-list">
+      <view class="order-card" wx:for="{{orders}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+        <view class="oc-head">
+          <text class="oc-shop">🛍 零食商城·直营店</text>
+          <text class="oc-status" style="color: {{item.statusColor}}">{{item.statusText}}</text>
+        </view>
+
+        <view class="oc-body">
+          <view class="oc-thumbs">
+            <safe-image wx:for="{{item.thumbs}}" wx:for-item="t" wx:key="goodsId"
+              class="oc-thumb" src="{{t.pic}}" mode="aspectFill"></safe-image>
+            <view wx:if="{{item.items.length > 3}}" class="oc-more">+{{item.items.length - 3}}</view>
+          </view>
+          <view class="oc-mid">
+            <view class="oc-names ellipsis">
+              <text wx:for="{{item.items}}" wx:for-item="g" wx:key="goodsId">{{g.name}} </text>
+            </view>
+            <view class="oc-count">共{{item.totalCount}}件</view>
+          </view>
+          <view class="oc-amount">
+            <view class="oc-pay">{{item.payAmountText}}</view>
+            <view class="oc-time">{{item.createTimeShort}}</view>
+          </view>
+        </view>
+
+        <!-- 操作按钮 -->
+        <view class="oc-actions">
+          <block wx:if="{{item.status === 1}}">
+            <view class="oa-btn plain" catchtap="cancelOrder" data-id="{{item.id}}">取消订单</view>
+            <view class="oa-btn primary" catchtap="payOrder" data-id="{{item.id}}">去支付</view>
+          </block>
+          <block wx:elif="{{item.status === 2}}">
+            <view class="oa-btn plain" catchtap="remindSend">提醒发货</view>
+          </block>
+          <block wx:elif="{{item.status === 3 || item.status === 4}}">
+            <view class="oa-btn plain" catchtap="goDetail" data-id="{{item.id}}">查看物流</view>
+            <view wx:if="{{item.status === 4}}" class="oa-btn primary" catchtap="confirmOrder" data-id="{{item.id}}">确认收货</view>
+          </block>
+          <block wx:elif="{{item.status === 5}}">
+            <view class="oa-btn plain" catchtap="applyAftersale" data-id="{{item.id}}">申请售后</view>
+            <view wx:if="{{!item.isReviewed}}" class="oa-btn primary" catchtap="goReview" data-id="{{item.id}}">去评价</view>
+            <view wx:else class="oa-btn plain disabled">已评价</view>
+            <view class="oa-btn plain" catchtap="reorder" data-id="{{item.id}}">再来一单</view>
+          </block>
+          <block wx:else>
+            <view class="oa-btn plain" catchtap="reorder" data-id="{{item.id}}">再来一单</view>
+          </block>
+        </view>
+      </view>
+    </view>
+
+    <empty-state wx:if="{{total === 0}}" img="/static/images/empty_order.png"
+      text="暂无相关订单" sub="美味订单将在这里出现" btnText="去逛逛" bindbtn="goShopping"></empty-state>
+
+    <load-more status="{{loadStatus}}" bind:retry="onRetry"></load-more>
+  </block>
+</view>

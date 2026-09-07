@@ -1,0 +1,82 @@
+.pt-page { padding-bottom: 30rpx; }
+.pt-hero {
+  margin: 24rpx;
+  padding: 46rpx 36rpx;
+  border-radius: 20rpx;
+  background: linear-gradient(135deg, #e3544b, #b4282d);
+  color: #fff;
+}
+.pt-label { font-size: 24rpx; opacity: 0.9; }
+.pt-balance { font-size: 80rpx; font-weight: 800; line-height: 1.2; margin: 8rpx 0; }
+.pt-sub { font-size: 22rpx; opacity: 0.85; }
+
+/* 兑换 */
+.ex-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 24rpx;
+}
+.ex-item {
+  width: 340rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 16rpx;
+  margin-bottom: 20rpx;
+  position: relative;
+}
+.ex-img { width: 100%; height: 220rpx; border-radius: 12rpx; }
+.ex-name { font-size: 26rpx; height: 70rpx; margin-top: 10rpx; line-height: 1.35; }
+.ex-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 10rpx; }
+.ex-points { color: #b4282d; font-weight: 700; font-size: 28rpx; }
+.ex-btn {
+  background: linear-gradient(90deg, #d8443a, #b4282d);
+  color: #fff;
+  font-size: 22rpx;
+  padding: 8rpx 24rpx;
+  border-radius: 999rpx;
+}
+.ex-btn.disabled { background: #dcdee0; }
+.ex-redeemed { position: absolute; right: 24rpx; top: 24rpx; background: rgba(0,0,0,0.45); color: #fff; font-size: 18rpx; padding: 2rpx 12rpx; border-radius: 999rpx; }
+
+/* tabs */
+.tab-bar { display: flex; background: #fff; margin: 0 24rpx; border-radius: 16rpx 16rpx 0 0; }
+.tab {
+  flex: 1;
+  text-align: center;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 27rpx;
+  color: #666;
+  position: relative;
+}
+.tab.on { color: #b4282d; font-weight: 700; }
+.tab.on::after {
+  content: '';
+  position: absolute;
+  bottom: 8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  border-radius: 3rpx;
+  background: #b4282d;
+}
+
+.record-card { background: #fff; margin: 0 24rpx 24rpx; border-radius: 0 0 16rpx 16rpx; padding: 0 24rpx; }
+.record {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 0;
+  border-bottom: 1rpx solid #f5f5f5;
+}
+.record:last-child { border-bottom: none; }
+.rc-title { font-size: 27rpx; color: #333; }
+.rc-time { font-size: 22rpx; color: #b0b3ba; margin-top: 8rpx; }
+.rc-points { font-size: 32rpx; font-weight: 700; }
+.rc-points.plus { color: #b4282d; }
+.rc-points.minus { color: #666; }
+
+.card-title { font-size: 30rpx; font-weight: 700; margin-bottom: 16rpx; }
+.rule { font-size: 24rpx; color: #666; line-height: 1.8; }

@@ -1,124 +1,210 @@
+// pages/classic/classic.js —— 分类页
+const homeApi = require('../../api/home.js')
+const goodsApi = require('../../api/goods.js')
+const { quickAdd } = require('../../utils/cart.js')
+
 const app = getApp()
-const {
-  getClass,
-  getClassDetail
-} = require('../../api/api.js');
+const SIZE = 10
+
+const PRICE_RANGES = [
+  { label: '全部价格', min: '', max: '' },
+  { label: '0-50 元', min: 0, max: 50 },
+  { label: '50-100 元', min: 50, max: 100 },
+  { label: '100-200 元', min: 100, max: 200 },
+  { label: '200 元以上', min: 200, max: '' }
+]
+const SORTS = [
+  { key: 'default', label: '综合' },
+  { key: 'sales', label: '销量' },
+  { key: 'priceAsc', label: '价格↑' },
+  { key: 'priceDesc', label: '价格↓' }
+]
+
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    detail: [{}],
-    classs: []
-
+    cats: [],
+    activeCat: 1,
+    sorts: SORTS,
+    sort: 'default',
+    priceRanges: PRICE_RANGES,
+    priceIndex: 0,
+    origins: [],
+    originOptions: [],
+    selectedOrigins: [],
+    onlyStock: false,
+    filterVisible: false,
+    // 面板内临时选择（点确定才生效）
+    tempPriceIndex: 0,
+    tempOrigins: [],
+    tempOnlyStock: false,
+    filterCount: 0,
+    goods: [],
+    current: 1,
+    total: 0,
+    loadStatus: 'hidden',
+    loading: true
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
   onLoad() {
-    const that = this;
-    // async function get() {
-    //   let detail;
-    //   await getClass().then(res => {
-    //     console.log(res.data.data)
-    //     detail=res.data.data
-    //     that.setData({
-    //       detail
-    //     })
-    //     console.log(222,detail)
-    //   })
-    //   console.log(112,this.detail)
-    //   for (var i = 0; i < this.data.detail.legth; i++) {
-    //     getClassDetail(that.data.detail[i].id).then(res => {
-    //       console.log(res.data.data)
-    //     })
-    //   }
-    // }
-    // get();
-    var classs = [];
-    let detail;
-    getClass().then(res => {
-      detail = res
-      // console.log(detail)
-      for (var i = 0; i < detail.length; i++) {
-        getClassDetail(detail[i].id).then(res => {
-          classs.push(res)
-          that.setData({
-            detail,
-            classs
-          })
-        })
-        console.log(classs)
-      }
+    homeApi.getCategories().then((cats) => {
+      this.setData({ cats: cats })
+      this.selectCat({ currentTarget: { dataset: { id: app.globalData.pendingCategory || 1 } } })
+      app.globalData.pendingCategory = null
     })
-
-  },
-  switchTab(e) {
-    const self = this;
-    this.setData({
-      isScroll: true
-    });
-    setTimeout(function () {
-      self.setData({
-        toView: 's' + e.target.dataset.id,
-        curIndex: e.target.dataset.index
-      });
-    }, 0);
-    setTimeout(function () {
-      self.setData({
-        isScroll: false
-      });
-    }, 1);
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
   onShow() {
-
+    if (app.globalData.pendingCategory) {
+      const id = app.globalData.pendingCategory
+      app.globalData.pendingCategory = null
+      if (id !== this.data.activeCat) this.selectCat({ currentTarget: { dataset: { id: id } } })
+    }
   },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
+  selectCat(e) {
+    const id = Number(e.currentTarget.dataset.id)
+    this.setData({
+      activeCat: id,
+      goods: [],
+      current: 1,
+      loading: true,
+      sort: 'default',
+      priceIndex: 0,
+      selectedOrigins: [],
+      onlyStock: false,
+      filterCount: 0
+    })
+    goodsApi.getFilterMeta(id).then((meta) => {
+      this.setData({
+        origins: meta.origins,
+        originOptions: meta.origins.map((o) => ({ name: o, selected: false }))
+      })
+    })
+    this.loadGoods(true)
   },
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
+  buildParams(current) {
+    const r = PRICE_RANGES[this.data.priceIndex]
+    return {
+      current: current,
+      size: SIZE,
+      categoryId: this.data.activeCat,
+      sort: this.data.sort,
+      minPrice: r.min,
+      maxPrice: r.max,
+      origins: this.data.selectedOrigins.join(','),
+      onlyStock: this.data.onlyStock ? 1 : ''
+    }
   },
 
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
+  loadGoods(reset) {
+    if (reset) {
+      this.setData({ current: 1, loadStatus: 'loading' })
+    } else {
+      if (this.data.loadStatus === 'loading' || this.data.loadStatus === 'nomore') return
+      this.setData({ loadStatus: 'loading' })
+    }
+    const current = reset ? 1 : this.data.current
+    goodsApi.getList(this.buildParams(current)).then((res) => {
+      const goods = reset ? res.records : this.data.goods.concat(res.records)
+      const hasMore = current * SIZE < res.total
+      this.setData({
+        loading: false,
+        goods: goods,
+        current: current + 1,
+        total: res.total,
+        loadStatus: res.total === 0 ? 'hidden' : (hasMore ? 'hidden' : 'nomore')
+      })
+    }).catch(() => {
+      this.setData({ loading: false, loadStatus: 'error' })
+    })
   },
 
-  /**
-   * 页面上拉触底事件的处理函数
-   */
   onReachBottom() {
-
+    if (this.data.loadStatus === 'nomore' || this.data.total === 0) return
+    this.loadGoods(false)
   },
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
+  onRetry() {
+    this.loadGoods(false)
+  },
 
+  onPullDownRefresh() {
+    this.loadGoods(true)
+    setTimeout(() => wx.stopPullDownRefresh(), 600)
+  },
+
+  // ---- 排序 ----
+  switchSort(e) {
+    const key = e.currentTarget.dataset.key
+    if (key === this.data.sort) return
+    this.setData({ sort: key })
+    this.loadGoods(true)
+  },
+
+  // ---- 筛选面板 ----
+  openFilter() {
+    const opts = this.data.origins.map((o) => ({
+      name: o,
+      selected: this.data.selectedOrigins.indexOf(o) > -1
+    }))
+    this.setData({
+      filterVisible: true,
+      originOptions: opts,
+      tempPriceIndex: this.data.priceIndex,
+      tempOrigins: this.data.selectedOrigins.slice(),
+      tempOnlyStock: this.data.onlyStock
+    })
+  },
+  closeFilter() {
+    this.setData({ filterVisible: false })
+  },
+  noop() {},
+  pickPrice(e) {
+    this.setData({ tempPriceIndex: Number(e.currentTarget.dataset.index) })
+  },
+  toggleOrigin(e) {
+    const index = Number(e.currentTarget.dataset.index)
+    const key = 'originOptions[' + index + '].selected'
+    const obj = {}
+    obj[key] = !this.data.originOptions[index].selected
+    this.setData(obj)
+    this.setData({
+      tempOrigins: this.data.originOptions.filter((o) => o.selected).map((o) => o.name)
+    })
+  },
+  toggleOnlyStock() {
+    this.setData({ tempOnlyStock: !this.data.tempOnlyStock })
+  },
+  resetFilter() {
+    const opts = this.data.originOptions.map((o) => ({ name: o.name, selected: false }))
+    this.setData({ tempPriceIndex: 0, tempOrigins: [], tempOnlyStock: false, originOptions: opts })
+  },
+  confirmFilter() {
+    let count = this.data.tempOrigins.length
+    if (this.data.tempPriceIndex !== 0) count++
+    if (this.data.tempOnlyStock) count++
+    this.setData({
+      filterVisible: false,
+      priceIndex: this.data.tempPriceIndex,
+      selectedOrigins: this.data.tempOrigins,
+      onlyStock: this.data.tempOnlyStock,
+      filterCount: count
+    })
+    this.loadGoods(true)
+  },
+  clearFilter() {
+    this.setData({
+      priceIndex: 0,
+      selectedOrigins: [],
+      onlyStock: false,
+      filterCount: 0,
+      sort: 'default'
+    })
+    this.loadGoods(true)
+  },
+
+  onAdd(e) {
+    quickAdd(e.detail.item)
   }
 })

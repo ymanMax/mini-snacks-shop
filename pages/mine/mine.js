@@ -1,235 +1,152 @@
-// pages/mine/mine.js
-const app = getApp();
-const {
-  getAllOrders,
-  verify
-} = require('../../api/api.js');
+// pages/mine/mine.js —— 个人中心
+const memberApi = require('../../api/member.js')
+const orderApi = require('../../api/order.js')
+const messageApi = require('../../api/message.js')
+const userApi = require('../../api/user.js')
+const shopApi = require('../../api/shop.js')
+const http = require('../../api/http.js')
+const toast = require('../../utils/toast.js')
+
+const app = getApp()
+
 Page({
   data: {
-    isLogined: false,
-    avatarUrl: "",
-    nickName: "", //用户昵称
-    hasAddress: false,
-    address: {},
-    orders: [],
-    page: 1, // 设置加载的第几次，默认是第一次
-    size: 8, // 每次加载的数据条数
-    total: null, //返回数据的个数(可以传空)
-    searchLoading: true, //"上拉加载"的变量，默认false，隐藏
-    searchLoadingComplete: false, //“没有数据”的变量，默认false，隐藏
-    scrollHeight:1000
-
+    member: null,
+    isGuest: false,
+    counts: { pay: 0, send: 0, delivery: 0, receive: 0, review: 0 },
+    checkinRed: false,
+    unread: 0,
+    deliveryRule: null,
+    // 弹层
+    serviceVisible: false,
+    aboutVisible: false,
+    deliveryVisible: false,
+    serviceMsgs: [
+      { me: false, text: '您好，这里是零食商城在线客服，请问有什么可以帮您？' }
+    ],
+    serviceInput: ''
   },
-  onLoad() {
-    let res = wx.getSystemInfoSync();
 
-    let boxHeight = res.windowHeight;
+  onShow() {
+    this.loadAll()
+  },
 
-    this.data.scrollHeight = boxHeight;
+  loadAll() {
+    memberApi.getInfo().then((info) => {
+      wx.setStorageSync('userInfo', info.isGuest
+        ? { id: 0, nickName: '游客', avatar: info.user.avatar, level: 0, points: 0, growthValue: 0 }
+        : info.user)
+      app.globalData.userInfo = info.user
+      this.setData({ member: info, isGuest: info.isGuest })
+    })
+    orderApi.getCounts().then((c) => this.setData({ counts: c }))
+    memberApi.getCheckinInfo().then((c) => this.setData({ checkinRed: !c.state.todaySigned })).catch(() => {})
+    messageApi.getUnreadCount().then((r) => this.setData({ unread: r.count })).catch(() => {})
+    shopApi.getInfo().then((s) => this.setData({ deliveryRule: s.deliveryRule })).catch(() => {})
+    app.refreshCartBadge()
+  },
 
-    this.setData({
-      isLogined: wx.getStorageSync("isLogined") ? true : false
-    });
-    wx.getStorage({
-      key: 'nickName',
-      success(res) {
-        this.setData({
-          nickName: res.data
-        })
-      }
-    })
-    wx.getStorage({
-      key: 'avatarUrl',
-      success(res) {
-        this.setData({
-          avatarUrl: res.data
-        })
-      }
-    })
-    wx.getStorage({
-      key: 'address',
-      success(res) {
-        this.setData({
-          address: res.data,
-          hasAddress: true
-        })
-      }
-    })
-    let nickName = wx.getStorageSync('nickName'),
-      avatarUrl = wx.getStorageSync('avatarUrl'),
-      address = wx.getStorageSync('address'),
-      hasAddress = wx.getStorageSync('hasAddress');
-    console.log(wx.getStorageSync('hasAddress'))
-    this.setData({
-      nickName,
-      avatarUrl,
-      address,
-      hasAddress
-    })
-    let token = app.globalData.token.token;
-    verify(token).then(res => {
-      console.log(token)
-      if (res.isValid == true) {
-
-        getAllOrders(1, 8).then(res => {
-          this.setData({
-            orders: res.data.data
-          })
-          console.log(res.data.data)
-        })
-      } else {
-        console.log(res.data.isValid)
-        const that = this;
-        let gbdata = app.globalData;
-        wx.login({
-          success: function (res) {
-            let code = res.code;
-            // console.log(res.code)
-            getApp().post('/token/user', {
-              code: code
-            }).then((e) => {
-              try {
-                wx.setStorageSync('token', e.data);
-                // console.log(wx.getStorageSync('token'))
-              } catch (e) {
-                // console.log('setTokenErr', e)
-              }
-              gbdata.token = e.data;
-              let isLogined = true;
-              that.setData({
-                isLogined
-              })
-              wx.setStorageSync('isLogined', isLogined);
-              // console.log(wx.getStorageSync('isLogined'))
-              wx.showToast({
-                title: '登陆成功',
-                icon: 'success'
-              })
-            })
-          }
-        })
-        getAllOrders(1, 8).then(res => {
-          this.setData({
-            orders: res.data.data.orders
-          })
-          console.log(res.data.data.data)
-        })
-      }
+  // ---------- 登录 ----------
+  login() {
+    userApi.login().then(() => {
+      toast.success('登录成功')
+      this.loadAll()
     })
   },
-  login: function () {
-    const that = this;
-    let gbdata = app.globalData;
-    wx.login({
-      success: function (res) {
-        let code = res.code;
-        console.log(res.code)
-        getApp().post('/token/user', {
-          code: code
-        }).then((e) => {
-          try {
-            wx.setStorageSync('token', e.data);
-            console.log(wx.getStorageSync('token'))
-          } catch (e) {
-            console.log('setTokenErr', e)
-          }
-          gbdata.token = e.data;
-          let isLogined = true;
-          that.setData({
-            isLogined
-          })
-          wx.setStorageSync('isLogined', isLogined);
-          console.log(wx.getStorageSync('isLogined'))
-          wx.showToast({
-            title: '登陆成功',
-            icon: 'success'
-          })
-        })
-      }
+
+  logout() {
+    toast.confirm('确定退出登录吗？退出后仍可以游客身份浏览。', '退出登录').then((ok) => {
+      if (!ok) return
+      userApi.logout().then(() => {
+        toast.showToast('已退出登录')
+        this.loadAll()
+      })
     })
-    this.getUserProfile();
   },
-  getUserProfile() {
-    wx.getUserProfile({
-      desc: '登录', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
+
+  // ---------- 头像 ----------
+  changeAvatar() {
+    if (this.data.isGuest) return this.login()
+    wx.showActionSheet({
+      itemList: ['从相册选择头像', '随机一个头像'],
       success: (res) => {
-        this.setData({
-          nickName: res.userInfo.nickName,
-          avatarUrl: res.userInfo.avatarUrl
-        })
-        wx.setStorage({ //数据缓存方法
-          key: 'nickName', //关键字，本地缓存中指定的key
-          data: res.userInfo.nickName, //缓存微信用户公开信息，
-          success: function () { //缓存成功后，输出提示
-            console.log('写入nickName缓存成功')
-          },
-          fail: function () { //缓存失败后的提示
-            console.log('写入nickName发生错误')
-          }
-        })
-        wx.setStorage({ //数据缓存方法
-          key: 'avatarUrl', //关键字，本地缓存中指定的key
-          data: res.userInfo.avatarUrl, //缓存微信用户公开信息，
-          success: function () { //缓存成功后，输出提示
-            console.log('写入avatarUrl缓存成功')
-          },
-          fail: function () { //缓存失败后的提示
-            console.log('写入avatarUrl发生错误')
-          }
-        })
-      }
-    })
-
-  },
-  payOrders() {
-    wx.navigateTo({
-      url: '../fail/fail'
-    })
-  },
-  onPullDownRefresh: function () {
-    wx.showNavigationBarLoading() //在标题栏中显示加载
-
-    //模拟加载
-    setTimeout(function () {
-      // complete
-      wx.hideNavigationBarLoading() //完成停止加载
-      wx.stopPullDownRefresh() //停止下拉刷新
-    }, 1500);
-  },
-  searchScrollLower: function () {
-    let that = this;
-    if (that.data.searchLoading && !that.data.searchLoadingComplete) {
-      that.setData({
-        page: that.data.page + 1, //每次触发上拉事件，把page+1
-        isFromSearch: false //触发到上拉事件，把isFromSearch设为为false
-      });
-      that.informationQuery();
-    }
-  },
-
-  informationQuery() {
-    const params = {
-      page: this.data.page,
-      size: this.data.size
-    }
-    console.log(params);
-    getAllOrders({data: params}).then(res => {
-      if (res.data.data.data.data.length > 0) {
-        let searchList = [];
-        //如果isFromSearch是true从data中取出数据，否则先从原来的数据继续添加
-        searchList = this.data.orders.concat(res.data.data.data.data)
-        this.setData({
-          orders: searchList, //获取数据数组
-          searchLoading: true //把"上拉加载"的变量设为false，显示  
-        });
-        //没有数据了，把“没有数据”显示，把“上拉加载”隐藏  
-      } else {
-        this.setData({
-          searchLoadingComplete: true, //把“没有数据”设为true，显示 
-          searchLoading: false //把"上拉加载"的变量设为false，隐藏  
-        });
+        if (res.tapIndex === 0) {
+          wx.chooseMedia({
+            count: 1,
+            mediaType: ['image'],
+            success: (r) => {
+              const path = r.tempFiles[0].tempFilePath
+              http.upload(path).then((f) => userApi.update({ avatar: f.url })).then(() => {
+                toast.success('头像已更新')
+                this.loadAll()
+              })
+            }
+          })
+        } else {
+          const n = Math.floor(Math.random() * 6) + 1
+          const avatar = '/static/mock/avatar/av0' + n + '.png'
+          userApi.update({ avatar: avatar }).then(() => {
+            toast.success('头像已更新')
+            this.loadAll()
+          })
+        }
       }
     })
   },
 
+  // ---------- 跳转 ----------
+  navigate(e) {
+    const { url, type } = e.currentTarget.dataset
+    if (!url) return
+    if (type === 'tab') wx.switchTab({ url })
+    else wx.navigateTo({ url })
+  },
+
+  goOrderList(e) {
+    const status = e.currentTarget.dataset.status || 0
+    wx.navigateTo({ url: '/pages/order/list/list?status=' + status })
+  },
+
+  // ---------- 设置 ----------
+  openSettings() {
+    wx.showActionSheet({
+      itemList: ['清除缓存（重置演示数据）', this.data.isGuest ? '登录账号' : '退出登录'],
+      success: (res) => {
+        if (res.tapIndex === 0) this.clearCache()
+        else if (this.data.isGuest) this.login()
+        else this.logout()
+      }
+    })
+  },
+
+  clearCache() {
+    toast.confirm('将清空购物车、订单等演示数据并恢复初始状态，是否继续？', '清除缓存').then((ok) => {
+      if (!ok) return
+      userApi.resetCache().then(() => {
+        wx.removeStorageSync('search_history')
+        app.refreshCartBadge()
+        toast.success('缓存已清除')
+        this.loadAll()
+      })
+    })
+  },
+
+  // ---------- 弹层 ----------
+  openAbout() {
+    this.setData({ aboutVisible: true })
+  },
+  openDelivery() {
+    this.setData({ deliveryVisible: true })
+  },
+  closeMask() {
+    this.setData({ aboutVisible: false, deliveryVisible: false })
+  },
+  noop() {},
+
+  onShareAppMessage() {
+    return {
+      title: '零食商城·直营店 —— 网红零食一站购齐',
+      path: '/pages/index/index'
+    }
+  }
 })

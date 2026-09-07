@@ -1,0 +1,24 @@
+<view class="slot-page">
+  <view class="group-title">配送日期</view>
+  <view class="date-row">
+    <view wx:for="{{dates}}" wx:key="key" data-index="{{index}}" bindtap="pickDate"
+      class="date-item {{activeDate === index ? 'on' : ''}}">
+      <view class="date-label">{{item.label}}</view>
+    </view>
+  </view>
+
+  <view class="group-title">配送时段</view>
+  <view class="slot-list">
+    <view wx:for="{{slots}}" wx:key="*this" data-index="{{index}}" bindtap="pickSlot"
+      class="slot-item {{activeSlot === index ? 'on' : ''}}">
+      <view class="slot-text">{{item}}</view>
+      <view class="slot-radio" wx:if="{{activeSlot === index}}">✓</view>
+    </view>
+  </view>
+
+  <view class="slot-tip">营业时间 08:00-22:00，预约订单将在所选时段送达</view>
+
+  <view class="slot-bar">
+    <button class="slot-confirm" bindtap="confirm">确定</button>
+  </view>
+</view>

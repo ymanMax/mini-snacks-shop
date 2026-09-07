@@ -1,0 +1,94 @@
+<view class="sh-page" wx:if="{{shop}}">
+  <!-- 店铺头 -->
+  <view class="shop-hero">
+    <safe-image class="shop-logo" src="{{shop.logo}}" mode="aspectFill"></safe-image>
+    <view class="shop-info">
+      <view class="shop-name">{{shop.name}}</view>
+      <view class="shop-score">
+        <text class="score-num">★ {{shop.score}}</text>
+        <text class="score-text">综合评分</text>
+      </view>
+      <view class="shop-hours">营业时间 {{shop.businessHours}}</view>
+    </view>
+    <view class="call-btn" bindtap="callShop">📞</view>
+  </view>
+
+  <!-- tab -->
+  <view class="tabs">
+    <view class="tab {{tab === 'home' ? 'on' : ''}}" data-tab="home" bindtap="switchTab">店铺首页</view>
+    <view class="tab {{tab === 'review' ? 'on' : ''}}" data-tab="review" bindtap="switchTab">店铺评价 ({{total}})</view>
+  </view>
+
+  <!-- 首页 -->
+  <block wx:if="{{tab === 'home'}}">
+    <view class="card score-card">
+      <view class="sc-title">分项评分</view>
+      <view class="sc-row">
+        <text class="sc-label">商品新鲜</text>
+        <view class="sc-bar"><view class="sc-in" style="width: {{shop.subScores.fresh / 5 * 100}}%"></view></view>
+        <text class="sc-num">{{shop.subScores.fresh}}</text>
+      </view>
+      <view class="sc-row">
+        <text class="sc-label">配送速度</text>
+        <view class="sc-bar"><view class="sc-in blue" style="width: {{shop.subScores.speed / 5 * 100}}%"></view></view>
+        <text class="sc-num">{{shop.subScores.speed}}</text>
+      </view>
+      <view class="sc-row">
+        <text class="sc-label">包装服务</text>
+        <view class="sc-bar"><view class="sc-in green" style="width: {{shop.subScores.package / 5 * 100}}%"></view></view>
+        <text class="sc-num">{{shop.subScores.package}}</text>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">📢 店铺公告</view>
+      <view class="notice">{{shop.notice}}</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">配送说明</view>
+      <view class="rule-line">· 起步配送费 ￥{{shop.deliveryRule.baseFee}}（含 {{shop.deliveryRule.baseKm}}km）</view>
+      <view class="rule-line">· 超出每公里加收 ￥{{shop.deliveryRule.perKmFee}}</view>
+      <view class="rule-line">· 满 ￥{{shop.deliveryRule.freeThreshold}} 免基础配送费，高等级会员门槛更低</view>
+      <view class="rule-line">· 营业时间 {{shop.businessHours}}，支持尽快送达与预约时段</view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">门店照片</view>
+      <view class="photos">
+        <safe-image wx:for="{{shop.photos}}" wx:key="*this" class="photo"
+          src="{{item}}" mode="aspectFill" data-url="{{item}}" bindtap="previewPhoto"></safe-image>
+      </view>
+    </view>
+
+    <view class="card">
+      <view class="card-title">店铺地址</view>
+      <view class="address-line">{{shop.address}}</view>
+    </view>
+
+    <view class="enter-btn" bindtap="goCategory">进店逛逛 ›</view>
+    <view style="height: 40rpx;"></view>
+  </block>
+
+  <!-- 评价 -->
+  <block wx:else>
+    <view class="rv-list" wx:if="{{reviews.length}}">
+      <view class="rv-item" wx:for="{{reviews}}" wx:key="id">
+        <view class="rv-head">
+          <safe-image class="rv-avatar" src="{{item.avatar}}" mode="aspectFill"></safe-image>
+          <text class="rv-name">{{item.userName}}</text>
+          <text class="rv-date">{{item.createTime}}</text>
+        </view>
+        <view class="rv-scores">
+          <text>新鲜 {{item.scores.fresh}}★</text>
+          <text>速度 {{item.scores.speed}}★</text>
+          <text>包装 {{item.scores.package}}★</text>
+        </view>
+        <view class="rv-content" wx:if="{{item.content}}">{{item.content}}</view>
+        <view class="rv-reply" wx:if="{{item.reply}}">商家回复：{{item.reply}}</view>
+      </view>
+    </view>
+    <empty-state wx:else img="/static/images/empty_message.png" text="暂无店铺评价"></empty-state>
+    <load-more status="{{loadStatus}}" bind:retry="onRetry"></load-more>
+  </block>
+</view>
