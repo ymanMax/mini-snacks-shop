@@ -1,0 +1,49 @@
+/* pages/order/list.wxss */
+/* 状态 Tab */
+.tabs {
+  position: sticky; top: 0; z-index: 10;
+  display: flex; background: #fff;
+  overflow-x: auto; white-space: nowrap;
+}
+.tab-item {
+  position: relative; flex-shrink: 0;
+  padding: 24rpx 28rpx; font-size: 28rpx; color: #666;
+}
+.tab-item.on { color: #b4282d; font-weight: bold; }
+.tab-line {
+  position: absolute; left: 50%; bottom: 8rpx; transform: translateX(-50%);
+  width: 48rpx; height: 6rpx; border-radius: 999rpx; background: #b4282d;
+}
+
+/* 订单卡 */
+.order-card { padding-bottom: 16rpx; }
+.order-head { display: flex; justify-content: space-between; align-items: center; }
+.order-no { color: #838383; font-size: 24rpx; flex: 1; margin-right: 20rpx; }
+.order-status { font-size: 26rpx; font-weight: bold; }
+.st-orange { color: #e8890c; }
+.st-blue { color: #2f6fe0; }
+.st-purple { color: #8a4fd8; }
+.st-cyan { color: #12a3a8; }
+.st-green { color: #2ea44f; }
+.st-gray { color: #b0b0b0; }
+
+.order-thumbs { display: flex; align-items: center; margin-top: 20rpx; }
+.thumb { width: 120rpx; height: 120rpx; border-radius: 12rpx; background: #f2f3f5; margin-right: 16rpx; }
+.thumb-more {
+  width: 120rpx; height: 120rpx; border-radius: 12rpx;
+  background: #f2f3f5; color: #838383; font-size: 28rpx;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.order-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 20rpx; }
+.order-time { color: #b0b0b0; font-size: 22rpx; }
+.order-amount { display: flex; align-items: baseline; }
+.order-count { color: #838383; font-size: 24rpx; margin-right: 16rpx; }
+.order-pay-label { color: #666; font-size: 24rpx; margin-right: 6rpx; }
+
+.order-actions { display: flex; justify-content: flex-end; margin-top: 20rpx; }
+.act-btn { font-size: 26rpx; padding: 10rpx 32rpx; margin-left: 20rpx; }
+.act-btn.gray { border-color: #d0d0d0; color: #666; }
+.act-btn.sm { font-size: 24rpx; padding: 8rpx 24rpx; }
+
+.load-more { text-align: center; color: #b0b0b0; font-size: 24rpx; padding: 24rpx 0 40rpx; }

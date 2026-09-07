@@ -1,0 +1,6 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "收藏记录",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#f5f6f7"
+}

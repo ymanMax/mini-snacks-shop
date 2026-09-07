@@ -1,0 +1,44 @@
+/* pages/user/footprint.wxss */
+.page { padding-bottom: 40rpx; }
+
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #fff;
+  padding: 20rpx 24rpx;
+}
+.total-text { font-size: 24rpx; color: #838383; }
+.clear-btn {
+  font-size: 24rpx;
+  color: #b4282d;
+  border: 2rpx solid #b4282d;
+  border-radius: 999rpx;
+  padding: 6rpx 28rpx;
+}
+
+.date-group { margin-top: 24rpx; }
+.date-title {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #555;
+  padding: 0 24rpx 16rpx;
+}
+.goods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 12rpx;
+}
+.goods-item {
+  width: 33.33%;
+  padding: 0 12rpx 24rpx;
+}
+.goods-pic {
+  width: 100%;
+  height: 220rpx;
+  border-radius: 12rpx;
+  background: #f2f3f5;
+}
+.goods-name { font-size: 24rpx; margin-top: 10rpx; }
+.goods-bottom { margin-top: 6rpx; }
+.view-time { font-size: 20rpx; color: #b0b0b0; margin-top: 6rpx; }

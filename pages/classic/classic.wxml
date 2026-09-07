@@ -1,29 +1,122 @@
+<wxs src="../../utils/format.wxs" module="f" />
+<wxs module="u">
+  function has(arr, v) { return arr && arr.indexOf(v) > -1; }
+  module.exports = { has: has };
+</wxs>
 
-<view class="main">
-    <view class="categroy-left">
-        <view wx:for="{{detail}}" wx:key="index" data-id="{{item.id}}" data-index="{{index}}"
-            bindtap="switchTab"
-            class="cate-list {{curIndex === index?'on':''}}">{{item.name}}</view>
+<view class="layout">
+  <!-- 左侧竖向分类导航 -->
+  <view class="left-nav">
+    <view
+      class="cat-item {{activeCat === item.id ? 'active' : ''}}"
+      wx:for="{{categories}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onCatTap">
+      <text class="cat-icon">{{item.icon}}</text>
+      <text class="cat-name">{{item.name}}</text>
     </view>
-    <scroll-view class="categroy-right" scroll-y="{{isScroll}}" scroll-into-view="{{toView}}" scroll-with-animation="true">
-         <block wx:for="{{detail}}" wx:for-index wx:key="idx">
-            <view id="{{'s'+item.id}}" class="cate-box">
-                <view class="cate-banner">
-                    <image src="{{'https://hanmashanghu.qiaomai365.com' + item.img.url}}"></image>
-                </view>
-                <view class="cate-title">
-                    <text>{{item.name}}</text>
-                </view>
-                <view class="product">
-                    <view class="product-list" wx:for="{{classs[index]}}" wx:key="index" wx:for-item="val">
-                        <navigator url="../detail/detail?product_id={{val.id}}">
-                            <image src="{{'https://hanmashanghu.qiaomai365.com' + val.main_img_url}}"></image>
-                            <view class="classname"><text>{{val.name}}</text></view>
-                        </navigator>
-                    </view>
-                </view>
-            </view>
-        </block> 
-    </scroll-view>
+  </view>
 
+  <!-- 右侧商品区 -->
+  <view class="right">
+    <!-- 吸顶筛选栏 -->
+    <view class="filter-bar">
+      <view class="sort-tabs">
+        <text
+          class="sort-tab {{sort === item.key ? 'active' : ''}}"
+          wx:for="{{sorts}}"
+          wx:key="key"
+          data-key="{{item.key}}"
+          bindtap="onSortTap">{{item.label}}</text>
+      </view>
+      <view class="filter-btn" bindtap="openFilter">
+        <text>筛选</text>
+        <text class="filter-dot" wx:if="{{filter.priceRange || filter.origins.length || filter.inStock}}"></text>
+      </view>
+    </view>
+
+    <!-- 骨架屏 -->
+    <view wx:if="{{loading && current === 1 && !list.length}}">
+      <view class="goods-row" wx:for="{{[1, 2, 3]}}" wx:key="*this">
+        <view class="skeleton skeleton-thumb"></view>
+        <view class="goods-info">
+          <view class="skeleton skeleton-line"></view>
+          <view class="skeleton skeleton-line short"></view>
+          <view class="skeleton skeleton-line tiny"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空态 + 清除筛选 -->
+    <view class="empty-state" wx:elif="{{!loading && !list.length}}">
+      <image class="empty-img" src="/static/images/default.png" mode="aspectFit" binderror="onImgError" />
+      <view class="empty-text">没有找到符合条件的商品</view>
+      <view class="empty-btn" bindtap="onClearFilter">清除筛选</view>
+    </view>
+
+    <!-- 商品单列卡片 -->
+    <view wx:else>
+      <view class="goods-row" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+        <image class="goods-thumb" src="{{item._imgErr ? '/static/images/default.png' : item.pic}}" mode="aspectFill" lazy-load data-key="{{index}}" data-field="list" binderror="onImgError" />
+        <view class="goods-info">
+          <view class="goods-name ellipsis-2">{{item.name}}</view>
+          <view class="goods-tags" wx:if="{{item.tags.length}}">
+            <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:for-index="ti" wx:key="*this" wx:if="{{ti < 2}}">{{tag}}</text>
+          </view>
+          <view class="goods-bottom">
+            <view class="goods-price-wrap">
+              <text class="price"><text class="symbol">￥</text>{{f.fp(item.minPrice)}}</text>
+              <text class="price-origin" wx:if="{{item.originalPrice > item.minPrice}}">￥{{f.fp(item.originalPrice)}}</text>
+              <text class="goods-sold">已售{{f.sold(item.numberSells)}}</text>
+            </view>
+            <view class="add-btn" data-item="{{item}}" catchtap="onAddCart">+</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 分页状态 -->
+      <view class="list-footer">
+        <text wx:if="{{loading}}">加载中...</text>
+        <text wx:elif="{{noMore}}">没有更多了~</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 筛选半屏弹层 -->
+<view class="filter-mask {{filterVisible ? 'show' : ''}}" bindtap="closeFilter"></view>
+<view class="filter-panel {{filterVisible ? 'show' : ''}}">
+  <view class="panel-title">筛选</view>
+
+  <view class="panel-label">价格区间</view>
+  <view class="panel-options">
+    <text
+      class="panel-opt {{tempFilter.priceRange === item ? 'active' : ''}}"
+      wx:for="{{priceRanges}}"
+      wx:key="*this"
+      data-value="{{item}}"
+      bindtap="onPriceTap">{{item === '200+' ? '200以上' : item + '元'}}</text>
+  </view>
+
+  <view class="panel-label">产地（可多选）</view>
+  <view class="panel-options" wx:if="{{originOptions.length}}">
+    <text
+      class="panel-opt {{u.has(tempFilter.origins, item) ? 'active' : ''}}"
+      wx:for="{{originOptions}}"
+      wx:key="*this"
+      data-value="{{item}}"
+      bindtap="onOriginTap">{{item}}</text>
+  </view>
+  <view class="panel-empty" wx:else>当前分类暂无产地信息</view>
+
+  <view class="panel-row">
+    <text class="panel-label inline">仅看有货</text>
+    <switch checked="{{tempFilter.inStock}}" color="#b4282d" bindchange="onStockChange" />
+  </view>
+
+  <view class="panel-actions">
+    <view class="btn-plain panel-btn" bindtap="onResetFilter">重置</view>
+    <view class="btn-primary panel-btn" bindtap="onConfirmFilter">确定</view>
+  </view>
 </view>

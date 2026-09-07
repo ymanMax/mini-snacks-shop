@@ -1,0 +1,63 @@
+/* pages/member/points.wxss */
+.page { padding-bottom: 40rpx; }
+
+/* ===== 积分大卡 ===== */
+.points-card {
+  background: linear-gradient(135deg, #d43a3f 0%, #b4282d 60%, #8f1f23 100%);
+  padding: 64rpx 32rpx;
+  text-align: center;
+  color: #fff;
+}
+.points-num { font-size: 88rpx; font-weight: bold; line-height: 1; }
+.points-label { font-size: 24rpx; opacity: 0.85; margin-top: 12rpx; }
+.earn-btn {
+  display: inline-block;
+  margin-top: 28rpx;
+  font-size: 24rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.6);
+  border-radius: 999rpx;
+  padding: 10rpx 36rpx;
+}
+
+.sec-title { font-size: 30rpx; font-weight: bold; margin-bottom: 20rpx; }
+
+/* ===== 兑换专区 ===== */
+.mall-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0;
+  border-bottom: 2rpx solid #f5f5f5;
+}
+.mall-item:last-child { border-bottom: none; }
+.mall-name { font-size: 28rpx; font-weight: bold; }
+.mall-scope { font-size: 22rpx; color: #838383; margin-top: 6rpx; }
+.mall-points { font-size: 24rpx; color: #b4282d; font-weight: bold; margin-top: 6rpx; }
+.mall-btn {
+  background: #b4282d;
+  color: #fff;
+  font-size: 26rpx;
+  border-radius: 999rpx;
+  padding: 12rpx 40rpx;
+  flex-shrink: 0;
+}
+.mall-btn.disabled { background: #e0e0e0; color: #999; }
+
+/* ===== 明细 ===== */
+.record-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #f5f5f5;
+}
+.record-row:last-child { border-bottom: none; }
+.record-desc { font-size: 26rpx; }
+.record-time { font-size: 22rpx; color: #b0b0b0; margin-top: 6rpx; }
+.record-points { font-size: 30rpx; font-weight: bold; }
+.record-points.plus { color: #b4282d; }
+.record-points.minus { color: #2b9e5f; }
+
+.load-more { text-align: center; color: #b0b0b0; font-size: 24rpx; padding: 24rpx 0 8rpx; }
+
+.rule-line { font-size: 24rpx; color: #666; line-height: 2; }

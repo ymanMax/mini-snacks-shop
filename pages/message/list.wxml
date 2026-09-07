@@ -1,0 +1,53 @@
+<!--pages/message/list.wxml-->
+<view class="page">
+  <!-- 类型分组 Tab -->
+  <view class="type-tabs">
+    <view class="type-tab {{activeType === item.type ? 'on' : ''}}"
+      wx:for="{{tabs}}" wx:key="type"
+      data-type="{{item.type}}" bindtap="switchTab">
+      <text>{{item.label}}</text>
+      <view class="tab-line" wx:if="{{activeType === item.type}}"></view>
+    </view>
+  </view>
+
+  <view class="top-bar" wx:if="{{hasAny}}">
+    <text class="unread-text" wx:if="{{unread > 0}}">{{unread}} 条未读</text>
+    <text class="unread-text" wx:else>全部已读</text>
+    <text class="read-all" bindtap="onReadAll">全部已读</text>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <block wx:if="{{list.length}}">
+      <view class="msg-card {{item.isRead ? 'read' : ''}}" wx:for="{{list}}" wx:key="id"
+            data-index="{{index}}" bindtap="onTapMessage">
+        <view class="msg-icon {{item.cls}}">{{item.icon}}</view>
+        <view class="msg-body">
+          <view class="msg-title-row">
+            <text class="msg-title {{item.isRead ? '' : 'bold'}}">{{item.title}}</text>
+            <view class="dot" wx:if="{{!item.isRead}}"></view>
+          </view>
+          <view class="msg-content ellipsis-2">{{item.content}}</view>
+          <view class="msg-time">{{item.createTime}}</view>
+        </view>
+      </view>
+      <view class="load-more" wx:if="{{loadingMore}}">正在加载...</view>
+      <view class="load-more" wx:elif="{{activeType === 0 && list.length >= total}}">没有更多了~</view>
+    </block>
+
+    <!-- 筛选后为空（但其他类型有消息） -->
+    <view class="empty-state" wx:elif="{{hasAny}}">
+      <image class="empty-img" src="/static/images/default.png" binderror="onImgError"></image>
+      <view class="empty-text">暂无该类型消息</view>
+    </view>
+
+    <view class="empty-state" wx:else>
+      <image class="empty-img" src="/static/images/default.png" binderror="onImgError"></image>
+      <view class="empty-text">暂无消息</view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="skeleton" style="height:160rpx;margin:24rpx;border-radius:16rpx;"></view>
+    <view class="skeleton" style="height:160rpx;margin:24rpx;border-radius:16rpx;"></view>
+  </block>
+</view>

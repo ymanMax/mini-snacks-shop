@@ -1,0 +1,114 @@
+<wxs src="../../utils/format.wxs" module="f" />
+
+<view class="page">
+  <!-- 顶部搜索框 -->
+  <view class="header">
+    <view class="back" bindtap="goBack">←</view>
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        value="{{keyword}}"
+        placeholder="搜索零食"
+        focus="{{focusInput}}"
+        confirm-type="search"
+        bindinput="onInput"
+        bindfocus="onFocus"
+        bindblur="onBlur"
+        bindconfirm="onConfirm" />
+    </view>
+    <view class="search-btn" bindtap="onConfirm">搜索</view>
+  </view>
+
+  <!-- 未搜索状态：历史 + 热门 -->
+  <block wx:if="{{mode === 'home'}}">
+    <view class="block" wx:if="{{history.length}}">
+      <view class="block-head">
+        <text class="block-title">搜索历史</text>
+        <text class="block-clear" bindtap="onClearHistory">清空</text>
+      </view>
+      <view class="word-wall">
+        <view class="word history-word" wx:for="{{history}}" wx:key="*this" data-word="{{item}}" bindtap="onWordTap">
+          <text class="word-text">{{item}}</text>
+          <text class="word-del" data-word="{{item}}" catchtap="onDeleteHistory">×</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="block" wx:if="{{hotWords.length}}">
+      <view class="block-head">
+        <text class="block-title">热门搜索</text>
+      </view>
+      <view class="word-wall">
+        <view class="word hot-word" wx:for="{{hotWords}}" wx:key="*this" data-word="{{item}}" bindtap="onWordTap">{{item}}</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 输入联想 -->
+  <view class="suggest-list" wx:elif="{{mode === 'suggest'}}">
+    <view class="suggest-item" wx:for="{{suggests}}" wx:key="id" data-id="{{item.id}}" bindtap="onSuggestTap">
+      <text class="suggest-icon">🔍</text>
+      <text class="suggest-name ellipsis">{{item.name}}</text>
+    </view>
+    <view class="suggest-empty" wx:if="{{!suggests.length && !loading}}">无相关联想，点击"搜索"查看结果</view>
+  </view>
+
+  <!-- 搜索结果 -->
+  <block wx:elif="{{mode === 'result'}}">
+    <!-- 排序 Tab -->
+    <view class="sort-bar">
+      <text
+        class="sort-tab {{sort === item.key ? 'active' : ''}}"
+        wx:for="{{sorts}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onSortTap">{{item.label}}</text>
+    </view>
+
+    <!-- 骨架屏 -->
+    <view class="goods-grid" wx:if="{{loading && current === 1 && !list.length}}">
+      <view class="goods-card" wx:for="{{[1, 2, 3]}}" wx:key="*this">
+        <view class="skeleton skeleton-img"></view>
+        <view class="goods-info">
+          <view class="skeleton skeleton-line"></view>
+          <view class="skeleton skeleton-line short"></view>
+          <view class="skeleton skeleton-line tiny"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空态 -->
+    <view class="empty-state" wx:elif="{{!loading && !list.length}}">
+      <image class="empty-img" src="/static/images/default.png" mode="aspectFit" binderror="onImgError" />
+      <view class="empty-text">没有找到相关商品</view>
+    </view>
+
+    <!-- 结果两列网格 -->
+    <view class="goods-grid" wx:else>
+      <view class="goods-card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+        <image class="goods-img" src="{{item._imgErr ? '/static/images/default.png' : item.pic}}" mode="aspectFill" lazy-load data-key="{{index}}" data-field="list" binderror="onImgError" />
+        <view class="goods-info">
+          <view class="goods-name ellipsis-2">{{item.name}}</view>
+          <view class="goods-tags" wx:if="{{item.tags.length}}">
+            <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:for-index="ti" wx:key="*this" wx:if="{{ti < 2}}">{{tag}}</text>
+          </view>
+          <view class="goods-bottom">
+            <view class="goods-price-wrap">
+              <text class="price"><text class="symbol">￥</text>{{f.fp(item.minPrice)}}</text>
+              <text class="price-origin" wx:if="{{item.originalPrice > item.minPrice}}">￥{{f.fp(item.originalPrice)}}</text>
+              <view class="goods-sold">已售{{f.sold(item.numberSells)}}</view>
+            </view>
+            <view class="add-btn" data-item="{{item}}" catchtap="onAddCart">+</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分页状态 -->
+    <view class="list-footer" wx:if="{{list.length}}">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{noMore}}">没有更多了~</text>
+    </view>
+  </block>
+</view>

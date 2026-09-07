@@ -1,50 +1,135 @@
-<view class="J-shopping-cart-empty" hidden="{{iscart}}">
-  <view class="shopping-cart-empty">
-    <view class="bg"></view>
-    <image src="../../image/cry.png"></image>
-    <text class='empty-text'>购物车空空如也</text>
+<wxs src="../../utils/format.wxs" module="f" />
+
+<!-- ============ 骨架屏 ============ -->
+<view wx:if="{{loading}}" class="page">
+  <view class="card sk-item" wx:for="{{[1, 2, 3]}}" wx:key="*this">
+    <view class="skeleton sk-circle"></view>
+    <view class="skeleton sk-img"></view>
+    <view class="sk-right">
+      <view class="skeleton sk-line" style="width:80%"></view>
+      <view class="skeleton sk-line" style="width:50%"></view>
+      <view class="skeleton sk-line" style="width:35%"></view>
+    </view>
   </view>
 </view>
 
-<view class="main" hidden="{{hidden}}">
-  <scroll-view class="scroll" scroll-y="true">
-    <view class="separate"></view>
-    <view class="cart-box">
-      <view class="cart-list" wx:for="{{carts}}" wx:key="{{index}}">
-        <view wx:if="{{!item.isSelect}}">
-          <icon class="cart-pro-select" bindtap="switchSelect" data-index="{{index}}" data-id="{{index}}" type="circle" size="20"></icon>
+<block wx:if="{{!loading}}">
+  <!-- ============ 有商品 ============ -->
+  <block wx:if="{{valid.length || invalid.length}}">
+    <!-- 有效商品列表 -->
+    <view class="card list-card" wx:if="{{valid.length}}">
+      <view class="cart-item" wx:for="{{valid}}" wx:key="id"
+        data-id="{{item.id}}" bindlongpress="onDeleteItem">
+        <view class="check-circle {{item.checked ? 'checked' : ''}}"
+          data-id="{{item.id}}" data-index="{{index}}" bindtap="onCheckItem">
+          <text wx:if="{{item.checked}}">✓</text>
         </view>
-        <view wx:elif="{{item.isSelect}}">
-          <icon class="cart-pro-select" bindtap="switchSelect" data-index="{{index}}" data-id="{{index}}" type="success" color="#f0145a" size="20"></icon>
+        <image class="cart-img" src="{{item._imgErr ? '/static/images/default.png' : item.pic}}" mode="aspectFill"
+          data-key="{{index}}" data-field="valid" binderror="onImgError"
+          data-id="{{item.goodsId}}" bindtap="goDetail" />
+        <view class="cart-info">
+          <view class="cart-name ellipsis-2" data-id="{{item.goodsId}}" bindtap="goDetail">{{item.name}}</view>
+          <view class="cart-spec ellipsis">{{item.specText}}</view>
+          <view class="cart-bottom">
+            <text class="price"><text class="symbol">￥</text>{{f.fp(item.price)}}</text>
+            <view class="stepper">
+              <view class="stepper-btn {{item.count <= 1 ? 'disabled' : ''}}"
+                data-id="{{item.id}}" data-index="{{index}}" bindtap="onMinus">−</view>
+              <text class="stepper-num">{{item.count}}</text>
+              <view class="stepper-btn {{item.count >= item.stock ? 'disabled' : ''}}"
+                data-id="{{item.id}}" data-index="{{index}}" bindtap="onPlus">＋</view>
+            </view>
+          </view>
+          <view class="cart-stock" wx:if="{{item.count >= item.stock}}">库存仅剩 {{item.stock}} 件</view>
         </view>
-        <navigator url="../detail/detail?product_id={{item.id}}">
-          <image class="cart-thumb" src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
-        </navigator>
-        <text class="cart-pro-name">{{item.name}}</text>
-        <text class="cart-pro-price">￥{{item.price}}</text>
-        <view class="cart-count-box">
-          <text class="cart-count-down" bindtap="delCount" data-obj="{{obj}}" data-index="{{index}}">-</text>
-          <text class="cart-count-num">{{item.count}}</text>
-          <text class="cart-count-add" bindtap="addCount" data-index="{{index}}">+</text>
+      </view>
+      <view class="list-tip">长按商品可删除</view>
+    </view>
+
+    <!-- 失效商品折叠区 -->
+    <view class="card invalid-card" wx:if="{{invalid.length}}">
+      <view class="invalid-head" bindtap="toggleInvalid">
+        <text class="invalid-title">失效商品 ({{invalid.length}})</text>
+        <text class="invalid-arrow">{{invalidOpen ? '收起 ▲' : '展开 ▼'}}</text>
+      </view>
+      <block wx:if="{{invalidOpen}}">
+        <view class="cart-item invalid-item" wx:for="{{invalid}}" wx:key="id">
+          <view class="invalid-badge">失效</view>
+          <image class="cart-img gray" src="{{item._imgErr ? '/static/images/default.png' : item.pic}}" mode="aspectFill"
+            data-key="{{index}}" data-field="invalid" binderror="onImgError" />
+          <view class="cart-info">
+            <view class="cart-name ellipsis-2 gray-text">{{item.name}}</view>
+            <view class="cart-spec ellipsis">{{item.specText}}</view>
+            <text class="price-origin">￥{{f.fp(item.price)}}</text>
+          </view>
         </view>
-        <image class="cart-del" bindtap="delGoods" data-index="{{index}}" src="/image/delete.png"></image>
+        <view class="btn-plain clear-btn" bindtap="onClearInvalid">清空失效商品</view>
+      </block>
+    </view>
+
+    <view class="demo-tip">演示环境，不产生真实交易</view>
+    <view class="settle-placeholder"></view>
+
+    <!-- ============ 结算栏 ============ -->
+    <view class="settle-bar-wrap">
+      <!-- 优惠明细（可展开/收起） -->
+      <view class="reduce-panel" wx:if="{{reduceOpen && !editing && fullReduce}}">
+        <view class="reduce-row" wx:for="{{fullReduce.rules}}" wx:key="threshold">
+          <text class="reduce-rule">满 {{item.threshold}} 减 {{item.reduce}}</text>
+          <text class="reduce-state {{totalPrice >= item.threshold ? 'hit' : ''}}">{{totalPrice >= item.threshold ? '已达成' : '未达成'}}</text>
+        </view>
+        <view class="hairline"></view>
+        <view class="reduce-tip">{{reduceTip}}</view>
+        <view class="freight-tip">{{freightTip}}</view>
+      </view>
+      <!-- 最优券 / 凑单提示条（优化 1，点击去领券中心） -->
+      <view class="coupon-tip" wx:if="{{couponTip && !editing}}" bindtap="goCouponCenter">
+        <text class="coupon-tip-text ellipsis">{{couponTip}}</text>
+        <text class="coupon-tip-arrow">›</text>
+      </view>
+      <view class="settle-bar">
+        <view class="check-all" bindtap="onCheckAll">
+          <view class="check-circle {{isAll ? 'checked' : ''}}"><text wx:if="{{isAll}}">✓</text></view>
+          <text class="check-all-text">全选</text>
+        </view>
+        <block wx:if="{{!editing}}">
+          <view class="settle-mid" bindtap="toggleReduce">
+            <view class="settle-total">
+              <text>合计：</text>
+              <text class="price settle-price"><text class="symbol">￥</text>{{f.fp(totalPrice)}}</text>
+            </view>
+            <view class="settle-reduce" wx:if="{{reduceTip}}">{{reduceTip}} {{reduceOpen ? '▲' : '▼'}}</view>
+          </view>
+          <view class="settle-btn {{checkedCount ? '' : 'disabled'}}" bindtap="onSettle">结算({{checkedCount}})</view>
+        </block>
+        <block wx:else>
+          <view class="settle-mid"></view>
+          <view class="settle-btn delete-btn {{checkedCount ? '' : 'disabled'}}" bindtap="onDeleteSelected">删除选中</view>
+        </block>
       </view>
     </view>
 
-    <view class="cart-footer">
-      <view wx:if="{{!isAllSelect}}">
-        <icon class="total-select" bindtap="allSelect" type="circle" size="20"></icon>
-      </view>
-      <view wx:elif="{{isAllSelect}}">
-        <icon class="total-select" bindtap="allSelect" type="success" color="#f0145a" size="20"></icon>
-      </view>
-      <view class="order-icon">
-        <navigator  bindtap="goBuy">
-          <image src="/image/buy.png"></image>
-        </navigator>
-      </view>
-      <text>全选</text>
-      <text class="cart-toatl-price">￥{{totalMoney}}</text>
+    <!-- 右上角编辑入口（模拟导航区放置于列表顶部） -->
+    <view class="edit-entry" bindtap="toggleEdit">{{editing ? '完成' : '编辑'}}</view>
+  </block>
+
+  <!-- ============ 空态 ============ -->
+  <block wx:else>
+    <view class="empty-state">
+      <image class="empty-img" src="/static/images/default.png" data-field="imgErr" binderror="onImgError" />
+      <view class="empty-text">购物车还是空的</view>
+      <view class="empty-btn" bindtap="goShopping">去逛逛</view>
     </view>
-  </scroll-view>
-</view>
+    <view class="card" wx:if="{{recommend.length}}">
+      <view class="section-title">猜你喜欢</view>
+      <scroll-view scroll-x enhanced show-scrollbar="{{false}}" class="rec-scroll">
+        <view class="rec-item" wx:for="{{recommend}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+          <image class="rec-img" src="{{item._imgErr ? '/static/images/default.png' : item.pic}}" mode="aspectFill"
+            data-key="{{index}}" data-field="recommend" binderror="onImgError" />
+          <view class="rec-name ellipsis-2">{{item.name}}</view>
+          <text class="price rec-price"><text class="symbol">￥</text>{{f.fp(item.minPrice)}}</text>
+        </view>
+      </scroll-view>
+    </view>
+  </block>
+</block>

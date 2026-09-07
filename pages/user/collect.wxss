@@ -1,0 +1,59 @@
+/* pages/user/collect.wxss */
+.page { padding-bottom: 140rpx; }
+
+.goods-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 24rpx 24rpx 0;
+  padding: 20rpx;
+}
+.check-wrap { margin-right: 16rpx; }
+.check-circle {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 2rpx solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  color: #fff;
+}
+.check-circle.checked { background: #b4282d; border-color: #b4282d; }
+.goods-pic {
+  width: 160rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  background: #f2f3f5;
+  flex-shrink: 0;
+}
+.goods-info { flex: 1; margin-left: 20rpx; min-width: 0; }
+.goods-name { font-size: 28rpx; line-height: 1.4; }
+.goods-tags { margin-top: 10rpx; }
+.goods-bottom { display: flex; align-items: baseline; margin-top: 12rpx; }
+.sells { font-size: 20rpx; color: #b0b0b0; margin-left: 16rpx; }
+.heart { font-size: 40rpx; padding: 10rpx 0 10rpx 20rpx; }
+
+.tip-line { text-align: center; color: #b0b0b0; font-size: 22rpx; padding: 32rpx 0; }
+
+.edit-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  background: #fff;
+  padding: 20rpx 24rpx;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+.edit-cancel, .edit-delete {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  border-radius: 999rpx;
+  padding: 18rpx 0;
+}
+.edit-cancel { border: 2rpx solid #ccc; color: #666; margin-right: 24rpx; }
+.edit-delete { background: #b4282d; color: #fff; }

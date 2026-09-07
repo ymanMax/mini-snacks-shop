@@ -1,0 +1,6 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "消息通知",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#f5f6f7"
+}

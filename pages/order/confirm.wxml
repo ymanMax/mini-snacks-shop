@@ -1,0 +1,166 @@
+<wxs src="../../utils/format.wxs" module="f" />
+
+<view class="page">
+  <!-- 骨架屏 -->
+  <block wx:if="{{loading}}">
+    <view class="card"><view class="skeleton sk-block" style="height:120rpx"></view></view>
+    <view class="card"><view class="skeleton sk-block" style="height:200rpx"></view></view>
+    <view class="card"><view class="skeleton sk-block" style="height:160rpx"></view></view>
+  </block>
+
+  <block wx:else>
+    <!-- 地址卡 -->
+    <view class="card addr-card" bindtap="goAddress">
+      <view class="addr-icon">📍</view>
+      <block wx:if="{{address}}">
+        <view class="addr-info">
+          <view class="addr-line1">
+            <text class="addr-name">{{address.name}}</text>
+            <text class="addr-phone">{{address.phone}}</text>
+            <text class="tag" wx:if="{{address.tag}}">{{address.tag}}</text>
+          </view>
+          <view class="addr-detail ellipsis-2">{{address.province}}{{address.city}}{{address.district}}{{address.detail}}</view>
+          <view class="addr-freight" wx:if="{{address.distanceKm != null && preview && !outOfRange}}">
+            距离 {{address.distanceKm}}km · 配送费 ￥{{f.fp(preview.freight)}}
+          </view>
+        </view>
+      </block>
+      <view wx:else class="addr-empty">请添加收货地址</view>
+      <text class="addr-arrow">›</text>
+    </view>
+
+    <!-- 超出配送范围警告 -->
+    <view class="range-warning" wx:if="{{outOfRange && address}}">
+      ⚠️ 该地址暂不支持配送（超出 {{maxKm}}km 配送范围），请更换地址
+    </view>
+
+    <!-- 商品清单 -->
+    <view class="card">
+      <view class="card-title">商品清单</view>
+      <view class="goods-item" wx:for="{{items}}" wx:key="goodsId">
+        <image class="goods-pic" mode="aspectFill"
+          src="{{item._imgErr ? '/static/images/default.png' : item.pic}}"
+          data-key="{{index}}" data-field="items" binderror="onImgError" />
+        <view class="goods-info">
+          <view class="goods-name ellipsis-2">{{item.name}}</view>
+          <view class="goods-spec ellipsis">{{item.specText}}</view>
+          <view class="goods-bottom">
+            <text class="price"><text class="symbol">￥</text>{{f.fp(item.price)}}</text>
+            <text class="goods-count">x{{item.count}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 配送 / 支付 / 优惠券 / 备注 -->
+    <view class="card">
+      <view class="cell" bindtap="openSlot">
+        <text class="cell-label">配送时段</text>
+        <text class="cell-value">{{slots[slotIndex]}}</text>
+        <text class="cell-arrow">›</text>
+      </view>
+      <view class="hairline"></view>
+      <view class="cell" bindtap="openCoupon">
+        <text class="cell-label">优惠券</text>
+        <view class="cell-value coupon-value {{couponId ? 'theme-text' : ''}}">
+          {{couponText}}
+          <text class="auto-best-tag" wx:if="{{autoBest && couponId}}">已自动选择最优券</text>
+        </view>
+        <text class="cell-arrow">›</text>
+      </view>
+      <view class="hairline"></view>
+      <view class="cell pay-cell">
+        <text class="cell-label">支付方式</text>
+        <view class="pay-opts">
+          <view class="pay-opt {{payType === 1 ? 'on' : ''}}" data-t="1" bindtap="setPayType">微信支付</view>
+          <view class="pay-opt {{payType === 2 ? 'on' : ''}}" data-t="2" bindtap="setPayType">货到付款</view>
+        </view>
+      </view>
+      <view class="hairline"></view>
+      <view class="cell remark-cell">
+        <text class="cell-label">备注</text>
+        <input class="remark-input" placeholder="选填，给商家留言" value="{{remark}}" bindinput="onRemark" />
+      </view>
+    </view>
+
+    <!-- 金额明细 -->
+    <view class="card" wx:if="{{preview}}">
+      <view class="card-title">金额明细</view>
+      <view class="amount-row">
+        <text class="amount-label">商品总额</text>
+        <text class="price"><text class="symbol">￥</text>{{f.fp(preview.totalAmount)}}</text>
+      </view>
+      <view class="amount-row">
+        <text class="amount-label">优惠</text>
+        <text class="price">-<text class="symbol">￥</text>{{f.fp(preview.discountAmount)}}</text>
+      </view>
+      <view class="amount-row">
+        <text class="amount-label">配送费</text>
+        <text class="price"><text class="symbol">￥</text>{{f.fp(preview.freight)}}</text>
+      </view>
+      <view class="hairline"></view>
+      <view class="amount-row pay-row">
+        <text class="amount-label">实付</text>
+        <text class="price pay-amount"><text class="symbol">￥</text>{{f.fp(preview.payAmount)}}</text>
+      </view>
+      <view class="free-tip" wx:if="{{freeGap > 0}}">再买 ￥{{f.fp(freeGap)}} 免配送费</view>
+    </view>
+
+    <view class="demo-tip">演示环境，不产生真实交易</view>
+    <view class="bottom-safe"></view>
+  </block>
+
+  <!-- 底部结算栏 -->
+  <view class="bottom-bar" wx:if="{{!loading}}">
+    <view class="bottom-amount">
+      <text class="bottom-label">实付：</text>
+      <text class="price bottom-price"><text class="symbol">￥</text>{{preview ? f.fp(preview.payAmount) : '0.00'}}</text>
+    </view>
+    <view class="btn-primary submit-btn {{submitting || outOfRange ? 'disabled' : ''}}" bindtap="submitOrder">提交订单</view>
+  </view>
+
+  <!-- 配送时段弹层 -->
+  <view class="mask {{showSlot ? 'show' : ''}}" bindtap="closePopups"></view>
+  <view class="popup {{showSlot ? 'show' : ''}}">
+    <view class="popup-title">选择配送时段</view>
+    <view class="slot-item {{slotIndex === index ? 'on' : ''}}" wx:for="{{slots}}" wx:key="*this"
+      data-i="{{index}}" bindtap="chooseSlot">
+      <text>{{item}}</text>
+      <text class="slot-check" wx:if="{{slotIndex === index}}">✓</text>
+    </view>
+  </view>
+
+  <!-- 优惠券弹层 -->
+  <view class="mask {{showCoupon ? 'show' : ''}}" bindtap="closePopups"></view>
+  <view class="popup {{showCoupon ? 'show' : ''}}">
+    <view class="popup-title">选择优惠券</view>
+    <scroll-view scroll-y class="coupon-scroll">
+      <view class="coupon-item {{couponId === 0 ? 'on' : ''}}" data-id="0" bindtap="chooseCoupon">
+        <view class="coupon-main">
+          <view class="coupon-name">不使用优惠券</view>
+        </view>
+        <text class="coupon-check" wx:if="{{couponId === 0}}">✓</text>
+      </view>
+      <view class="coupon-item {{couponId === item.id ? 'on' : ''}}" wx:for="{{coupons}}" wx:key="id"
+        data-id="{{item.id}}" bindtap="chooseCoupon">
+        <view class="coupon-main">
+          <view class="coupon-name">{{item.name}}</view>
+          <view class="coupon-sub">{{item.threshold > 0 ? '满' + item.threshold + '元可用' : '无门槛'}} · {{item.scope || '全场'}}</view>
+          <view class="coupon-sub">有效期至 {{item.expireTime}}</view>
+        </view>
+        <text class="coupon-check" wx:if="{{couponId === item.id}}">✓</text>
+      </view>
+      <view class="empty-text coupon-empty" wx:if="{{!coupons.length}}">暂无可用优惠券</view>
+    </scroll-view>
+  </view>
+
+  <!-- Mock 支付弹层 -->
+  <view class="mask show" wx:if="{{showPay}}"></view>
+  <view class="popup show" wx:if="{{showPay}}">
+    <view class="popup-title">收银台</view>
+    <view class="pay-popup-amount price"><text class="symbol">￥</text>{{order ? f.fp(order.payAmount) : '0.00'}}</view>
+    <view class="btn-primary pay-btn" bindtap="confirmPay">确认支付</view>
+    <view class="btn-plain pay-btn" bindtap="skipPay">暂不支付</view>
+    <view class="demo-tip">演示环境，不产生真实交易</view>
+  </view>
+</view>

@@ -1,0 +1,80 @@
+<!--pages/member/center.wxml-->
+<view class="page">
+  <!-- ===== 会员卡 ===== -->
+  <view class="member-card" wx:if="{{member}}">
+    <view class="shine"></view>
+    <view class="card-top">
+      <view>
+        <view class="card-level">{{member.levelName}}</view>
+        <view class="card-no">No.{{member.userId}}</view>
+      </view>
+      <text class="discount-badge">{{member.discountText}}</text>
+    </view>
+    <view class="card-bottom">
+      <text class="valid">有效期至 {{member.validDate}}</text>
+      <image class="card-avatar" src="{{imgErr ? '/static/images/default.png' : member.avatar}}" binderror="onImgError"></image>
+    </view>
+  </view>
+  <view wx:elif="{{loading}}" class="skeleton" style="height:300rpx;margin:24rpx;border-radius:24rpx;"></view>
+
+  <!-- ===== 成长值进度 ===== -->
+  <view class="card" wx:if="{{member}}">
+    <view class="sec-title">成长值</view>
+    <view class="growth-row">
+      <text class="growth-cur">{{member.growthValue}}</text>
+      <text class="growth-target" wx:if="{{member.nextLevelGrowth}}">/ {{member.nextLevelGrowth}}</text>
+      <text class="growth-target" wx:else>/ MAX</text>
+    </view>
+    <view class="bar">
+      <view class="bar-inner" style="width:{{growthPercent}}%;"></view>
+    </view>
+    <view class="growth-tip" wx:if="{{member.nextLevelGrowth}}">
+      再积累 {{member.nextLevelGrowth - member.growthValue}} 成长值即可升级{{member.nextLevelName}}
+    </view>
+    <view class="growth-tip" wx:else>您已是最高等级会员，尊享全部特权</view>
+  </view>
+
+  <!-- ===== 生日福利 ===== -->
+  <view class="card birthday-card" wx:if="{{member && member.isBirthdayMonth && !member.birthdayClaimed}}">
+    <view class="birthday-info">
+      <text class="birthday-icon">🎂</text>
+      <view>
+        <view class="birthday-title">生日月专属礼包</view>
+        <view class="birthday-desc">满99减30 优惠券 + 100 积分</view>
+      </view>
+    </view>
+    <view class="btn-primary birthday-btn {{claiming ? 'disabled' : ''}}" bindtap="onClaimBirthday">立即领取</view>
+  </view>
+  <view class="card birthday-claimed" wx:elif="{{member && member.isBirthdayMonth && member.birthdayClaimed}}">
+    🎂 生日礼包已领取，可在「我的优惠券」中查看
+  </view>
+  <view class="card birthday-claimed" wx:elif="{{member && birthMonth}}">
+    🎂 您的生日在 {{birthMonth}} 月，生日月可领取专属礼包
+  </view>
+
+  <!-- ===== 成长体系表 ===== -->
+  <view class="card">
+    <view class="sec-title">会员成长体系</view>
+    <view class="level-header">
+      <text class="col-lv">等级</text>
+      <text class="col-growth">成长值</text>
+      <text class="col-discount">折扣</text>
+      <text class="col-free">免配送门槛</text>
+    </view>
+    <view wx:for="{{levels}}" wx:key="level"
+          class="level-row {{member && member.level === item.level ? 'current' : ''}}">
+      <view class="col-lv">
+        <text>{{item.levelName}}</text>
+        <text class="cur-tag" wx:if="{{member && member.level === item.level}}">当前等级</text>
+      </view>
+      <text class="col-growth">{{item.growth}}</text>
+      <text class="col-discount">{{item.discountText}}</text>
+      <text class="col-free">{{item.freeDeliveryThreshold === 0 ? '全场免配送' : '满' + item.freeDeliveryThreshold + '元'}}</text>
+      <view class="privileges">
+        <text class="tag" wx:for="{{item.privileges}}" wx:for-item="p" wx:key="*this">{{p}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="demo-tip">演示环境，不产生真实交易</view>
+</view>

@@ -1,0 +1,30 @@
+<!--pages/setting/setting.wxml-->
+<view class="page">
+  <view class="card menu-card">
+    <view class="menu-title">通用</view>
+    <view class="menu-row" bindtap="onClearCache">
+      <text class="menu-icon">🗑️</text>
+      <text class="menu-name">清除缓存</text>
+      <text class="menu-desc">恢复演示数据</text>
+      <text class="arrow">›</text>
+    </view>
+    <view class="menu-row" bindtap="goAbout">
+      <text class="menu-icon">ℹ️</text>
+      <text class="menu-name">关于我们</text>
+      <text class="menu-desc">{{version}}</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="card menu-card">
+    <view class="menu-title">账号</view>
+    <view class="menu-row" bindtap="onLogout">
+      <text class="menu-icon">🚪</text>
+      <text class="menu-name">退出登录</text>
+      <text class="menu-desc">回到游客态</text>
+      <text class="arrow">›</text>
+    </view>
+  </view>
+
+  <view class="demo-tip">演示环境，不产生真实交易</view>
+</view>

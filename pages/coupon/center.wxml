@@ -1,0 +1,71 @@
+<!--pages/coupon/center.wxml-->
+<view class="page">
+  <!-- ===== 顶部 Tab ===== -->
+  <view class="tabs">
+    <view class="tab {{tab === 'center' ? 'active' : ''}}" data-tab="center" bindtap="onTab">领券中心</view>
+    <view class="tab {{tab === 'mine' ? 'active' : ''}}" data-tab="mine" bindtap="onTab">我的优惠券</view>
+  </view>
+
+  <!-- ===== 领券中心 ===== -->
+  <block wx:if="{{tab === 'center'}}">
+    <block wx:if="{{!loadingCenter}}">
+      <view class="coupon-card" wx:for="{{centerList}}" wx:key="id">
+        <view class="coupon-left">
+          <text class="coupon-amount {{item.leftSmall ? 'small' : ''}}">{{item.leftText}}</text>
+          <text class="coupon-sub">{{item.subText}}</text>
+        </view>
+        <view class="coupon-right">
+          <view class="coupon-name">{{item.name}}</view>
+          <view class="coupon-scope">{{item.scope}}</view>
+          <view class="coupon-stock">剩余 {{item.stock}} 张</view>
+        </view>
+        <view class="coupon-btn {{item.claimed ? 'disabled' : ''}}"
+              data-index="{{index}}" bindtap="onClaim">
+          {{item.claimed ? '已领取' : '立即领取'}}
+        </view>
+      </view>
+      <view class="empty-state" wx:if="{{centerList.length === 0}}">
+        <image class="empty-img" src="/static/images/default.png" binderror="onImgError"></image>
+        <view class="empty-text">暂无可领取优惠券</view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="skeleton" style="height:180rpx;margin:24rpx;border-radius:16rpx;"></view>
+      <view class="skeleton" style="height:180rpx;margin:24rpx;border-radius:16rpx;"></view>
+    </block>
+  </block>
+
+  <!-- ===== 我的优惠券 ===== -->
+  <block wx:if="{{tab === 'mine'}}">
+    <view class="sub-tabs">
+      <view class="sub-tab {{mineStatus === 1 ? 'active' : ''}}" data-status="1" bindtap="onMineStatus">未使用</view>
+      <view class="sub-tab {{mineStatus === 2 ? 'active' : ''}}" data-status="2" bindtap="onMineStatus">已使用</view>
+      <view class="sub-tab {{mineStatus === 3 ? 'active' : ''}}" data-status="3" bindtap="onMineStatus">已过期</view>
+    </view>
+    <block wx:if="{{!loadingMine}}">
+      <view class="coupon-card {{mineStatus !== 1 ? 'gray' : ''}}" wx:for="{{mineList}}" wx:key="id">
+        <view class="coupon-left">
+          <text class="coupon-amount {{item.leftSmall ? 'small' : ''}}">{{item.leftText}}</text>
+          <text class="coupon-sub">{{item.subText}}</text>
+        </view>
+        <view class="coupon-right">
+          <view class="coupon-name">{{item.name}}</view>
+          <view class="coupon-scope">{{item.scope}} · 来源：{{item.source}}</view>
+          <view class="coupon-expire">{{item.expireTime}} 到期</view>
+        </view>
+        <view class="coupon-status-tag" wx:if="{{mineStatus === 2}}">已使用</view>
+        <view class="coupon-status-tag" wx:elif="{{mineStatus === 3}}">已过期</view>
+      </view>
+      <view class="empty-state" wx:if="{{mineList.length === 0}}">
+        <image class="empty-img" src="/static/images/default.png" binderror="onImgError"></image>
+        <view class="empty-text">暂无优惠券，去领券中心看看</view>
+        <view class="empty-btn" bindtap="goCenter">去领券中心</view>
+      </view>
+    </block>
+    <block wx:else>
+      <view class="skeleton" style="height:180rpx;margin:24rpx;border-radius:16rpx;"></view>
+    </block>
+  </block>
+
+  <view class="demo-tip">演示环境，不产生真实交易</view>
+</view>

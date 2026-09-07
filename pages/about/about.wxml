@@ -1,0 +1,27 @@
+<!--pages/about/about.wxml-->
+<view class="page">
+  <view class="hero">
+    <image class="logo" src="{{imgErr ? '/static/images/default.png' : '/static/mock/logo.png'}}"
+           binderror="onImgError"></image>
+    <view class="shop-name">零食商城</view>
+    <view class="version">V1.0</view>
+  </view>
+
+  <view class="card">
+    <view class="sec-title">商城简介</view>
+    <view class="desc">
+      零食商城是一家社区直营零食小店，精选薯片膨化、肉脯海味、坚果炒货、糖果巧克力、
+      饼干糕点、进口零食与礼盒礼包等数百款好物。门店 3 公里内极速配送，
+      下单后最快 45 分钟送达，让您足不出户实现零食自由。
+    </view>
+  </view>
+
+  <view class="card">
+    <view class="sec-title">联系我们</view>
+    <view class="desc">营业时间：每日 08:00 - 22:00</view>
+    <view class="desc">门店地址：浙江省杭州市西湖区文三路 88 号零食商城直营店</view>
+  </view>
+
+  <view class="demo-tip">演示环境，不产生真实交易</view>
+  <view class="copyright">零食商城 · 仅供演示学习使用</view>
+</view>

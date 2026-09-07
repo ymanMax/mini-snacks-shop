@@ -1,40 +1,61 @@
-<scroll-view class="scroll" scroll-y="true">
+<!-- 骨架屏 -->
+<block wx:if="{{loading}}">
+  <view class="card" wx:for="{{[1, 2]}}" wx:key="*this">
+    <view class="skeleton" style="height:40rpx;width:50%"></view>
+    <view class="skeleton" style="height:60rpx;margin-top:20rpx"></view>
+  </view>
+</block>
 
-<view wx:for="{{addressList}}" wx:for-index="index">
+<!-- 空态 -->
+<view class="empty-state" wx:elif="{{!hasAny}}">
+  <image class="empty-img" src="/static/images/default.png" binderror="onImgError" />
+  <view class="empty-text">还没有收货地址</view>
+  <view class="empty-btn" bindtap="addAddress">新增收货地址</view>
+</view>
 
-  <view class="product-name-wrap" bindtap="selectAddress" data-index="{{index}}">
-
-    <view class="ui-list-item-info">{{item.consignee}}
-
-      <text decode="{{true}}" space="{{true}}">  </text> {{item.mobile}}
-
-    </view>
-
-    <view class="ui-list-item-address">
-
-      {{item.address}}
-
-    </view>
-
-    <view class="ui-list-item-time">
-
-      <p>{{item.transportDay}}</p>
-
-      <p class="ui-list-item-del" data-id="{{index}}" bindtap="delAddress">删除</p>
-
-    </view>
-
-    <view class="separate"></view>
-
+<!-- 地址列表 -->
+<block wx:else>
+  <!-- 标签筛选胶囊条 -->
+  <view class="tag-bar">
+    <view class="tag-cap {{activeTag === item ? 'on' : ''}}" wx:for="{{tags}}" wx:key="*this"
+      data-tag="{{item}}" bindtap="chooseTag">{{item}}</view>
   </view>
 
-</view>
+  <view class="empty-text tag-empty" wx:if="{{!list.length}}">「{{activeTag}}」标签下暂无地址</view>
 
-</scroll-view>
+  <view class="card addr-card {{item.outOfRange && from === 'confirm' ? 'disabled' : ''}}"
+    wx:for="{{list}}" wx:key="id" data-index="{{index}}" bindtap="tapAddress">
+    <view class="addr-main">
+      <view class="addr-line1">
+        <text class="addr-name">{{item.name}}</text>
+        <text class="addr-phone">{{item.phone}}</text>
+        <text class="tag" wx:if="{{item.tag}}">{{item.tag}}</text>
+        <text class="default-tag" wx:if="{{item.isDefault}}">默认</text>
+        <text class="range-badge" wx:if="{{from === 'confirm' && item.outOfRange}}">暂不支持配送</text>
+      </view>
+      <view class="addr-detail">{{item.province}}{{item.city}}{{item.district}}{{item.detail}}</view>
+      <!-- confirm 模式：距离 + 配送费预估 -->
+      <view class="freight-line" wx:if="{{from === 'confirm'}}">
+        <block wx:if="{{item.distanceKm != null}}">距离 {{item.distanceKm}}km</block>
+        <block wx:if="{{!item.outOfRange}}">
+          <text wx:if="{{item.freightText !== ''}}">{{item.distanceKm != null ? ' · ' : ''}}配送费约 ￥{{item.freightText}}</text>
+          <text wx:elif="{{rule}}">{{item.distanceKm != null ? ' · ' : ''}}起步{{rule.baseFee}}元含{{rule.baseKm}}km</text>
+        </block>
+        <text wx:else>{{item.distanceKm != null ? ' · ' : ''}}超出 {{maxKm}}km 配送范围</text>
+      </view>
+    </view>
+    <view class="addr-ops" catchtap="noop">
+      <view class="op-item {{item.isDefault ? 'on' : ''}}" catchtap="setDefault" data-id="{{item.id}}">
+        {{item.isDefault ? '默认地址' : '设为默认'}}
+      </view>
+      <view class="op-item" catchtap="editAddress" data-id="{{item.id}}">编辑</view>
+      <view class="op-item" catchtap="delAddress" data-id="{{item.id}}">删除</view>
+    </view>
+  </view>
 
-<view class="add-address" bindtap="addAddress">
-
-<image class="add-img"  src="../../image/add.png"></image>
-<text>新增地址</text>
-
-</view>
+  <view class="tip-text" wx:if="{{from === 'confirm'}}">点击地址卡选择收货地址</view>
+  <view class="bottom-safe"></view>
+  <view class="bottom-bar">
+    <view class="btn-primary add-btn" bindtap="addAddress">新增收货地址</view>
+  </view>
+</block>

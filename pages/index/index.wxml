@@ -1,56 +1,135 @@
-<view class="main">
+<wxs src="../../utils/format.wxs" module="f" />
+
+<view class="page">
+  <!-- 顶部搜索栏 -->
+  <view class="search-bar" bindtap="goSearch">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <text class="search-ph">搜索零食</text>
+    </view>
+  </view>
+
   <!-- 轮播图 -->
-  <view class="swiperContainer">
-    <swiper class="imageContainer" bindchange="swiperChange" previous-margin="55rpx" next-margin="50rpx" circular autoplay>
-      <block wx:for="{{items}}" wx:key="index">
-        <swiper-item class="turnItem">
-          <image class="itemImg {{index == swiperCurrent ? 'imgActive': ''}}" src="{{'https://hanmashanghu.qiaomai365.com' + item.img.url}}"></image>
-        </swiper-item>
-      </block>
+  <view class="banner-wrap" wx:if="{{banners.length}}">
+    <swiper class="banner-swiper" indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#b4282d" autoplay circular interval="3500" duration="400">
+      <swiper-item wx:for="{{banners}}" wx:key="id">
+        <view class="banner-item" data-item="{{item}}" bindtap="onBannerTap">
+          <image class="banner-img" src="{{item._imgErr ? '/static/images/default.png' : item.img}}" mode="aspectFill" data-key="{{index}}" data-field="banners" binderror="onImgError" />
+          <view class="banner-mask">
+            <view class="banner-title">{{item.title}}</view>
+            <view class="banner-desc">{{item.desc}}</view>
+          </view>
+        </view>
+      </swiper-item>
     </swiper>
-    <!-- 指示点的修饰 -->
-    <view class="dots">
-      <block wx:for="{{items}}" wx:key="index">
-        <view class="dot{{index == swiperCurrent ? ' active' : ''}}"></view>
-      </block>
+  </view>
+
+  <!-- 限时抢购 -->
+  <view class="section seckill-section" wx:if="{{seckill.goods.length}}">
+    <view class="section-head">
+      <view class="section-title-wrap">
+        <text class="section-title">限时抢购</text>
+        <text class="seckill-sub">{{seckill.title}}</text>
+      </view>
+      <view class="seckill-head-right">
+        <view class="countdown" wx:if="{{countdown}}">
+          <text class="countdown-label">距结束</text>
+          <text class="countdown-time">{{countdown}}</text>
+        </view>
+        <view class="more-link" bindtap="goSeckill">更多场次 ›</view>
+      </view>
+    </view>
+    <scroll-view scroll-x enhanced show-scrollbar="{{false}}" class="seckill-scroll">
+      <view class="seckill-row">
+        <view class="seckill-card" wx:for="{{seckill.goods}}" wx:key="goodsId" data-id="{{item.goodsId}}" bindtap="goDetail">
+          <image class="seckill-img" src="{{item._imgErr ? '/static/images/default.png' : item.pic}}" mode="aspectFill" data-key="{{index}}" data-field="seckill.goods" binderror="onImgError" />
+          <view class="seckill-name ellipsis">{{item.name}}</view>
+          <view class="seckill-price-row">
+            <text class="price"><text class="symbol">￥</text>{{f.fp(item.seckillPrice)}}</text>
+            <text class="price-origin">￥{{f.fp(item.originalPrice)}}</text>
+          </view>
+          <view class="progress">
+            <view class="progress-inner" style="width: {{item.soldPercent}}%;"></view>
+            <text class="progress-text">已抢{{item.soldPercent}}%</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 精选主题 -->
+  <view class="section" wx:if="{{themes.length}}">
+    <view class="section-head">
+      <view class="section-title-wrap">
+        <text class="section-title">精选主题</text>
+      </view>
+    </view>
+    <view class="theme-row">
+      <view class="theme-card" wx:for="{{themes}}" wx:key="id" data-id="{{item.id}}" bindtap="onThemeTap">
+        <image class="theme-img" src="{{item._imgErr ? '/static/images/default.png' : item.img}}" mode="aspectFill" data-key="{{index}}" data-field="themes" binderror="onImgError" />
+        <view class="theme-name ellipsis">{{item.name}}</view>
+        <view class="theme-desc ellipsis">{{item.description}}</view>
+      </view>
     </view>
   </view>
 
-  <view class="selected">
-    <view class="select-title">
-      <text>精选主题</text>
-    </view>
-    <view class="select-top">
-      <view class="select-top-small">
-        <navigator url="../list/list?item=1">
-          <image src="{{'https://hanmashanghu.qiaomai365.com' + theme_1.topic_img.url}}"></image>
-        </navigator>
-      </view>
-      <view class="select-top-small">
-        <navigator url="../list/list?item=2">
-          <image src="{{'https://hanmashanghu.qiaomai365.com' + theme_2.topic_img.url}}"></image>
-        </navigator>
+  <!-- 推荐商品 -->
+  <view class="section">
+    <view class="section-head">
+      <view class="section-title-wrap">
+        <text class="section-title">为你推荐</text>
       </view>
     </view>
-    <view class="select-bottom">
-      <navigator url="../list/list?item=3">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + theme_3.topic_img.url}}"></image>
-      </navigator>
+
+    <!-- 骨架屏（首屏加载） -->
+    <view class="goods-grid" wx:if="{{loading && current === 1 && !list.length}}">
+      <view class="goods-card" wx:for="{{[1, 2, 3]}}" wx:key="*this">
+        <view class="skeleton skeleton-img"></view>
+        <view class="goods-info">
+          <view class="skeleton skeleton-line"></view>
+          <view class="skeleton skeleton-line short"></view>
+          <view class="skeleton skeleton-line tiny"></view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 空态 -->
+    <view class="empty-state" wx:elif="{{!loading && !list.length}}">
+      <image class="empty-img" src="/static/images/default.png" mode="aspectFit" binderror="onImgError" />
+      <view class="empty-text">暂时没有商品，去看看别的吧</view>
+    </view>
+
+    <!-- 商品两列网格 -->
+    <view class="goods-grid" wx:else>
+      <view class="goods-card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+        <image class="goods-img" src="{{item._imgErr ? '/static/images/default.png' : item.pic}}" mode="aspectFill" lazy-load data-key="{{index}}" data-field="list" binderror="onImgError" />
+        <view class="goods-info">
+          <view class="goods-name ellipsis-2">{{item.name}}</view>
+          <view class="goods-tags" wx:if="{{item.tags.length}}">
+            <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:for-index="ti" wx:key="*this" wx:if="{{ti < 2}}">{{tag}}</text>
+          </view>
+          <view class="goods-bottom">
+            <view class="goods-price-wrap">
+              <text class="price"><text class="symbol">￥</text>{{f.fp(item.minPrice)}}</text>
+              <text class="price-origin" wx:if="{{item.originalPrice > item.minPrice}}">￥{{f.fp(item.originalPrice)}}</text>
+              <view class="goods-sold">已售{{f.sold(item.numberSells)}}</view>
+            </view>
+            <view class="add-btn" data-item="{{item}}" catchtap="onAddCart">+</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 分页状态 -->
+    <view class="list-footer" wx:if="{{list.length}}">
+      <text wx:if="{{loading}}">加载中...</text>
+      <text wx:elif="{{noMore}}">没有更多了~</text>
     </view>
   </view>
 
-  <view class="newest">
-    <view class="newest-title">
-      <text>最近新品</text>
-    </view>
-    <view class="list-box">
-    <view class="newest-list" wx:for="{{products}}" wx:key="id">
-      <navigator url="../detail/detail?product_id={{item.id}}">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
-        <view class="newest-text"><text>{{item.name}}</text></view>
-        <view class="newest-text"><text>{{item.price}}</text></view>
-      </navigator>
-    </view>
-  </view>
+  <!-- 右下角悬浮购物车 -->
+  <view class="float-cart" bindtap="goCart">
+    <text class="float-cart-icon">🛒</text>
+    <view class="badge float-badge" wx:if="{{cartCount > 0}}">{{cartCount > 99 ? '99+' : cartCount}}</view>
   </view>
 </view>

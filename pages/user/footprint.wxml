@@ -1,0 +1,40 @@
+<!--pages/user/footprint.wxml-->
+<wxs src="../../utils/format.wxs" module="f" />
+<view class="page">
+  <!-- 顶部操作条 -->
+  <view class="top-bar" wx:if="{{groups.length}}">
+    <text class="total-text">共 {{groups.length}} 天浏览记录</text>
+    <text class="clear-btn" bindtap="onClear">清空</text>
+  </view>
+
+  <block wx:if="{{!loading}}">
+    <block wx:if="{{groups.length}}">
+      <view class="date-group" wx:for="{{groups}}" wx:key="date" wx:for-index="g">
+        <view class="date-title">{{item.date}}</view>
+        <view class="goods-grid">
+          <view class="goods-item" wx:for="{{item.items}}" wx:for-item="g2" wx:for-index="k" wx:key="goodsId"
+                data-id="{{g2.goodsId}}" bindtap="onTapItem">
+            <image class="goods-pic" mode="aspectFill"
+                   src="{{g2._imgErr ? '/static/images/default.png' : g2.pic}}"
+                   data-g="{{g}}" data-k="{{k}}" binderror="onImgError"></image>
+            <view class="goods-name ellipsis">{{g2.name}}</view>
+            <view class="goods-bottom">
+              <text class="price"><text class="symbol">￥</text>{{f.fp(g2.minPrice)}}</text>
+            </view>
+            <view class="view-time">{{g2.time}}</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <view class="empty-state" wx:else>
+      <image class="empty-img" src="/static/images/default.png" binderror="onImgError"></image>
+      <view class="empty-text">暂无浏览记录</view>
+      <view class="empty-btn" bindtap="goHome">去逛逛</view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="skeleton" style="height:300rpx;margin:24rpx;border-radius:16rpx;"></view>
+  </block>
+</view>

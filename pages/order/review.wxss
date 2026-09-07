@@ -1,0 +1,54 @@
+/* pages/order/review.wxss */
+.card-title { font-size: 30rpx; font-weight: bold; margin-bottom: 20rpx; }
+
+/* 商品头部 */
+.goods-head { display: flex; align-items: center; margin-bottom: 20rpx; }
+.goods-pic { width: 96rpx; height: 96rpx; border-radius: 12rpx; background: #f2f3f5; flex-shrink: 0; }
+.goods-name { flex: 1; min-width: 0; margin-left: 20rpx; font-size: 28rpx; line-height: 1.4; }
+
+/* 星级 */
+.star-row { display: flex; align-items: center; padding: 12rpx 0; }
+.star-label { color: #666; font-size: 26rpx; width: 140rpx; flex-shrink: 0; }
+.star { font-size: 44rpx; color: #d0d0d0; margin-right: 12rpx; }
+.star.on { color: #b4282d; }
+
+/* 快捷标签 */
+.tag-row { display: flex; flex-wrap: wrap; margin: 12rpx 0; }
+.qtag {
+  background: #f2f3f5; color: #666; font-size: 24rpx;
+  border-radius: 999rpx; padding: 10rpx 28rpx; margin: 8rpx 16rpx 8rpx 0;
+}
+.qtag.on { background: #b4282d; color: #fff; }
+
+/* 文字 */
+.review-text {
+  width: 100%; height: 160rpx; background: #f7f8fa; border-radius: 12rpx;
+  padding: 20rpx; font-size: 26rpx; margin-top: 12rpx;
+}
+
+/* 晒图九宫格 */
+.img-grid { display: flex; flex-wrap: wrap; margin-top: 20rpx; }
+.img-cell { position: relative; width: 160rpx; height: 160rpx; margin: 0 16rpx 16rpx 0; }
+.up-img { width: 160rpx; height: 160rpx; border-radius: 12rpx; background: #f2f3f5; }
+.img-del {
+  position: absolute; top: -12rpx; right: -12rpx;
+  width: 36rpx; height: 36rpx; border-radius: 50%;
+  background: rgba(0, 0, 0, 0.6); color: #fff;
+  font-size: 26rpx; line-height: 36rpx; text-align: center;
+}
+.img-add {
+  width: 160rpx; height: 160rpx; border-radius: 12rpx;
+  background: #f7f8fa; border: 2rpx dashed #d0d0d0;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+}
+.img-add-icon { font-size: 44rpx; }
+.img-add-text { color: #b0b0b0; font-size: 22rpx; margin-top: 8rpx; }
+
+/* 底部 */
+.bottom-safe { height: 140rpx; }
+.bottom-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: #fff; padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
+}
+.submit-btn { width: 100%; }

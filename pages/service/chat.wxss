@@ -1,0 +1,84 @@
+/* pages/service/chat.wxss */
+.page {
+  display: flex; flex-direction: column;
+  height: 100vh; background: #f5f6f7;
+}
+
+/* 右上角评价入口 */
+.rate-entry {
+  position: fixed; top: 20rpx; right: 24rpx; z-index: 20;
+  background: #fff; color: #b4282d; font-size: 24rpx;
+  border-radius: 999rpx; padding: 8rpx 24rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
+.chat-loading { padding: 32rpx 24rpx; }
+
+/* 会话区 */
+.chat-scroll { flex: 1; padding: 24rpx; box-sizing: border-box; }
+.chat-item { display: flex; align-items: flex-start; margin-bottom: 28rpx; }
+.chat-item.right { justify-content: flex-end; }
+.cs-avatar {
+  width: 72rpx; height: 72rpx; border-radius: 50%; background: #fbeaea;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40rpx; flex-shrink: 0; margin-right: 16rpx;
+}
+.bubble {
+  max-width: 68%; font-size: 26rpx; line-height: 1.6;
+  padding: 18rpx 22rpx; border-radius: 16rpx;
+  background: #fff; color: #333;
+  border-top-left-radius: 4rpx;
+}
+.chat-item.right .bubble {
+  background: #b4282d; color: #fff;
+  border-radius: 16rpx; border-top-right-radius: 4rpx;
+}
+.bubble.typing { color: #b0b0b0; font-style: italic; }
+
+/* 评价卡片 */
+.rate-card {
+  background: #fff; border-radius: 16rpx;
+  padding: 32rpx 24rpx; margin: 12rpx 0 24rpx;
+  text-align: center;
+}
+.rate-title { font-size: 30rpx; font-weight: bold; }
+.rate-row {
+  display: flex; align-items: center; justify-content: center;
+  margin-top: 24rpx;
+}
+.rate-label { font-size: 26rpx; color: #666; margin-right: 24rpx; }
+.stars { display: flex; }
+.star { font-size: 44rpx; color: #e0e0e0; margin: 0 6rpx; }
+.star.on { color: #b4282d; }
+.rate-btn { margin-top: 32rpx; }
+.rate-done-icon { font-size: 56rpx; }
+.rate-done-sub { color: #838383; font-size: 24rpx; margin-top: 12rpx; }
+
+/* 常见问题 chips */
+.faq-bar {
+  white-space: nowrap; background: #fff;
+  padding: 16rpx 24rpx; box-sizing: border-box;
+  border-top: 2rpx solid #f0f0f0;
+}
+.faq-chip {
+  display: inline-block;
+  border: 2rpx solid #b4282d; color: #b4282d;
+  font-size: 24rpx; border-radius: 999rpx;
+  padding: 10rpx 28rpx; margin-right: 16rpx;
+}
+
+/* 输入栏 */
+.input-bar {
+  display: flex; align-items: center;
+  background: #fff; padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
+}
+.chat-input {
+  flex: 1; background: #f2f3f5; border-radius: 999rpx;
+  font-size: 28rpx; padding: 14rpx 28rpx; margin-right: 20rpx;
+}
+.send-btn {
+  background: #b4282d; color: #fff; font-size: 26rpx;
+  border-radius: 999rpx; padding: 12rpx 36rpx; flex-shrink: 0;
+}
+.send-btn.off { background: #d9a0a2; }

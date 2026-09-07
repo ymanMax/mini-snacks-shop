@@ -1,37 +1,115 @@
-.banner image{
+/* pages/list/list.wxss —— 主题商品列表页 */
+
+/* 顶部主题头图卡 */
+.theme-header {
+  position: relative;
+  margin: 24rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+}
+.theme-img {
   width: 100%;
-  height: 400rpx;
+  height: 320rpx;
+  display: block;
+  background: #f5f6f7;
 }
-.list-box{
-  padding: 30rpx 20rpx;
+.theme-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 48rpx 28rpx 28rpx;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0));
 }
-.newest-list{
-  display: inline-block;
-  width: 347rpx;
-  height: 347rpx;
-  margin:0 15rpx 10rpx 0;
-  border-radius: 10px;
-  text-align: center;
-  background: #f5f6f5;
+.theme-name {
+  color: #ffffff;
+  font-size: 36rpx;
+  font-weight: bold;
 }
-.newest-list:nth-child(2n){
-  margin-right: 0;
-}
-.newest-list image{
-  width: 180rpx;
-  height: 180rpx;
-  margin: 30rpx 0 20rpx;
-}
-.newest-list .newest-text{
-  font-size: 32rpx;
-  line-height: 45rpx;
+.theme-desc {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 24rpx;
+  margin-top: 8rpx;
 }
 
-page{
-  background-color: #ffffff;
-  font-family: "Helvetica Neue","Hiragino Sans GB","Microsoft YaHei","\9ED1\4F53",Arial,sans-serif;
-  font-size: 32rpx;
+/* 商品两列网格（与首页一致） */
+.goods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 24rpx;
 }
-.navigator-hover{
-  background: none;
+.goods-card {
+  width: 340rpx;
+  background: #ffffff;
+  border-radius: 16rpx;
+  overflow: hidden;
+  margin-bottom: 24rpx;
+}
+.goods-img,
+.skeleton-img {
+  width: 340rpx;
+  height: 340rpx;
+  background: #f5f6f7;
+}
+.goods-info {
+  padding: 16rpx 20rpx 20rpx;
+}
+.goods-name {
+  font-size: 26rpx;
+  line-height: 1.4;
+  min-height: 72rpx;
+}
+.goods-tags {
+  margin-top: 8rpx;
+  min-height: 40rpx;
+}
+.goods-bottom {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-top: 10rpx;
+}
+.goods-price-wrap .price {
+  font-size: 34rpx;
+}
+.goods-price-wrap .price-origin {
+  margin-left: 10rpx;
+}
+.goods-sold {
+  font-size: 22rpx;
+  color: #b0b0b0;
+  margin-top: 4rpx;
+}
+.add-btn {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 50%;
+  background: #b4282d;
+  color: #ffffff;
+  font-size: 40rpx;
+  line-height: 48rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* 骨架屏 */
+.skeleton-line {
+  height: 28rpx;
+  margin-bottom: 16rpx;
+}
+.skeleton-line.short {
+  width: 60%;
+}
+.skeleton-line.tiny {
+  width: 40%;
+  height: 22rpx;
+}
+
+/* 分页状态 */
+.list-footer {
+  text-align: center;
+  color: #b0b0b0;
+  font-size: 24rpx;
+  padding: 10rpx 0 30rpx;
 }

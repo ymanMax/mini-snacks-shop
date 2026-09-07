@@ -1,0 +1,169 @@
+<wxs src="../../utils/format.wxs" module="f" />
+
+<!-- 骨架屏 -->
+<block wx:if="{{loading}}">
+  <view class="skeleton" style="height:220rpx"></view>
+  <view class="card"><view class="skeleton" style="height:200rpx"></view></view>
+  <view class="card"><view class="skeleton" style="height:160rpx"></view></view>
+</block>
+
+<block wx:elif="{{order}}">
+  <!-- 状态头部 -->
+  <view class="status-header">
+    <view class="status-text">{{statusText}}</view>
+    <view class="status-tip">{{statusTip}}</view>
+  </view>
+
+  <!-- 售后工单状态卡片 -->
+  <view class="card aftersale-card" wx:if="{{aftersale}}" bindtap="goAftersaleList">
+    <view class="as-icon">🛠</view>
+    <view class="as-info">
+      <view class="as-line1">
+        <text class="as-type">{{aftersale.typeText}}</text>
+        <text class="as-badge {{aftersale.statusClass}}">{{aftersale.statusText}}</text>
+      </view>
+      <view class="as-sub">售后原因：{{aftersale.reason}}</view>
+    </view>
+    <view class="as-link">查看进度 ›</view>
+  </view>
+
+  <!-- 配送 timeline -->
+  <view class="card" wx:if="{{order.status >= 2 && timeline.length}}">
+    <view class="card-title">配送进度</view>
+    <view class="tl-item {{index === 0 ? 'latest' : ''}}" wx:for="{{timeline}}" wx:key="index">
+      <view class="tl-dot-wrap">
+        <view class="tl-dot"></view>
+        <view class="tl-line" wx:if="{{index < timeline.length - 1}}"></view>
+      </view>
+      <view class="tl-body">
+        <view class="tl-status">{{item.status}}</view>
+        <view class="tl-remark">{{item.remark}}</view>
+        <view class="tl-time">{{item.time}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 骑手卡片 -->
+  <view class="card rider-card" wx:if="{{order.rider}}">
+    <view class="rider-avatar">🛵</view>
+    <view class="rider-info">
+      <view class="rider-name">{{order.rider.name}}</view>
+      <view class="rider-phone">{{order.rider.phone}}</view>
+    </view>
+    <view class="btn-plain rider-call" bindtap="callRider">联系骑手</view>
+  </view>
+
+  <!-- 地址快照 -->
+  <view class="card">
+    <view class="card-title">收货地址</view>
+    <view class="snap-line1">
+      <text class="snap-name">{{order.addressSnapshot.name}}</text>
+      <text class="snap-phone">{{order.addressSnapshot.phone}}</text>
+    </view>
+    <view class="snap-addr">{{order.addressSnapshot.province}}{{order.addressSnapshot.city}}{{order.addressSnapshot.district}}{{order.addressSnapshot.detail}}</view>
+  </view>
+
+  <!-- 商品清单 -->
+  <view class="card">
+    <view class="card-title">商品清单</view>
+    <view class="goods-item" wx:for="{{order.items}}" wx:key="goodsId" data-id="{{item.goodsId}}" bindtap="goGoods">
+      <image class="goods-pic" mode="aspectFill"
+        src="{{item._imgErr ? '/static/images/default.png' : item.pic}}"
+        data-key="{{index}}" data-field="order.items" binderror="onImgError" />
+      <view class="goods-info">
+        <view class="goods-name ellipsis-2">{{item.name}}</view>
+        <view class="goods-spec ellipsis">{{item.specText}}</view>
+        <view class="goods-bottom">
+          <text class="price"><text class="symbol">￥</text>{{f.fp(item.price)}}</text>
+          <text class="goods-count">x{{item.count}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 金额明细 -->
+  <view class="card">
+    <view class="card-title">金额明细</view>
+    <view class="amount-row">
+      <text class="amount-label">商品总额</text>
+      <text class="price"><text class="symbol">￥</text>{{f.fp(order.totalAmount)}}</text>
+    </view>
+    <view class="amount-row">
+      <text class="amount-label">优惠{{order.couponTitle ? '（' + order.couponTitle + '）' : ''}}</text>
+      <text class="price">-<text class="symbol">￥</text>{{f.fp(order.discountAmount)}}</text>
+    </view>
+    <view class="amount-row">
+      <text class="amount-label">配送费</text>
+      <text class="price"><text class="symbol">￥</text>{{f.fp(order.freight)}}</text>
+    </view>
+    <view class="hairline"></view>
+    <view class="amount-row pay-row">
+      <text class="amount-label">实付</text>
+      <text class="price pay-amount"><text class="symbol">￥</text>{{f.fp(order.payAmount)}}</text>
+    </view>
+  </view>
+
+  <!-- 订单信息 -->
+  <view class="card">
+    <view class="card-title">订单信息</view>
+    <view class="info-row" bindtap="copyOrderNo">
+      <text class="info-label">订单号</text>
+      <text class="info-value">{{order.orderNo}}</text>
+      <text class="info-copy">复制</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">支付方式</text>
+      <text class="info-value">{{order.payType === 2 ? '货到付款' : '微信支付'}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">配送时段</text>
+      <text class="info-value">{{order.deliveryDate}} {{order.deliverySlot}}</text>
+    </view>
+    <view class="info-row">
+      <text class="info-label">下单时间</text>
+      <text class="info-value">{{order.createTime}}</text>
+    </view>
+    <view class="info-row" wx:if="{{order.remark}}">
+      <text class="info-label">备注</text>
+      <text class="info-value">{{order.remark}}</text>
+    </view>
+  </view>
+
+  <view class="demo-tip">演示环境，不产生真实交易</view>
+  <view class="bottom-safe"></view>
+
+  <!-- 底部操作区 -->
+  <view class="bottom-bar">
+    <!-- 待付款 -->
+    <block wx:if="{{order.status === 1}}">
+      <view class="btn-plain act-btn gray" bindtap="cancelOrder">取消订单</view>
+      <view class="btn-primary act-btn" bindtap="payOrder">去支付</view>
+    </block>
+    <!-- 待发货 -->
+    <block wx:elif="{{order.status === 2}}">
+      <view class="btn-plain act-btn gray" bindtap="remindOrder">提醒发货</view>
+      <view class="btn-plain act-btn" bindtap="advanceOrder">模拟配送进度</view>
+    </block>
+    <!-- 配送中 -->
+    <block wx:elif="{{order.status === 3}}">
+      <view class="btn-plain act-btn gray" bindtap="advanceOrder">模拟配送进度</view>
+      <view class="btn-primary act-btn" bindtap="confirmOrder">确认收货</view>
+    </block>
+    <!-- 待收货 -->
+    <block wx:elif="{{order.status === 4}}">
+      <view class="btn-plain act-btn gray" bindtap="goAftersaleApply">申请售后</view>
+      <view class="btn-primary act-btn" bindtap="confirmOrder">确认收货</view>
+    </block>
+    <!-- 已完成未评价 -->
+    <block wx:elif="{{order.status === 5 && !order.isReviewed}}">
+      <view class="btn-plain act-btn gray" bindtap="goAftersaleApply">申请售后</view>
+      <view class="btn-plain act-btn gray" bindtap="rebuy">再来一单</view>
+      <view class="btn-primary act-btn" bindtap="goReview">去评价</view>
+    </block>
+    <!-- 已完成已评价 / 已取消 -->
+    <block wx:else>
+      <view class="btn-plain act-btn gray" wx:if="{{order.status === 5}}" bindtap="goAftersaleApply">申请售后</view>
+      <view class="btn-plain act-btn gray" bindtap="rebuy">再来一单</view>
+    </block>
+  </view>
+</block>

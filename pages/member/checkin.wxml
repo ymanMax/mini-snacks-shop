@@ -1,0 +1,56 @@
+<!--pages/member/checkin.wxml-->
+<view class="page">
+  <!-- ===== 连续签到大卡 ===== -->
+  <view class="top-card">
+    <block wx:if="{{info}}">
+      <view class="days-num">{{info.continuousDays}}</view>
+      <view class="days-text">已连续签到 {{info.continuousDays}} 天</view>
+      <view class="sign-area">
+        <view class="float-point {{showFloat ? 'go' : ''}}" wx:if="{{showFloat}}">{{floatText}}</view>
+        <view wx:if="{{info.todaySigned}}" class="btn-primary sign-btn disabled">今日已签到</view>
+        <view wx:else class="btn-primary sign-btn {{signing ? 'disabled' : ''}}" bindtap="onSign">
+          签到 +{{todayReward}} 积分
+        </view>
+      </view>
+    </block>
+    <block wx:elif="{{loading}}">
+      <view class="skeleton" style="width:160rpx;height:80rpx;margin:0 auto;"></view>
+      <view class="skeleton" style="width:240rpx;height:32rpx;margin:24rpx auto 0;"></view>
+    </block>
+  </view>
+
+  <!-- ===== 当月日历 ===== -->
+  <view class="card" wx:if="{{info}}">
+    <view class="sec-title">{{info.year}} 年 {{info.month}} 月</view>
+    <view class="cal-grid">
+      <view class="cal-head" wx:for="{{weekHead}}" wx:key="*this">{{item}}</view>
+      <view wx:for="{{cells}}" wx:key="index"
+            class="cal-cell {{item && item.signed ? 'signed' : ''}} {{item && item.isToday ? 'today' : ''}}">
+        <block wx:if="{{item}}">
+          <text class="cal-day">{{item.day}}</text>
+          <text class="cal-check" wx:if="{{item.signed}}">✓</text>
+        </block>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 奖励梯度 ===== -->
+  <view class="card" wx:if="{{info}}">
+    <view class="sec-title">连续签到奖励</view>
+    <view class="reward-row">
+      <view wx:for="{{info.rewards}}" wx:key="index"
+            class="reward-item {{index < activeRewards ? 'active' : ''}} {{index === 6 ? 'big' : ''}}">
+        <text class="reward-points">+{{item}}</text>
+        <text class="reward-label">{{index === 6 ? '大奖' : '第' + (index + 1) + '天'}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- ===== 规则说明 ===== -->
+  <view class="card" wx:if="{{info}}">
+    <view class="sec-title">签到规则</view>
+    <view class="rule-line" wx:for="{{info.rules}}" wx:key="index">{{index + 1}}. {{item}}</view>
+  </view>
+
+  <view class="demo-tip">演示环境，不产生真实交易</view>
+</view>

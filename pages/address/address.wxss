@@ -1,100 +1,53 @@
-page {
+/* pages/address/address.wxss */
+/* 标签筛选胶囊条 */
+.tag-bar {
+  display: flex; align-items: center;
+  padding: 24rpx 24rpx 0;
+}
+.tag-cap {
+  font-size: 26rpx; color: #666;
+  border: 2rpx solid #e0e0e0; border-radius: 999rpx;
+  background: #fff; padding: 8rpx 32rpx; margin-right: 20rpx;
+}
+.tag-cap.on { background: #b4282d; border-color: #b4282d; color: #fff; }
+.tag-empty { text-align: center; padding: 60rpx 0; }
 
-  display: flex;
+.addr-card { padding-bottom: 12rpx; }
+.addr-card.disabled { opacity: 0.65; }
+.addr-main { padding-bottom: 16rpx; }
+.addr-line1 { display: flex; align-items: center; flex-wrap: wrap; }
+.addr-name { font-size: 30rpx; font-weight: bold; margin-right: 16rpx; }
+.addr-phone { color: #838383; font-size: 26rpx; margin-right: 12rpx; }
+.default-tag {
+  background: #b4282d; color: #fff; font-size: 20rpx;
+  border-radius: 999rpx; padding: 4rpx 14rpx; line-height: 1.6;
+}
+.addr-detail { color: #666; font-size: 26rpx; margin-top: 10rpx; line-height: 1.5; }
 
-  flex-direction: column;
-
-  height: 100%;
-
+/* confirm 模式：配送费预估 / 超范围徽章 */
+.freight-line { color: #b4282d; font-size: 24rpx; margin-top: 10rpx; }
+.range-badge {
+  background: #f2f3f5; color: #999; font-size: 20rpx;
+  border-radius: 999rpx; padding: 4rpx 14rpx; line-height: 1.6; margin-left: 12rpx;
 }
 
-.product-name-wrap {
-
-  margin: 0px 10px;
-
-  font-size: 14px;
-
-  color: #404040;
-
-  height: 120rpx;
-
+.addr-ops {
+  display: flex; justify-content: flex-end; align-items: center;
+  border-top: 2rpx solid #f0f0f0; padding-top: 16rpx;
 }
-
-.ui-list-item-info {
-
-  margin: 5px 0px;
-
+.op-item {
+  color: #666; font-size: 24rpx;
+  border: 2rpx solid #e0e0e0; border-radius: 999rpx;
+  padding: 6rpx 24rpx; margin-left: 16rpx;
 }
+.op-item.on { color: #b4282d; border-color: #b4282d; background: #fbeaea; }
 
-.ui-list-item-address {
+.tip-text { text-align: center; color: #838383; font-size: 24rpx; padding: 16rpx 0; }
 
-  color: #585c64;
-
+.bottom-safe { height: 140rpx; }
+.bottom-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: #fff; padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
 }
-
-.ui-list-item-time {
-
-  margin: 5px 0px;
-
-}
-
-.ui-list-item-del {
-
-  position: absolute;
-
-  right: 10px;
-
-  color: #585c64;
-
-}
-
-/* 分割线 */
-
-.separate {
-
-  margin: 5px 0px;
-
-  height: 2rpx;
-
-  background-color: #f2f2f2;
-
-}
-
-.add-address {
-
-  margin: 0 auto;
-
-  margin-top: 30px;
-
-  width: 150px;
-
-  height: 35px;
-
-  border: 1px #000 solid;
-
-  line-height: 35px;
-
-  text-align: center;
-
-  color: #000;
-
-  border-radius: 5rpx;
-
-  display: block;
-
-}
-
-.add-img {
-  padding-top: 10rpx;
-  margin-right: 15rpx;
-
-  width: 15px;
-
-  height: 15px;
-
-}
-
-.add-address text {
-  position: relative;
-  top: -5rpx;
-}
+.add-btn { width: 100%; }

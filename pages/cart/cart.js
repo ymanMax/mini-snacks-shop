@@ -1,275 +1,266 @@
-// pages/cart/cart.js
-const {
-  setOrder,
-  verify
-} = require('../../api/api.js');
-const {
-  login
-} = require('../mine/mine.js')
-const app = getApp();
+// pages/cart/cart.js —— 购物车（优化 6：全选/总价修复、失效商品、编辑模式、优惠明细、空态推荐）
+const api = require('../../api/index.js');
+const toast = require('../../utils/toast.js');
+const { mul, add, priceText } = require('../../utils/format.js');
+
+const FREE_FREIGHT = 59; // 满 59 免配送费
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    carts: [], //数据 
-    iscart: false,
-    hidden: null,
-    isAllSelect: false,
-    totalMoney: 0,
-    order_id: 0
+    loading: true,
+    valid: [],
+    invalid: [],
+    isAll: false,
+    totalPrice: 0,      // 选中总价（数字，渲染走 f.fp）
+    checkedCount: 0,    // 选中件数
+    editing: false,
+    invalidOpen: false,
+    reduceOpen: false,
+    fullReduce: null,
+    reduceTip: '',
+    freightTip: '',
+    couponTip: '',      // 最优券 / 凑单提示条（优化 1）
+    recommend: []       // 空态"猜你喜欢"
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad(options) {
-
+  onLoad() {
+    api.getFullReduce().then(res => {
+      this.setData({ fullReduce: res }, () => this.recompute());
+    }).catch(() => {});
   },
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
-  },
-
-  /**
-   * 生命周期函数--监听页面显示
-   */
   onShow() {
-    var arr = wx.getStorageSync('cart') || [];
-    // console.log("缓存数据：", arr);
-    if (arr.length > 0) {
-      // 更新数据  
+    this.loadCart(this.data.loading);
+    getApp().refreshCartBadge();
+  },
+
+  onUnload() {
+    if (this.bestTimer) clearTimeout(this.bestTimer);
+  },
+
+  // ===== 数据加载 =====
+  loadCart(showSkeleton) {
+    return api.getCartList().then(res => {
       this.setData({
-        carts: arr,
-        iscart: true,
-        hidden: false
+        valid: res.valid || [],
+        invalid: res.invalid || [],
+        loading: false
+      }, () => {
+        this.recompute();
+        this.maybeLoadRecommend();
       });
-      // console.log("新缓存数据：", this.data.carts);
-    } else {
-      this.setData({
-        iscart: false,
-        hidden: true,
-      });
-      // console.info("缓存数据：啥也没有");
-    }
-  },
-
-  //勾选事件处理函数  
-  switchSelect: function (e) {
-    // 获取item项的id，和数组的下标值  
-    var Allprice = 0,
-      i = 0;
-    let id = e.target.dataset.id,
-      index = parseInt(e.target.dataset.index);
-    this.data.carts[index].isSelect = !this.data.carts[index].isSelect; //价钱统计
-    if (this.data.carts[index].isSelect) {
-      this.data.totalMoney = this.data.totalMoney + (this.data.carts[index].price * this.data.carts[index].count);
-    } else {
-      this.data.totalMoney = this.data.totalMoney - (this.data.carts[index].price * this.data.carts[index].count);
-    }
-    //是否全选判断
-    for (i = 0; i < this.data.carts.length; i++) {
-      Allprice = Allprice + (this.data.carts[index].price * this.data.carts[index].count);
-      // console.log(this.data.carts[i].isSelect);
-    }
-    if (Allprice == this.data.totalMoney) {
-      this.data.isAllSelect = true;
-    } else {
-      this.data.isAllSelect = false;
-    }
-    this.setData({
-      carts: this.data.carts,
-      totalMoney: this.data.totalMoney,
-      isAllSelect: this.data.isAllSelect,
-    })
-  },
-
-  allSelect: function (e) {
-    //处理全选逻辑
-    let i = 0;
-    if (!this.data.isAllSelect) {
-      this.data.totalMoney = 0;
-      for (i = 0; i < this.data.carts.length; i++) {
-        this.data.carts[i].isSelect = true;
-        this.data.totalMoney = this.data.totalMoney + (this.data.carts[i].price * this.data.carts[i].count);
-      }
-    } else {
-      for (i = 0; i < this.data.carts.length; i++) {
-        this.data.carts[i].isSelect = false;
-      }
-      this.data.totalMoney = 0;
-    }
-    this.setData({
-      carts: this.data.carts,
-      isAllSelect: !this.data.isAllSelect,
-      totalMoney: this.data.totalMoney,
-    })
-  },
-
-  /* 减数 */
-  delCount: function (e) {
-    var index = e.target.dataset.index;
-    // console.log("count--");
-    var count = this.data.carts[index].count; // 商品总数量-1
-    if (count > 1) {
-      this.data.carts[index].count--;
-    }
-    // 将数值与状态写回  
-    this.setData({
-      carts: this.data.carts
+    }).catch(() => {
+      this.setData({ loading: false });
     });
-    // console.log("carts:" + this.data.carts);
-    this.priceCount();
-  },
-  /* 加数 */
-  addCount: function (e) {
-    var index = e.target.dataset.index;
-    // console.log("count++");
-    var count = this.data.carts[index].count; // 商品总数量+1  
-    if (count < 10) {
-      this.data.carts[index].count++;
-    }
-    // 将数值与状态写回  
-    this.setData({
-      carts: this.data.carts
-    });
-    // console.log("carts:" + this.data.carts);
-    this.priceCount();
-  },
-  priceCount: function (e) {
-    this.data.totalMoney = 0;
-    for (var i = 0; i < this.data.carts.length; i++) {
-      if (this.data.carts[i].isSelect == true) {
-        this.data.totalMoney = this.data.totalMoney + (this.data.carts[i].price * this.data.carts[i].count);
-      }
-
-    }
-    this.setData({
-      totalMoney: this.data.totalMoney,
-    })
-  },
-  /* 删除item */
-  delGoods: function (e) {
-    this.data.carts.splice(e.target.id.substring(3), 1); // 更新data数据对象  
-    if (this.data.carts.length > 0) {
-      this.setData({
-        carts: this.data.carts
-      })
-      wx.setStorageSync('cart', this.data.carts);
-      this.priceCount();
-    } else {
-      this.setData({
-        cart: this.data.carts,
-        iscart: false,
-        hidden: true,
-      })
-      wx.setStorageSync('cart', []);
-    }
   },
 
-  goBuy: function (e) {
-    var newProducts = [];
-    const that = this;
-    this.data.carts.forEach(item => {
-      if (item.isSelect == true) {
+  // 操作成功后统一刷新：本地数据 + 全局角标
+  afterChange() {
+    this.loadCart(false);
+    getApp().refreshCartBadge();
+  },
 
-        newProducts.push({
-          product_id: item.id,
-          count: item.count,
-        })
-        // 删除选中进入订单的商品
-      }
-      newProducts.forEach(item_selected => {
-        var index = this.data.carts.indexOf(item_selected);
-        this.data.carts.splice(index, 1);
-      })
-    })
-    console.log(newProducts);
-    if (this.data.carts.length > 0) {
-      this.setData({
-        carts: this.data.carts
-      })
-      wx.setStorageSync('cart', this.data.carts);
-      this.priceCount();
-    } else {
-      this.setData({
-        cart: this.data.carts,
-        iscart: false,
-        hidden: true,
-      })
-      wx.setStorageSync('cart', []);
-    }
+  // 空态时加载"猜你喜欢"
+  maybeLoadRecommend() {
+    if (this.data.valid.length || this.data.invalid.length || this.data.recommend.length) return;
+    api.getGoodsList({ current: 1, size: 8, sort: 'default' }).then(res => {
+      this.setData({ recommend: (res.records || []).slice(0, 8) });
+    }).catch(() => {});
+  },
 
-
-    // console.log("app.globalData.token：   ", app.globalData.token);
-    let token = app.globalData.token.token;
-    // console.log("token：   ", token);
-
-    verify(token).then(res => {
-      if (res.data.isValid == true) {
-        console.log("2", newProducts)
+  // ===== 核心：遍历 valid 中 checked===true 的项累加 price*count（修复旧全选 bug）=====
+  recompute() {
+    const { valid, fullReduce } = this.data;
+    let total = 0;
+    let count = 0;
+    let isAll = valid.length > 0;
+    valid.forEach(item => {
+      if (item.checked === true) {
+        total = add(total, mul(item.price, item.count));
+        count += item.count;
       } else {
-        // console.log(res.data.isValid)
-        const that = this;
-        let gbdata = app.globalData;
-        wx.login({
-          success: function (res) {
-            let code = res.code;
-            // console.log(res.code)
-            getApp().post('/token/user', {
-              code: code
-            }).then((e) => {
-              try {
-                wx.setStorageSync('token', e.data);
-                // console.log(wx.getStorageSync('token'))
-              } catch (e) {
-                // console.log('setTokenErr', e)
-              }
-              gbdata.token = e.data;
-              let isLogined = true;
-              that.setData({
-                isLogined
-              })
-              wx.setStorageSync('isLogined', isLogined);
-              // console.log(wx.getStorageSync('isLogined'))
-              wx.showToast({
-                title: '登陆成功',
-                icon: 'success'
-              })
-            })
-          }
-        })
+        isAll = false;
       }
-    })
-    wx.request({
-      url: 'https://hanmashanghu.qiaomai365.com/api/v1/order',
-      method: 'POST',
-      header: {
-        //修改
-        'content-type': 'application/json',
-        'token': token
-      },
-      data: {
-        products: newProducts
-      },
-      success: res => {
-        var order_id = res.data.data.order_id;
-        wx.setStorageSync('data', res.data.data)
-        console.log(res.data.data)
-        wx.setStorageSync('order_id', order_id)
-        wx.navigateTo({
-          url: '/pages/orders/orders?order_id=' + wx.getStorageSync('order_id')
-        })
-        console.log(wx.getStorageSync('order_id'))
+    });
+
+    // 满减进度提示
+    let reduceTip = '';
+    const rules = fullReduce && fullReduce.rules
+      ? fullReduce.rules.slice().sort((a, b) => a.threshold - b.threshold)
+      : [];
+    if (rules.length) {
+      let passed = null;
+      let next = null;
+      rules.forEach(r => {
+        if (total >= r.threshold) passed = r;
+        else if (!next) next = r;
+      });
+      if (passed && next) {
+        reduceTip = '已满 ' + passed.threshold + ' 减 ' + passed.reduce +
+          '，再买 ' + priceText(add(next.threshold, -total)) + ' 可减 ' + next.reduce;
+      } else if (passed) {
+        reduceTip = '已满 ' + passed.threshold + ' 减 ' + passed.reduce + '，已享最高满减';
+      } else if (next) {
+        reduceTip = '再买 ' + priceText(add(next.threshold, -total)) + ' 可减 ' + next.reduce;
       }
-    })
+    }
+    const freightTip = total >= FREE_FREIGHT
+      ? '已满 ' + FREE_FREIGHT + ' 元，免配送费'
+      : '满 ' + FREE_FREIGHT + ' 免配送费，还差 ' + priceText(add(FREE_FREIGHT, -total)) + ' 元';
 
-    // console.log(res.data.isValid)
-
+    this.setData({ totalPrice: total, checkedCount: count, isAll, reduceTip, freightTip });
+    this.maybeQueryBestCoupon(total);
   },
-})
+
+  // ===== 最优券 / 凑单提示条（优化 1）：300ms 防抖 + 仅在总价变化时触发 =====
+  maybeQueryBestCoupon(total) {
+    if (total <= 0) {
+      this.lastCouponAmount = 0;
+      if (this.data.couponTip) this.setData({ couponTip: '' });
+      return;
+    }
+    if (total === this.lastCouponAmount) return;
+    this.lastCouponAmount = total;
+    if (this.bestTimer) clearTimeout(this.bestTimer);
+    this.bestTimer = setTimeout(() => {
+      api.getBestCoupon(total).then(res => {
+        // 响应过期（总价已再变化）则丢弃
+        if (total !== this.lastCouponAmount) return;
+        let couponTip = '';
+        if (res && res.coupon) {
+          couponTip = '🎟 结算时可用「' + res.coupon.name + '」，预计再省 ￥' + priceText(res.saving);
+        } else if (total < FREE_FREIGHT) {
+          couponTip = '🚚 还差 ￥' + priceText(add(FREE_FREIGHT, -total)) + ' 免配送费，去领券中心看看';
+        }
+        this.setData({ couponTip });
+      }).catch(() => {});
+    }, 300);
+  },
+
+  goCouponCenter() {
+    wx.navigateTo({ url: '/pages/coupon/center' });
+  },
+
+  // ===== 勾选 =====
+  onCheckItem(e) {
+    const { id, index } = e.currentTarget.dataset;
+    const item = this.data.valid[index];
+    if (!item) return;
+    const checked = !item.checked;
+    api.updateCartItem({ id, checked }).then(() => {
+      this.setData({ [`valid[${index}].checked`]: checked }, () => this.recompute());
+    }).catch(() => {});
+  },
+
+  onCheckAll() {
+    if (!this.data.valid.length) return;
+    const checked = !this.data.isAll;
+    api.checkAllCart(checked).then(() => {
+      const valid = this.data.valid.map(x => Object.assign({}, x, { checked }));
+      this.setData({ valid }, () => this.recompute());
+    }).catch(() => {});
+  },
+
+  // ===== 数量 stepper =====
+  onMinus(e) {
+    const { id, index } = e.currentTarget.dataset;
+    const item = this.data.valid[index];
+    if (!item || item.count <= 1) return;
+    this.changeCount(id, index, item.count - 1);
+  },
+
+  onPlus(e) {
+    const { id, index } = e.currentTarget.dataset;
+    const item = this.data.valid[index];
+    if (!item) return;
+    if (item.count >= item.stock) {
+      toast.showToast('已达库存上限');
+      return;
+    }
+    this.changeCount(id, index, item.count + 1);
+  },
+
+  changeCount(id, index, count) {
+    api.updateCartItem({ id, count }).then(() => {
+      this.setData({ [`valid[${index}].count`]: count }, () => {
+        this.recompute();
+        getApp().refreshCartBadge();
+      });
+    }).catch(() => {});
+  },
+
+  // ===== 删除（长按单项）=====
+  onDeleteItem(e) {
+    const { id } = e.currentTarget.dataset;
+    toast.confirm('确定删除该商品吗？').then(ok => {
+      if (!ok) return;
+      api.deleteCartItems([id]).then(() => {
+        toast.success('已删除');
+        this.afterChange();
+      }).catch(() => {});
+    });
+  },
+
+  // ===== 编辑模式：批量删除 =====
+  toggleEdit() {
+    this.setData({ editing: !this.data.editing });
+  },
+
+  onDeleteSelected() {
+    const ids = this.data.valid.filter(x => x.checked === true).map(x => x.id);
+    if (!ids.length) return;
+    toast.confirm('确定删除选中的 ' + ids.length + ' 件商品吗？').then(ok => {
+      if (!ok) return;
+      api.deleteCartItems(ids).then(() => {
+        toast.success('已删除');
+        this.afterChange();
+      }).catch(() => {});
+    });
+  },
+
+  // ===== 失效商品 =====
+  toggleInvalid() {
+    this.setData({ invalidOpen: !this.data.invalidOpen });
+  },
+
+  onClearInvalid() {
+    toast.confirm('确定清空全部失效商品吗？').then(ok => {
+      if (!ok) return;
+      api.clearInvalidCart().then(() => {
+        toast.success('已清空失效商品');
+        this.afterChange();
+      }).catch(() => {});
+    });
+  },
+
+  // ===== 优惠明细展开/收起 =====
+  toggleReduce() {
+    this.setData({ reduceOpen: !this.data.reduceOpen });
+  },
+
+  // ===== 结算 =====
+  onSettle() {
+    if (!this.data.checkedCount) return;
+    wx.navigateTo({ url: '/pages/order/confirm?mode=cart' });
+  },
+
+  // ===== 跳转 =====
+  goShopping() {
+    wx.switchTab({ url: '/pages/index/index' });
+  },
+
+  goDetail(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({ url: '/pages/detail/detail?id=' + id });
+  },
+
+  // ===== 图片兜底（契约 §5）=====
+  onImgError(e) {
+    const { key, field } = e.currentTarget.dataset;
+    if (key !== undefined) {
+      this.setData({ [`${field || 'list'}[${key}]._imgErr`]: true });
+    } else {
+      this.setData({ [field || 'imgErr']: true });
+    }
+  }
+});

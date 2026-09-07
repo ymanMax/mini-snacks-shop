@@ -1,0 +1,79 @@
+/* pages/coupon/center.wxss */
+.page { padding-bottom: 40rpx; }
+
+/* ===== Tab ===== */
+.tabs {
+  display: flex;
+  background: #fff;
+  padding: 0 24rpx;
+}
+.tab {
+  flex: 1;
+  text-align: center;
+  height: 88rpx;
+  line-height: 88rpx;
+  font-size: 28rpx;
+  color: #666;
+  border-bottom: 4rpx solid transparent;
+}
+.tab.active { color: #b4282d; font-weight: bold; border-bottom-color: #b4282d; }
+
+.sub-tabs { display: flex; margin: 24rpx 24rpx 0; }
+.sub-tab {
+  font-size: 24rpx;
+  color: #666;
+  background: #fff;
+  border-radius: 999rpx;
+  padding: 10rpx 32rpx;
+  margin-right: 16rpx;
+}
+.sub-tab.active { background: #b4282d; color: #fff; }
+
+/* ===== 券卡 ===== */
+.coupon-card {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 24rpx 24rpx 0;
+  overflow: hidden;
+}
+.coupon-card.gray { opacity: 0.55; }
+.coupon-left {
+  width: 200rpx;
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #d43a3f, #b4282d);
+  color: #fff;
+  padding: 32rpx 0;
+}
+.coupon-card.gray .coupon-left { background: #999; }
+.coupon-amount { font-size: 48rpx; font-weight: bold; }
+.coupon-amount.small { font-size: 40rpx; }
+.coupon-sub { font-size: 20rpx; opacity: 0.9; margin-top: 6rpx; }
+.coupon-right { flex: 1; padding: 24rpx; min-width: 0; }
+.coupon-name { font-size: 28rpx; font-weight: bold; }
+.coupon-scope { font-size: 22rpx; color: #838383; margin-top: 8rpx; }
+.coupon-stock, .coupon-expire { font-size: 20rpx; color: #b0b0b0; margin-top: 8rpx; }
+.coupon-btn {
+  background: #b4282d;
+  color: #fff;
+  font-size: 24rpx;
+  border-radius: 999rpx;
+  padding: 12rpx 28rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}
+.coupon-btn.disabled { background: #e0e0e0; color: #999; }
+.coupon-status-tag {
+  font-size: 22rpx;
+  color: #999;
+  border: 2rpx solid #ccc;
+  border-radius: 999rpx;
+  padding: 8rpx 20rpx;
+  margin-right: 24rpx;
+  flex-shrink: 0;
+}

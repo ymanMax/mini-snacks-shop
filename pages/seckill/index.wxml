@@ -1,0 +1,73 @@
+<wxs src="../../utils/format.wxs" module="f" />
+
+<!-- ============ 骨架屏 ============ -->
+<view wx:if="{{loading}}" class="page">
+  <view class="sk-tabs">
+    <view class="skeleton sk-tab" wx:for="{{[1, 2, 3]}}" wx:key="*this"></view>
+  </view>
+  <view class="card sk-card" wx:for="{{[1, 2]}}" wx:key="*this">
+    <view class="skeleton sk-img"></view>
+    <view class="sk-info">
+      <view class="skeleton sk-line" style="width:80%"></view>
+      <view class="skeleton sk-line" style="width:50%"></view>
+      <view class="skeleton sk-line" style="width:65%"></view>
+    </view>
+  </view>
+</view>
+
+<block wx:if="{{!loading && sessions.length}}">
+  <!-- ============ 场次 Tab ============ -->
+  <view class="tabs">
+    <view class="tab st{{item.status}} {{activeIndex === index ? 'active' : ''}}"
+      wx:for="{{sessions}}" wx:key="id" data-index="{{index}}" bindtap="onTab">
+      <view class="tab-title ellipsis">{{item.title}}</view>
+      <view class="tab-cd" wx:if="{{item.status === 1}}">距结束 {{cd[item.id]}}</view>
+      <view class="tab-cd" wx:elif="{{item.status === 2}}">距开始 {{cd[item.id]}}</view>
+      <view class="tab-cd" wx:else>已结束</view>
+    </view>
+  </view>
+
+  <!-- ============ 场次操作行 ============ -->
+  <view class="session-bar" wx:if="{{activeSession}}">
+    <text class="session-cd st{{activeSession.status}}" wx:if="{{activeSession.status === 1}}">距结束 {{cd[activeSession.id]}}</text>
+    <text class="session-cd st{{activeSession.status}}" wx:elif="{{activeSession.status === 2}}">距开始 {{cd[activeSession.id]}}</text>
+    <text class="session-cd st3" wx:else>本场已结束</text>
+    <view class="session-actions">
+      <view class="remind-btn" wx:if="{{activeSession.status === 2}}" bindtap="onRemind">提醒我</view>
+      <button class="share-btn" open-type="share">↗ 分享</button>
+    </view>
+  </view>
+
+  <!-- ============ 商品列表 ============ -->
+  <block wx:if="{{activeSession}}">
+    <view class="goods-card {{activeSession.status !== 1 ? 'gray' : ''}}"
+      wx:for="{{activeSession.goods}}" wx:key="goodsId"
+      data-id="{{item.goodsId}}" bindtap="goDetail">
+      <image class="goods-img" src="{{item._imgErr ? '/static/images/default.png' : item.pic}}" mode="aspectFill"
+        data-key="{{index}}" data-field="activeSession.goods" binderror="onImgError" />
+      <view class="goods-info">
+        <view class="goods-name ellipsis-2">{{item.name}}</view>
+        <view class="goods-price-row">
+          <text class="price"><text class="symbol">￥</text>{{f.fp(item.seckillPrice)}}</text>
+          <text class="price-origin">￥{{f.fp(item.originalPrice)}}</text>
+        </view>
+        <view class="progress">
+          <view class="progress-inner" style="width: {{item.soldPercent}}%;"></view>
+          <text class="progress-text">{{item.soldPercent > 90 ? '即将抢光' : '已抢' + item.soldPercent + '%'}}</text>
+        </view>
+      </view>
+      <view class="buy-btn" wx:if="{{activeSession.status === 1}}">立即抢购</view>
+      <view class="buy-btn soon" wx:elif="{{activeSession.status === 2}}">即将开抢</view>
+      <view class="buy-btn over" wx:else>已结束</view>
+    </view>
+  </block>
+
+  <view class="demo-tip">演示环境，不产生真实交易</view>
+</block>
+
+<!-- ============ 空态 ============ -->
+<view wx:if="{{!loading && !sessions.length}}" class="empty-state">
+  <image class="empty-img" src="/static/images/default.png" data-field="imgErr" binderror="onImgError" />
+  <view class="empty-text">暂无抢购场次，敬请期待</view>
+  <view class="empty-btn" bindtap="goHome">去逛逛</view>
+</view>

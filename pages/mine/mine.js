@@ -1,235 +1,122 @@
-// pages/mine/mine.js
-const app = getApp();
-const {
-  getAllOrders,
-  verify
-} = require('../../api/api.js');
+// pages/mine/mine.js —— 个人中心（优化 8 / 模块 3.1）
+const api = require('../../api/index.js');
+const toast = require('../../utils/toast.js');
+
+const ORDER_ENTRIES = [
+  { icon: '💰', name: '待付款', status: 1 },
+  { icon: '📦', name: '待发货', status: 2 },
+  { icon: '🚚', name: '配送中', status: 3 },
+  { icon: '📬', name: '待收货', status: 4 },
+  { icon: '✍️', name: '待评价', status: 7 }
+];
+
 Page({
   data: {
-    isLogined: false,
-    avatarUrl: "",
-    nickName: "", //用户昵称
-    hasAddress: false,
-    address: {},
-    orders: [],
-    page: 1, // 设置加载的第几次，默认是第一次
-    size: 8, // 每次加载的数据条数
-    total: null, //返回数据的个数(可以传空)
-    searchLoading: true, //"上拉加载"的变量，默认false，隐藏
-    searchLoadingComplete: false, //“没有数据”的变量，默认false，隐藏
-    scrollHeight:1000
-
+    loading: true,
+    member: null,
+    growthPercent: 0,
+    orderEntries: ORDER_ENTRIES,
+    statusCount: {},
+    todaySigned: true,
+    unread: 0,
+    imgErr: false,
+    // 配送说明弹层
+    showDelivery: false,
+    deliveryText: []
   },
-  onLoad() {
-    let res = wx.getSystemInfoSync();
 
-    let boxHeight = res.windowHeight;
+  onShow() {
+    this.loadAll();
+  },
 
-    this.data.scrollHeight = boxHeight;
+  onPullDownRefresh() {
+    this.loadAll().then(() => wx.stopPullDownRefresh());
+  },
 
-    this.setData({
-      isLogined: wx.getStorageSync("isLogined") ? true : false
+  loadAll() {
+    return Promise.all([
+      api.getMemberInfo().then(m => {
+        const percent = m.nextLevelGrowth
+          ? Math.min(100, Math.round((m.growthValue / m.nextLevelGrowth) * 100))
+          : 100;
+        this.setData({ member: m, growthPercent: percent, loading: false });
+      }).catch(() => this.setData({ loading: false })),
+      api.getOrderStatusCount().then(c => this.setData({ statusCount: c })).catch(() => {}),
+      api.getCheckinInfo().then(info => this.setData({ todaySigned: info.todaySigned })).catch(() => {}),
+      api.getUnreadCount().then(n => this.setData({ unread: n })).catch(() => {})
+    ]);
+  },
+
+  onImgError() {
+    this.setData({ imgErr: true });
+  },
+
+  // 点击头像 mock 换头像
+  onChangeAvatar() {
+    wx.chooseImage({
+      count: 1,
+      sizeType: ['compressed'],
+      success: res => {
+        const avatar = res.tempFilePaths[0];
+        api.updateUserInfo({ avatar }).then(() => {
+          toast.success('头像已更新');
+          const app = getApp();
+          if (app.globalData.userInfo) app.globalData.userInfo.avatar = avatar;
+          this.loadAll();
+        });
+      },
+      fail: () => {}
     });
-    wx.getStorage({
-      key: 'nickName',
-      success(res) {
-        this.setData({
-          nickName: res.data
-        })
-      }
-    })
-    wx.getStorage({
-      key: 'avatarUrl',
-      success(res) {
-        this.setData({
-          avatarUrl: res.data
-        })
-      }
-    })
-    wx.getStorage({
-      key: 'address',
-      success(res) {
-        this.setData({
-          address: res.data,
-          hasAddress: true
-        })
-      }
-    })
-    let nickName = wx.getStorageSync('nickName'),
-      avatarUrl = wx.getStorageSync('avatarUrl'),
-      address = wx.getStorageSync('address'),
-      hasAddress = wx.getStorageSync('hasAddress');
-    console.log(wx.getStorageSync('hasAddress'))
-    this.setData({
-      nickName,
-      avatarUrl,
-      address,
-      hasAddress
-    })
-    let token = app.globalData.token.token;
-    verify(token).then(res => {
-      console.log(token)
-      if (res.isValid == true) {
+  },
 
-        getAllOrders(1, 8).then(res => {
-          this.setData({
-            orders: res.data.data
-          })
-          console.log(res.data.data)
-        })
-      } else {
-        console.log(res.data.isValid)
-        const that = this;
-        let gbdata = app.globalData;
-        wx.login({
-          success: function (res) {
-            let code = res.code;
-            // console.log(res.code)
-            getApp().post('/token/user', {
-              code: code
-            }).then((e) => {
-              try {
-                wx.setStorageSync('token', e.data);
-                // console.log(wx.getStorageSync('token'))
-              } catch (e) {
-                // console.log('setTokenErr', e)
-              }
-              gbdata.token = e.data;
-              let isLogined = true;
-              that.setData({
-                isLogined
-              })
-              wx.setStorageSync('isLogined', isLogined);
-              // console.log(wx.getStorageSync('isLogined'))
-              wx.showToast({
-                title: '登陆成功',
-                icon: 'success'
-              })
-            })
-          }
-        })
-        getAllOrders(1, 8).then(res => {
-          this.setData({
-            orders: res.data.data.orders
-          })
-          console.log(res.data.data.data)
-        })
-      }
-    })
+  // 演示登录入口
+  onMockLogin() {
+    getApp().mockLogin();
+    toast.success('已登录演示账号');
+    this.loadAll();
   },
-  login: function () {
-    const that = this;
-    let gbdata = app.globalData;
-    wx.login({
-      success: function (res) {
-        let code = res.code;
-        console.log(res.code)
-        getApp().post('/token/user', {
-          code: code
-        }).then((e) => {
-          try {
-            wx.setStorageSync('token', e.data);
-            console.log(wx.getStorageSync('token'))
-          } catch (e) {
-            console.log('setTokenErr', e)
-          }
-          gbdata.token = e.data;
-          let isLogined = true;
-          that.setData({
-            isLogined
-          })
-          wx.setStorageSync('isLogined', isLogined);
-          console.log(wx.getStorageSync('isLogined'))
-          wx.showToast({
-            title: '登陆成功',
-            icon: 'success'
-          })
-        })
-      }
-    })
-    this.getUserProfile();
-  },
-  getUserProfile() {
-    wx.getUserProfile({
-      desc: '登录', // 声明获取用户个人信息后的用途，后续会展示在弹窗中，请谨慎填写
-      success: (res) => {
-        this.setData({
-          nickName: res.userInfo.nickName,
-          avatarUrl: res.userInfo.avatarUrl
-        })
-        wx.setStorage({ //数据缓存方法
-          key: 'nickName', //关键字，本地缓存中指定的key
-          data: res.userInfo.nickName, //缓存微信用户公开信息，
-          success: function () { //缓存成功后，输出提示
-            console.log('写入nickName缓存成功')
-          },
-          fail: function () { //缓存失败后的提示
-            console.log('写入nickName发生错误')
-          }
-        })
-        wx.setStorage({ //数据缓存方法
-          key: 'avatarUrl', //关键字，本地缓存中指定的key
-          data: res.userInfo.avatarUrl, //缓存微信用户公开信息，
-          success: function () { //缓存成功后，输出提示
-            console.log('写入avatarUrl缓存成功')
-          },
-          fail: function () { //缓存失败后的提示
-            console.log('写入avatarUrl发生错误')
-          }
-        })
-      }
-    })
 
+  goOrder(e) {
+    const status = e.currentTarget.dataset.status;
+    wx.navigateTo({ url: '/pages/order/list?status=' + status });
   },
-  payOrders() {
-    wx.navigateTo({
-      url: '../fail/fail'
-    })
-  },
-  onPullDownRefresh: function () {
-    wx.showNavigationBarLoading() //在标题栏中显示加载
 
-    //模拟加载
-    setTimeout(function () {
-      // complete
-      wx.hideNavigationBarLoading() //完成停止加载
-      wx.stopPullDownRefresh() //停止下拉刷新
-    }, 1500);
+  goPoints() {
+    wx.navigateTo({ url: '/pages/member/points' });
   },
-  searchScrollLower: function () {
-    let that = this;
-    if (that.data.searchLoading && !that.data.searchLoadingComplete) {
-      that.setData({
-        page: that.data.page + 1, //每次触发上拉事件，把page+1
-        isFromSearch: false //触发到上拉事件，把isFromSearch设为为false
+
+  goMyCoupon() {
+    wx.navigateTo({ url: '/pages/coupon/center?tab=mine' });
+  },
+
+  // 菜单统一跳转
+  onMenuTap(e) {
+    const { url, action } = e.currentTarget.dataset;
+    if (action === 'switchTab') {
+      wx.switchTab({ url });
+    } else if (action === 'delivery') {
+      this.openDelivery();
+    } else if (url) {
+      wx.navigateTo({ url });
+    }
+  },
+
+  // 配送说明弹层
+  openDelivery() {
+    api.getShopInfo().then(shop => {
+      const r = shop.deliveryRule || {};
+      this.setData({
+        showDelivery: true,
+        deliveryText: [
+          '基础配送费 ' + r.baseFee + ' 元（含 ' + r.baseKm + ' 公里）',
+          '超出 ' + r.baseKm + ' 公里后，每公里加收 ' + r.perKmFee + ' 元',
+          '单笔订单满 ' + r.freeThreshold + ' 元免基础配送费',
+          '营业时间：' + shop.businessHours + '，最快 45 分钟送达'
+        ]
       });
-      that.informationQuery();
-    }
+    });
   },
-
-  informationQuery() {
-    const params = {
-      page: this.data.page,
-      size: this.data.size
-    }
-    console.log(params);
-    getAllOrders({data: params}).then(res => {
-      if (res.data.data.data.data.length > 0) {
-        let searchList = [];
-        //如果isFromSearch是true从data中取出数据，否则先从原来的数据继续添加
-        searchList = this.data.orders.concat(res.data.data.data.data)
-        this.setData({
-          orders: searchList, //获取数据数组
-          searchLoading: true //把"上拉加载"的变量设为false，显示  
-        });
-        //没有数据了，把“没有数据”显示，把“上拉加载”隐藏  
-      } else {
-        this.setData({
-          searchLoadingComplete: true, //把“没有数据”设为true，显示 
-          searchLoading: false //把"上拉加载"的变量设为false，隐藏  
-        });
-      }
-    })
-  },
-
-})
+  closeDelivery() {
+    this.setData({ showDelivery: false });
+  }
+});

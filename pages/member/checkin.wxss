@@ -1,0 +1,99 @@
+/* pages/member/checkin.wxss */
+.page { padding-bottom: 40rpx; }
+
+/* ===== 顶部大卡 ===== */
+.top-card {
+  background: linear-gradient(135deg, #d43a3f 0%, #b4282d 60%, #8f1f23 100%);
+  padding: 56rpx 32rpx;
+  text-align: center;
+  color: #fff;
+}
+.days-num { font-size: 96rpx; font-weight: bold; line-height: 1; }
+.days-text { font-size: 26rpx; opacity: 0.9; margin-top: 16rpx; }
+.sign-area { position: relative; margin-top: 40rpx; }
+.sign-btn {
+  width: 420rpx;
+  margin: 0 auto;
+  background: #fff;
+  color: #b4282d;
+  font-weight: bold;
+}
+.sign-btn.disabled { background: rgba(255, 255, 255, 0.5); color: rgba(180, 40, 45, 0.7); }
+
+/* 积分飘字 */
+.float-point {
+  position: absolute;
+  left: 50%;
+  top: -20rpx;
+  transform: translateX(-50%);
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #ffe9a8;
+  opacity: 0;
+  pointer-events: none;
+}
+.float-point.go { animation: float-up 1.5s ease-out forwards; }
+@keyframes float-up {
+  0% { opacity: 0; transform: translate(-50%, 20rpx); }
+  20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -90rpx); }
+}
+
+/* ===== 日历 ===== */
+.sec-title { font-size: 30rpx; font-weight: bold; margin-bottom: 20rpx; }
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 8rpx;
+}
+.cal-head {
+  text-align: center;
+  font-size: 22rpx;
+  color: #838383;
+  padding: 8rpx 0;
+}
+.cal-cell {
+  position: relative;
+  height: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12rpx;
+  font-size: 24rpx;
+  color: #555;
+}
+.cal-cell.signed {
+  background: #b4282d;
+  color: #fff;
+}
+.cal-cell.today {
+  border: 2rpx solid #b4282d;
+  color: #b4282d;
+  font-weight: bold;
+}
+.cal-cell.signed.today { color: #fff; }
+.cal-check {
+  position: absolute;
+  right: 4rpx;
+  top: 2rpx;
+  font-size: 18rpx;
+}
+
+/* ===== 奖励梯度 ===== */
+.reward-row { display: flex; }
+.reward-item {
+  flex: 1;
+  text-align: center;
+  background: #f5f6f7;
+  border-radius: 12rpx;
+  padding: 16rpx 0;
+  margin-right: 10rpx;
+}
+.reward-item:last-child { margin-right: 0; }
+.reward-item.active { background: #fbeaea; }
+.reward-item.big { border: 2rpx solid #e0b44c; }
+.reward-points { display: block; font-size: 26rpx; font-weight: bold; color: #b4282d; }
+.reward-label { display: block; font-size: 18rpx; color: #838383; margin-top: 4rpx; }
+
+/* ===== 规则 ===== */
+.rule-line { font-size: 24rpx; color: #666; line-height: 2; }

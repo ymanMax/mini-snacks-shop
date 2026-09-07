@@ -1,0 +1,17 @@
+// utils/format.wxs —— WXML 内共享格式化模块
+// 用法：<wxs src="../../utils/format.wxs" module="f" /> 然后 {{f.fp(item.price)}}
+function fp(n) {
+  n = n * 1;
+  if (isNaN(n)) n = 0;
+  return n.toFixed(2);
+}
+
+// 销量：>=10000 显示 x.x万
+function sold(n) {
+  n = n * 1;
+  if (isNaN(n)) n = 0;
+  if (n >= 10000) return (n / 10000).toFixed(1) + '万';
+  return '' + n;
+}
+
+module.exports = { fp: fp, sold: sold };

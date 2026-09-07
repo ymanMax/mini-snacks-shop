@@ -1,0 +1,61 @@
+<!--pages/member/points.wxml-->
+<view class="page">
+  <!-- ===== 积分大卡 ===== -->
+  <view class="points-card">
+    <block wx:if="{{!loading}}">
+      <view class="points-num">{{points}}</view>
+      <view class="points-label">当前可用积分</view>
+      <view class="earn-btn" bindtap="onCheckin">去签到赚积分 ›</view>
+    </block>
+    <view wx:else class="skeleton" style="width:200rpx;height:80rpx;margin:0 auto;"></view>
+  </view>
+
+  <!-- ===== 兑换专区 ===== -->
+  <view class="card">
+    <view class="sec-title">积分兑换</view>
+    <view class="mall-list" wx:if="{{mall.length}}">
+      <view class="mall-item" wx:for="{{mall}}" wx:key="id">
+        <view class="mall-info">
+          <view class="mall-name">{{item.name}}</view>
+          <view class="mall-scope">{{item.scope}}</view>
+          <view class="mall-points">{{item.points}} 积分</view>
+        </view>
+        <view class="mall-btn {{points < item.points ? 'disabled' : ''}}"
+              data-index="{{index}}" bindtap="onExchange">
+          {{points < item.points ? '积分不足' : '兑换'}}
+        </view>
+      </view>
+    </view>
+    <view class="skeleton" wx:else style="height:120rpx;"></view>
+  </view>
+
+  <!-- ===== 积分明细 ===== -->
+  <view class="card">
+    <view class="sec-title">积分明细</view>
+    <block wx:if="{{records.length}}">
+      <view class="record-row" wx:for="{{records}}" wx:key="id">
+        <view class="record-info">
+          <view class="record-desc">{{item.desc}}</view>
+          <view class="record-time">{{item.createTime}}</view>
+        </view>
+        <text class="record-points {{item.points > 0 ? 'plus' : 'minus'}}">
+          {{item.points > 0 ? '+' : ''}}{{item.points}}
+        </text>
+      </view>
+      <view class="load-more" wx:if="{{loadingMore}}">正在加载...</view>
+      <view class="load-more" wx:elif="{{records.length >= total}}">没有更多了~</view>
+    </block>
+    <view class="empty-state" wx:elif="{{!loading}}">
+      <view class="empty-text">暂无积分记录</view>
+    </view>
+    <view class="skeleton" wx:else style="height:200rpx;"></view>
+  </view>
+
+  <!-- ===== 规则说明 ===== -->
+  <view class="card">
+    <view class="sec-title">积分规则</view>
+    <view class="rule-line" wx:for="{{rules}}" wx:key="index">{{index + 1}}. {{item}}</view>
+  </view>
+
+  <view class="demo-tip">演示环境，不产生真实交易</view>
+</view>

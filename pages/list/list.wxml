@@ -1,15 +1,57 @@
-<!--pages/list/list.wxml-->
-<view class="main">
-  <view class="banner">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + pic}}"></image>
+<wxs src="../../utils/format.wxs" module="f" />
+
+<view class="page">
+  <!-- 顶部主题头图卡 -->
+  <view class="theme-header" wx:if="{{theme}}">
+    <image class="theme-img" src="{{themeImgErr ? '/static/images/default.png' : theme.img}}" mode="aspectFill" data-field="themeImgErr" binderror="onImgError" />
+    <view class="theme-mask">
+      <view class="theme-name">{{theme.name}}</view>
+      <view class="theme-desc">{{theme.description}}</view>
     </view>
-  <view class="list-box">
-    <view class="newest-list" wx:for="{{products}}">
-      <navigator url="../detail/detail?product_id={{item.id}}">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
-        <view class="newest-text"><text>{{item.name}}</text></view>
-        <view class="newest-text"><text>{{item.price}}</text></view>
-      </navigator>
+  </view>
+
+  <!-- 骨架屏 -->
+  <view class="goods-grid" wx:if="{{!loaded || (loading && current === 1 && !list.length)}}">
+    <view class="goods-card" wx:for="{{[1, 2, 3]}}" wx:key="*this">
+      <view class="skeleton skeleton-img"></view>
+      <view class="goods-info">
+        <view class="skeleton skeleton-line"></view>
+        <view class="skeleton skeleton-line short"></view>
+        <view class="skeleton skeleton-line tiny"></view>
+      </view>
     </view>
+  </view>
+
+  <!-- 空态 -->
+  <view class="empty-state" wx:elif="{{!loading && !list.length}}">
+    <image class="empty-img" src="/static/images/default.png" mode="aspectFit" binderror="onImgError" />
+    <view class="empty-text">该主题暂无商品</view>
+  </view>
+
+  <!-- 商品两列网格 -->
+  <view class="goods-grid" wx:else>
+    <view class="goods-card" wx:for="{{list}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+      <image class="goods-img" src="{{item._imgErr ? '/static/images/default.png' : item.pic}}" mode="aspectFill" lazy-load data-key="{{index}}" data-field="list" binderror="onImgError" />
+      <view class="goods-info">
+        <view class="goods-name ellipsis-2">{{item.name}}</view>
+        <view class="goods-tags" wx:if="{{item.tags.length}}">
+          <text class="tag" wx:for="{{item.tags}}" wx:for-item="tag" wx:for-index="ti" wx:key="*this" wx:if="{{ti < 2}}">{{tag}}</text>
+        </view>
+        <view class="goods-bottom">
+          <view class="goods-price-wrap">
+            <text class="price"><text class="symbol">￥</text>{{f.fp(item.minPrice)}}</text>
+            <text class="price-origin" wx:if="{{item.originalPrice > item.minPrice}}">￥{{f.fp(item.originalPrice)}}</text>
+            <view class="goods-sold">已售{{f.sold(item.numberSells)}}</view>
+          </view>
+          <view class="add-btn" data-item="{{item}}" catchtap="onAddCart">+</view>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 分页状态 -->
+  <view class="list-footer" wx:if="{{list.length}}">
+    <text wx:if="{{loading}}">加载中...</text>
+    <text wx:elif="{{noMore}}">没有更多了~</text>
   </view>
 </view>

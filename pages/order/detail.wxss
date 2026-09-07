@@ -1,0 +1,89 @@
+/* pages/order/detail.wxss */
+/* 状态头部 */
+.status-header {
+  background: linear-gradient(135deg, #c94045, #b4282d);
+  color: #fff; padding: 48rpx 32rpx 64rpx;
+}
+.status-text { font-size: 44rpx; font-weight: bold; }
+.status-tip { font-size: 26rpx; opacity: 0.9; margin-top: 12rpx; }
+
+.card-title { font-size: 30rpx; font-weight: bold; margin-bottom: 20rpx; }
+
+/* 售后工单状态卡片 */
+.aftersale-card { display: flex; align-items: center; }
+.as-icon {
+  width: 72rpx; height: 72rpx; border-radius: 50%; background: #fbeaea;
+  display: flex; align-items: center; justify-content: center; font-size: 36rpx; flex-shrink: 0;
+}
+.as-info { flex: 1; min-width: 0; margin-left: 20rpx; }
+.as-line1 { display: flex; align-items: center; }
+.as-type { font-size: 28rpx; font-weight: bold; margin-right: 16rpx; }
+.as-badge { font-size: 20rpx; border-radius: 999rpx; padding: 4rpx 16rpx; line-height: 1.6; }
+.as-badge.as-orange { background: #fdf3e6; color: #fa8c16; }
+.as-badge.as-blue { background: #e8f1fd; color: #2f6fed; }
+.as-badge.as-green { background: #e9f7ef; color: #1a9f5c; }
+.as-badge.as-red { background: #fbeaea; color: #b4282d; }
+.as-badge.as-gray { background: #f2f3f5; color: #999; }
+.as-sub { color: #838383; font-size: 24rpx; margin-top: 8rpx; }
+.as-link { color: #b4282d; font-size: 24rpx; flex-shrink: 0; margin-left: 16rpx; }
+
+/* 时间线 */
+.tl-item { display: flex; }
+.tl-dot-wrap { width: 40rpx; display: flex; flex-direction: column; align-items: center; flex-shrink: 0; }
+.tl-dot { width: 16rpx; height: 16rpx; border-radius: 50%; background: #d0d0d0; margin-top: 10rpx; }
+.tl-item.latest .tl-dot { background: #b4282d; box-shadow: 0 0 0 6rpx #fbeaea; }
+.tl-line { flex: 1; width: 2rpx; background: #eee; margin-top: 4rpx; }
+.tl-body { flex: 1; padding: 0 0 32rpx 20rpx; }
+.tl-status { font-size: 28rpx; color: #333; font-weight: bold; }
+.tl-item.latest .tl-status { color: #b4282d; }
+.tl-remark { color: #838383; font-size: 24rpx; margin-top: 6rpx; }
+.tl-time { color: #b0b0b0; font-size: 22rpx; margin-top: 6rpx; }
+
+/* 骑手卡片 */
+.rider-card { display: flex; align-items: center; }
+.rider-avatar {
+  width: 88rpx; height: 88rpx; border-radius: 50%; background: #fbeaea;
+  display: flex; align-items: center; justify-content: center; font-size: 44rpx;
+}
+.rider-info { flex: 1; margin-left: 20rpx; }
+.rider-name { font-size: 30rpx; font-weight: bold; }
+.rider-phone { color: #838383; font-size: 24rpx; margin-top: 6rpx; }
+.rider-call { padding: 10rpx 28rpx; font-size: 26rpx; }
+
+/* 地址快照 */
+.snap-line1 { display: flex; align-items: center; }
+.snap-name { font-size: 30rpx; font-weight: bold; margin-right: 16rpx; }
+.snap-phone { color: #838383; font-size: 26rpx; }
+.snap-addr { color: #666; font-size: 26rpx; margin-top: 10rpx; line-height: 1.5; }
+
+/* 商品 */
+.goods-item { display: flex; padding: 16rpx 0; }
+.goods-pic { width: 140rpx; height: 140rpx; border-radius: 12rpx; background: #f2f3f5; flex-shrink: 0; }
+.goods-info { flex: 1; min-width: 0; margin-left: 20rpx; display: flex; flex-direction: column; }
+.goods-name { font-size: 28rpx; line-height: 1.4; }
+.goods-spec { color: #838383; font-size: 24rpx; margin-top: 6rpx; }
+.goods-bottom { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+.goods-count { color: #838383; font-size: 26rpx; }
+
+/* 金额 */
+.amount-row { display: flex; justify-content: space-between; align-items: center; padding: 12rpx 0; }
+.amount-label { color: #666; font-size: 26rpx; }
+.pay-row { padding-top: 20rpx; }
+.pay-amount { font-size: 36rpx; }
+
+/* 订单信息 */
+.info-row { display: flex; align-items: center; padding: 12rpx 0; }
+.info-label { color: #838383; font-size: 26rpx; width: 150rpx; flex-shrink: 0; }
+.info-value { flex: 1; color: #333; font-size: 26rpx; }
+.info-copy { color: #b4282d; font-size: 24rpx; border: 2rpx solid #b4282d; border-radius: 999rpx; padding: 2rpx 16rpx; }
+
+/* 底部操作区 */
+.bottom-safe { height: 140rpx; }
+.bottom-bar {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+  background: #fff; display: flex; justify-content: flex-end; align-items: center;
+  padding: 16rpx 24rpx calc(16rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
+}
+.act-btn { font-size: 26rpx; padding: 12rpx 36rpx; margin-left: 20rpx; }
+.act-btn.gray { border-color: #d0d0d0; color: #666; }

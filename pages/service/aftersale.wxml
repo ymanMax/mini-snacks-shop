@@ -1,0 +1,78 @@
+<wxs src="../../utils/format.wxs" module="f" />
+
+<view class="page">
+  <!-- 骨架屏 -->
+  <block wx:if="{{loading}}">
+    <view class="card" wx:for="{{[1, 2, 3]}}" wx:key="*this">
+      <view class="skeleton" style="height:40rpx;width:50%"></view>
+      <view class="skeleton" style="height:120rpx;margin-top:24rpx"></view>
+      <view class="skeleton" style="height:48rpx;width:40%;margin-top:24rpx"></view>
+    </view>
+  </block>
+
+  <!-- 空态 -->
+  <view class="empty-state" wx:elif="{{!list.length}}">
+    <image class="empty-img" src="/static/images/default.png" binderror="onImgError" />
+    <view class="empty-text">暂无售后工单</view>
+  </view>
+
+  <!-- 工单列表 -->
+  <block wx:else>
+    <view class="card ticket-card" wx:for="{{list}}" wx:key="id">
+      <!-- 头部：订单号 + 状态徽章 -->
+      <view class="tk-head">
+        <text class="tk-order ellipsis" data-oid="{{item.orderId}}" bindtap="goOrder">订单号：{{item.orderNo}} ›</text>
+        <text class="tk-badge {{item.statusClass}}">{{item.statusText}}</text>
+      </view>
+
+      <!-- 商品摘要 -->
+      <view class="tk-body">
+        <image class="tk-pic" mode="aspectFill"
+          src="{{item._imgErr ? '/static/images/default.png' : item.pic}}"
+          data-key="{{index}}" data-field="list" binderror="onImgError" />
+        <view class="tk-info">
+          <view class="tk-line1">
+            <text class="tk-type">{{item.typeText}}</text>
+            <text class="tk-reason">{{item.reason}}</text>
+          </view>
+          <view class="tk-goods ellipsis-2">{{item.goodsSummary}}</view>
+          <view class="tk-amount-row">
+            <text class="tk-amount-label" wx:if="{{item.type !== 3}}">退款金额</text>
+            <text class="tk-amount-label" wx:else>售后方式</text>
+            <text class="price" wx:if="{{item.type !== 3}}"><text class="symbol">￥</text>{{f.fp(item.amount)}}</text>
+            <text class="price" wx:else>免费换新</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="tk-time">{{item.createTime}}</view>
+
+      <!-- 进度时间线（可展开） -->
+      <view class="tk-timeline-toggle" data-index="{{index}}" bindtap="toggleTimeline">
+        <text>{{item.expanded ? '收起进度 ▲' : '查看进度 ▼'}}</text>
+      </view>
+      <view class="tk-timeline" wx:if="{{item.expanded}}">
+        <view class="tl-item {{index === 0 ? 'latest' : ''}}" wx:for="{{item.timelineDesc}}" wx:for-item="tl" wx:key="index">
+          <view class="tl-dot-wrap">
+            <view class="tl-dot"></view>
+            <view class="tl-line" wx:if="{{index < item.timelineDesc.length - 1}}"></view>
+          </view>
+          <view class="tl-body">
+            <view class="tl-status">{{tl.status}}</view>
+            <view class="tl-remark">{{tl.remark}}</view>
+            <view class="tl-time">{{tl.time}}</view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作区 -->
+      <view class="tk-ops" wx:if="{{item.status === 1 || item.status === 2}}">
+        <view class="btn-plain tk-btn gray" wx:if="{{item.status === 1}}" data-id="{{item.id}}" bindtap="cancelTicket">撤销申请</view>
+        <view class="btn-plain tk-btn" data-id="{{item.id}}" bindtap="advanceTicket">模拟处理进度</view>
+      </view>
+    </view>
+
+    <view class="load-more" wx:if="{{loadingMore}}">加载中...</view>
+    <view class="load-more" wx:elif="{{noMore}}">没有更多了~</view>
+  </block>
+</view>

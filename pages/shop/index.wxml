@@ -1,0 +1,115 @@
+<!--pages/shop/index.wxml-->
+<view class="page">
+  <!-- ===== 店铺头部 ===== -->
+  <view class="shop-head" wx:if="{{shop}}">
+    <view class="head-main">
+      <image class="shop-logo" src="{{logoErr ? '/static/images/default.png' : shop.logo}}"
+             data-field="logoErr" binderror="onImgError"></image>
+      <view class="head-info">
+        <view class="shop-name">{{shop.name}}</view>
+        <view class="score-row">
+          <text class="score-num">{{shop.score}}</text>
+          <view class="stars">
+            <text wx:for="{{[1,2,3,4,5]}}" wx:key="*this"
+                  class="star {{index < fullStars ? 'on' : ''}}">★</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="sub-scores">
+      <view class="sub-item">
+        <view class="sub-bar"><view class="sub-inner" style="width:{{shop.subScores.fresh / 5 * 100}}%;"></view></view>
+        <text class="sub-text">商品新鲜 {{shop.subScores.fresh}}</text>
+      </view>
+      <view class="sub-item">
+        <view class="sub-bar"><view class="sub-inner" style="width:{{shop.subScores.speed / 5 * 100}}%;"></view></view>
+        <text class="sub-text">配送速度 {{shop.subScores.speed}}</text>
+      </view>
+      <view class="sub-item">
+        <view class="sub-bar"><view class="sub-inner" style="width:{{shop.subScores.package / 5 * 100}}%;"></view></view>
+        <text class="sub-text">包装完好 {{shop.subScores.package}}</text>
+      </view>
+    </view>
+  </view>
+  <view wx:elif="{{loading}}" class="skeleton" style="height:280rpx;margin:24rpx;border-radius:16rpx;"></view>
+
+  <!-- ===== 公告 / 信息 ===== -->
+  <view class="card" wx:if="{{shop}}">
+    <view class="notice-row">
+      <text class="notice-icon">📢</text>
+      <view class="notice-clip">
+        <view class="notice-text">{{shop.notice}}</view>
+      </view>
+    </view>
+    <view class="hairline"></view>
+    <view class="info-row">
+      <text class="info-icon">🕒</text>
+      <text class="info-label">营业时间</text>
+      <text class="info-value">{{shop.businessHours}}</text>
+    </view>
+    <view class="info-row" bindtap="onCopyAddress">
+      <text class="info-icon">📍</text>
+      <text class="info-label">门店地址</text>
+      <text class="info-value ellipsis">{{shop.address}}</text>
+      <text class="copy-tag">复制</text>
+    </view>
+  </view>
+
+  <!-- ===== 门店照片 ===== -->
+  <swiper class="photo-swiper" wx:if="{{shop && shop.photos.length}}"
+          indicator-dots indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#b4282d"
+          autoplay circular>
+    <swiper-item wx:for="{{shop.photos}}" wx:key="*this">
+      <image class="photo" mode="aspectFill"
+             src="{{item._imgErr ? '/static/images/default.png' : item}}"
+             data-key="{{index}}" data-field="shop.photos" binderror="onImgError"></image>
+    </swiper-item>
+  </swiper>
+
+  <!-- ===== 配送费规则 ===== -->
+  <view class="card" wx:if="{{shop}}">
+    <view class="sec-title">配送费规则</view>
+    <view class="rule-line">· 基础配送费 {{shop.deliveryRule.baseFee}} 元，含 {{shop.deliveryRule.baseKm}} 公里</view>
+    <view class="rule-line">· 超出 {{shop.deliveryRule.baseKm}} 公里后，每公里加收 {{shop.deliveryRule.perKmFee}} 元</view>
+    <view class="rule-line">· 单笔订单满 {{shop.deliveryRule.freeThreshold}} 元免基础配送费</view>
+  </view>
+
+  <!-- ===== 店铺评价 ===== -->
+  <view class="card review-section">
+    <view class="sec-title">店铺评价</view>
+    <view class="summary-row" wx:if="{{summary}}">
+      <view class="summary-item">新鲜 <text class="summary-num">{{summary.fresh}}</text></view>
+      <view class="summary-item">速度 <text class="summary-num">{{summary.speed}}</text></view>
+      <view class="summary-item">包装 <text class="summary-num">{{summary.package}}</text></view>
+    </view>
+
+    <block wx:if="{{reviews.length}}">
+      <view class="review-item" wx:for="{{reviews}}" wx:key="id">
+        <image class="rv-avatar"
+               src="{{item._imgErr ? '/static/images/default.png' : item.avatar}}"
+               data-key="{{index}}" data-field="reviews" binderror="onImgError"></image>
+        <view class="rv-body">
+          <view class="rv-head">
+            <text class="rv-name">{{item.userName}}</text>
+            <text class="rv-time">{{item.createTime}}</text>
+          </view>
+          <view class="rv-scores">
+            <text class="rv-score">新鲜 {{item.scores.fresh}} 分</text>
+            <text class="rv-score">速度 {{item.scores.speed}} 分</text>
+            <text class="rv-score">包装 {{item.scores.package}} 分</text>
+          </view>
+          <view class="rv-content">{{item.content}}</view>
+        </view>
+      </view>
+      <view class="btn-plain more-btn" wx:if="{{reviews.length < total}}" bindtap="loadMore">
+        {{loadingMore ? '加载中...' : '加载更多'}}
+      </view>
+      <view class="load-more" wx:else>没有更多了~</view>
+    </block>
+    <view class="empty-state" wx:elif="{{!loading}}">
+      <view class="empty-text">暂无店铺评价</view>
+    </view>
+  </view>
+
+  <view class="demo-tip">演示环境，不产生真实交易</view>
+</view>

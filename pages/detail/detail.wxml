@@ -1,34 +1,249 @@
-<view class="main">
-    <view class="item-box">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}" class="item-thumb"></image>
-        
-        <navigator open-type="switchTab" url="../cart/cart">
-            <view class="carts-icon {{scaleCart?'on':''}}">
-                <image src="/image/gouwuche.png"></image>
-                <text class="carts-icon-num" wx:if="{{hasCarts}}">{{totalNum}}</text>
-            </view>
-        </navigator>
-        
-        <view class="item-operation">
-          <text class="item-operation-unadd" bindtap="unaddCount">-</text>
-            <text class="item-operation-num">数量  {{num}}</text>
-            <text class="item-operation-add" bindtap="addCount">+</text>
-            <text class="item-to-cart" bindtap="addToCart">加入购物车</text>
-            <image src="/image/goche.png"  class="item-cart-img" bindtap="{{isClick? 'addToCart' : ' '}}"></image>
-        </view>
-        <image wx:if="{{show}}" src="/image/gouwuche.png" class="to-carts-icon"></image>
-        <view class="item-stock">{{item.stock > 0 ? "有货" : "无货"}}</view>
-        <view class="item-title">{{item.name}}</view>
-        <view class="item-price">￥ {{item.price}}</view>
-    </view>
-    <view class="item-tab-box">
-        <view class="item-tab-nav {{curIndex === 0 ?'on':''}}" bindtap="bindTap" data-index="0">商品详情</view>
-        <view class="item-tab-nav {{curIndex === 1 ?'on':''}}" bindtap="bindTap" data-index="1">产品参数</view>
-        <view class="item-tab-nav {{curIndex === 2 ?'on':''}}" bindtap="bindTap" data-index="2">售后保障</view>
-        <view class="item-content">
-            <view wx:if="{{curIndex === 0}}">{{item.detail}}</view>
-            <view wx:if="{{curIndex === 1}}">{{item.parameter}}</view>
-            <view wx:if="{{curIndex === 2}}">{{item.service}}</view>
-        </view>
-    </view>
+<wxs src="../../utils/format.wxs" module="f" />
+
+<!-- ============ 首屏骨架屏 ============ -->
+<view wx:if="{{loading}}" class="page">
+  <view class="skeleton sk-media"></view>
+  <view class="card">
+    <view class="skeleton sk-line" style="width:40%"></view>
+    <view class="skeleton sk-line" style="width:70%"></view>
+  </view>
+  <view class="card">
+    <view class="skeleton sk-line" style="width:85%"></view>
+    <view class="skeleton sk-line" style="width:60%"></view>
+    <view class="skeleton sk-line" style="width:75%"></view>
+  </view>
+  <view class="card">
+    <view class="skeleton sk-line" style="width:30%"></view>
+    <view class="skeleton sk-block"></view>
+  </view>
 </view>
+
+<block wx:if="{{!loading && goods}}">
+  <!-- ============ 媒体区 ============ -->
+  <view class="media">
+    <view class="media-tabs" wx:if="{{showVideoTab}}">
+      <view class="media-tab {{mediaTab === 'image' ? 'active' : ''}}" data-tab="image" bindtap="switchMedia">图片</view>
+      <view class="media-tab {{mediaTab === 'video' ? 'active' : ''}}" data-tab="video" bindtap="switchMedia">视频</view>
+    </view>
+    <swiper wx:if="{{mediaTab === 'image'}}" class="media-swiper" current="{{swiperCurrent}}" bindchange="onSwiperChange">
+      <swiper-item wx:for="{{pics}}" wx:key="index">
+        <image class="media-img" src="{{item._imgErr ? '/static/images/default.png' : item.url}}" mode="aspectFill"
+          data-key="{{index}}" data-field="pics" binderror="onImgError"
+          data-index="{{index}}" bindtap="previewImage" />
+      </swiper-item>
+    </swiper>
+    <video wx:else id="goodsVideo" class="media-video" src="{{goods.videoUrl}}" poster="{{goods.videoCover}}"
+      controls binderror="onVideoError"></video>
+    <view class="media-indicator" wx:if="{{mediaTab === 'image'}}">{{swiperCurrent + 1}}/{{pics.length}}</view>
+  </view>
+
+  <!-- ============ 价格区 ============ -->
+  <view class="card price-card">
+    <view class="price-row">
+      <text class="price price-big"><text class="symbol">￥</text>{{f.fp(curPrice)}}</text>
+      <text class="price-origin" wx:if="{{goods.originalPrice > curPrice}}">￥{{f.fp(goods.originalPrice)}}</text>
+      <text class="member-tag" wx:if="{{goods.memberPrice}}">会员价 ￥{{f.fp(goods.memberPrice)}}</text>
+    </view>
+    <view class="meta-row">
+      <text class="meta-item">已售 {{f.sold(goods.numberSells)}}</text>
+      <text class="meta-item">产地 {{goods.origin}}</text>
+      <text class="meta-item">单位 {{goods.unit}}</text>
+      <text class="meta-item">库存 {{curStock}}</text>
+    </view>
+    <view class="tags-row" wx:if="{{goods.tags && goods.tags.length}}">
+      <text class="tag" wx:for="{{goods.tags}}" wx:key="*this">{{item}}</text>
+    </view>
+  </view>
+
+  <!-- ============ 名称 + 简介 ============ -->
+  <view class="card">
+    <view class="goods-name">{{goods.name}}</view>
+    <view class="goods-desc">{{goods.description}}</view>
+  </view>
+
+  <!-- ============ 领券条（优化 1）============ -->
+  <view class="card mini-entry" wx:if="{{couponCount > 0}}" bindtap="openCoupons">
+    <text class="mini-entry-icon">🎟</text>
+    <view class="coupon-pills">
+      <text class="coupon-pill" wx:for="{{couponBrief}}" wx:key="id" wx:if="{{index < 2}}">{{item.name}}</text>
+    </view>
+    <text class="mini-entry-more">共 {{couponCount}} 张可领 ›</text>
+  </view>
+
+  <!-- ============ 拼团入口条（优化 1）============ -->
+  <view class="card group-entry" wx:if="{{group}}" bindtap="goGroup">
+    <text class="group-entry-text ellipsis">🔥 拼团价 ￥{{f.fp(group.groupPrice)}} · {{group.requiredCount}}人团 已拼{{group.joinedCount}}人</text>
+    <text class="group-entry-arrow">›</text>
+  </view>
+  <view class="card group-entry" wx:else data-mode="group" bindtap="openSku">
+    <text class="group-entry-text ellipsis">🔥 发起拼团立省 ￥{{groupSaving}}</text>
+    <text class="group-entry-arrow">›</text>
+  </view>
+
+  <!-- ============ 规格选择入口 ============ -->
+  <view class="card sku-entry" data-mode="cart" bindtap="openSku">
+    <text class="sku-entry-label">选择</text>
+    <text class="sku-entry-value ellipsis {{specText ? '' : 'placeholder'}}">{{specText ? specText + ' ×' + count : '请选择 规格 / 口味 / 数量'}}</text>
+    <text class="sku-entry-arrow">›</text>
+  </view>
+
+  <!-- ============ 图文详情 ============ -->
+  <view class="card">
+    <view class="section-title">商品介绍</view>
+    <view class="detail-desc">{{goods.description}}</view>
+    <image wx:for="{{detailImages}}" wx:key="index" class="detail-img"
+      src="{{item._imgErr ? '/static/images/default.png' : item.url}}" mode="widthFix" lazy-load
+      data-key="{{index}}" data-field="detailImages" binderror="onImgError" />
+  </view>
+
+  <!-- ============ 评价区块 ============ -->
+  <view class="card" wx:if="{{reviewSummary}}">
+    <view class="section-title">商品评价</view>
+    <view class="review-summary">
+      <text class="review-avg">{{reviewSummary.avg}}</text>
+      <view class="review-avg-side">
+        <text class="stars">{{summaryStars}}</text>
+        <text class="review-total">共 {{reviewSummary.count}} 条评价</text>
+      </view>
+    </view>
+    <view class="review-tags" wx:if="{{reviewSummary.tags && reviewSummary.tags.length}}">
+      <text class="tag gray" wx:for="{{reviewSummary.tags}}" wx:key="name">{{item.name}}({{item.count}})</text>
+    </view>
+
+    <view class="review-item" wx:for="{{reviews}}" wx:key="id" wx:for-item="rv" wx:for-index="ri">
+      <view class="review-head">
+        <image class="review-avatar" src="{{rv._imgErr ? '/static/images/default.png' : rv.avatar}}"
+          data-key="{{ri}}" data-field="reviews" binderror="onImgError" />
+        <view class="review-head-info">
+          <view class="review-nick">{{rv.userName}}</view>
+          <text class="stars stars-sm">{{rv.stars}}</text>
+        </view>
+        <text class="review-time">{{rv.createTime}}</text>
+      </view>
+      <view class="review-rtags" wx:if="{{rv.tags && rv.tags.length}}">
+        <text class="tag gray" wx:for="{{rv.tags}}" wx:key="*this" wx:for-item="t">{{t}}</text>
+      </view>
+      <view class="review-content">{{rv.content}}</view>
+      <view class="review-imgs" wx:if="{{rv.images && rv.images.length}}">
+        <image wx:for="{{rv.images}}" wx:key="url" wx:for-item="img" wx:for-index="ii" class="review-img"
+          src="{{img._imgErr ? '/static/images/default.png' : img.url}}" mode="aspectFill"
+          data-key="{{ii}}" data-field="reviews[{{ri}}].images" binderror="onImgError"
+          data-urls="{{rv.imageUrls}}" data-current="{{img.url}}" bindtap="previewReviewImage" />
+      </view>
+    </view>
+
+    <view class="review-all" wx:if="{{!reviewExpanded && reviewSummary.count > reviews.length}}" bindtap="expandReviews">
+      查看全部评价 ({{reviewSummary.count}})
+    </view>
+    <block wx:if="{{reviewExpanded}}">
+      <view class="review-more" wx:if="{{reviewHasMore}}" bindtap="loadMoreReviews">加载更多</view>
+      <view class="review-nomore" wx:else>没有更多了~</view>
+    </block>
+  </view>
+
+  <!-- ============ 看了又看 ============ -->
+  <view class="card" wx:if="{{recommend.length}}">
+    <view class="section-title">看了又看</view>
+    <scroll-view scroll-x enhanced show-scrollbar="{{false}}" class="rec-scroll">
+      <view class="rec-item" wx:for="{{recommend}}" wx:key="id" data-id="{{item.id}}" bindtap="goDetail">
+        <image class="rec-img" src="{{item._imgErr ? '/static/images/default.png' : item.pic}}" mode="aspectFill"
+          data-key="{{index}}" data-field="recommend" binderror="onImgError" />
+        <view class="rec-name ellipsis-2">{{item.name}}</view>
+        <text class="price rec-price"><text class="symbol">￥</text>{{f.fp(item.minPrice)}}</text>
+      </view>
+    </scroll-view>
+  </view>
+
+  <view class="demo-tip">演示环境，不产生真实交易</view>
+  <view class="action-bar-placeholder"></view>
+</block>
+
+<!-- 加载失败空态 -->
+<view wx:if="{{!loading && !goods}}" class="empty-state">
+  <image class="empty-img" src="/static/images/default.png" data-field="imgErr" binderror="onImgError" />
+  <view class="empty-text">商品不存在或已下架</view>
+  <view class="empty-btn" bindtap="goCart">去购物车看看</view>
+</view>
+
+<!-- ============ 底部固定操作栏 ============ -->
+<view class="action-bar" wx:if="{{!loading && goods}}">
+  <view class="action-icon" bindtap="toggleCollect">
+    <text class="action-emoji {{goods.isCollect ? 'collected' : ''}}">{{goods.isCollect ? '❤️' : '🤍'}}</text>
+    <text class="action-label">收藏</text>
+  </view>
+  <view class="action-icon" bindtap="goCart">
+    <text class="action-emoji">🛒</text>
+    <view class="badge action-badge" wx:if="{{cartCount > 0}}">{{cartCount > 99 ? '99+' : cartCount}}</view>
+    <text class="action-label">购物车</text>
+  </view>
+  <view class="action-btn btn-add" data-mode="cart" bindtap="openSku">加入购物车</view>
+  <view class="action-btn btn-buy" data-mode="buy" bindtap="openSku">立即购买</view>
+</view>
+
+<!-- ============ SKU 半屏弹层 ============ -->
+<block wx:if="{{skuShow && goods}}">
+  <view class="sku-mask" bindtap="closeSku"></view>
+  <view class="sku-panel">
+    <view class="sku-head">
+      <image class="sku-pic" src="{{skuImgErr ? '/static/images/default.png' : skuPic}}" mode="aspectFill"
+        data-field="skuImgErr" binderror="onImgError" />
+      <view class="sku-head-info">
+        <text class="price sku-price"><text class="symbol">￥</text>{{f.fp(curPrice)}}</text>
+        <text class="sku-stock">库存 {{curStock}} {{goods.unit}}</text>
+        <text class="sku-chosen ellipsis">{{specText ? '已选：' + specText : '请选择规格'}}</text>
+      </view>
+      <text class="sku-close" bindtap="closeSku">✕</text>
+    </view>
+    <scroll-view scroll-y class="sku-body">
+      <view class="sku-dim" wx:for="{{goods.specs}}" wx:key="name" wx:for-item="dim" wx:for-index="di">
+        <view class="sku-dim-name">{{dim.name}}</view>
+        <view class="sku-values">
+          <view wx:for="{{dim.values}}" wx:key="label" wx:for-item="val" wx:for-index="vi"
+            class="sku-value {{selected[di] === vi ? 'active' : ''}} {{di === 0 && val.stock === 0 ? 'disabled' : ''}}"
+            data-dim="{{di}}" data-index="{{vi}}" bindtap="selectSpec">
+            <text class="sku-value-label">{{val.label}}</text>
+            <text class="sku-value-sub" wx:if="{{di === 0}}">￥{{f.fp(val.price)}} 库存{{val.stock}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="sku-count-row">
+        <text class="sku-count-label">数量</text>
+        <view class="stepper">
+          <view class="stepper-btn {{count <= 1 ? 'disabled' : ''}}" bindtap="minusCount">−</view>
+          <text class="stepper-num">{{count}}</text>
+          <view class="stepper-btn {{count >= curStock ? 'disabled' : ''}}" bindtap="plusCount">＋</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="sku-confirm" bindtap="confirmSku">{{skuMode === 'buy' ? '立即购买' : skuMode === 'group' ? '发起拼团' : '加入购物车'}}</view>
+  </view>
+</block>
+
+<!-- ============ 领券半屏弹层（复用 SKU 弹层遮罩 + 上滑模式）============ -->
+<block wx:if="{{couponShow}}">
+  <view class="sku-mask" bindtap="closeCoupons"></view>
+  <view class="sku-panel coupon-panel">
+    <view class="coupon-panel-head">
+      <text class="coupon-panel-title">领取优惠券</text>
+      <text class="sku-close" bindtap="closeCoupons">✕</text>
+    </view>
+    <scroll-view scroll-y class="coupon-panel-body">
+      <view class="coupon-card {{item.claimed ? 'gray' : ''}}" wx:for="{{couponList}}" wx:key="id">
+        <view class="coupon-left">
+          <text class="coupon-amount {{item.leftSmall ? 'small' : ''}}">{{item.leftText}}</text>
+          <text class="coupon-sub">{{item.subText}}</text>
+        </view>
+        <view class="coupon-right">
+          <view class="coupon-name">{{item.name}}</view>
+          <view class="coupon-scope">{{item.scope}}</view>
+          <view class="coupon-stock">剩余 {{item.stock}} 张</view>
+        </view>
+        <view class="coupon-btn {{item.claimed ? 'disabled' : ''}}"
+          data-index="{{index}}" bindtap="onClaimCoupon">
+          {{item.claimed ? '已领取' : '领取'}}
+        </view>
+      </view>
+      <view class="coupon-empty" wx:if="{{!couponList.length}}">暂无可领取优惠券</view>
+    </scroll-view>
+  </view>
+</block>

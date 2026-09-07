@@ -1,0 +1,167 @@
+<!--pages/group/detail.wxml-->
+<wxs src="../../utils/format.wxs" module="f" />
+
+<!-- ============ 骨架屏 ============ -->
+<view wx:if="{{loading}}" class="page">
+  <view class="card">
+    <view style="display:flex;">
+      <view class="skeleton" style="width:200rpx;height:200rpx;border-radius:12rpx;"></view>
+      <view style="flex:1;margin-left:20rpx;">
+        <view class="skeleton" style="height:32rpx;width:90%;border-radius:8rpx;"></view>
+        <view class="skeleton" style="height:32rpx;width:60%;border-radius:8rpx;margin-top:16rpx;"></view>
+        <view class="skeleton" style="height:44rpx;width:50%;border-radius:8rpx;margin-top:24rpx;"></view>
+      </view>
+    </view>
+  </view>
+  <view class="card">
+    <view class="skeleton" style="height:32rpx;width:40%;border-radius:8rpx;"></view>
+    <view class="skeleton" style="height:24rpx;width:100%;border-radius:999rpx;margin-top:24rpx;"></view>
+    <view class="skeleton" style="height:56rpx;width:70%;border-radius:999rpx;margin-top:24rpx;"></view>
+  </view>
+</view>
+
+<block wx:if="{{!loading && group}}">
+  <view class="page {{group.status ? 'has-bar' : ''}}">
+    <!-- ============ 状态横幅 ============ -->
+    <view class="banner green" wx:if="{{group.status === 2}}">🎉 拼团成功，商品尽快发出</view>
+    <view class="banner gray" wx:elif="{{group.status === 3}}">未成团，款项已原路退回（演示环境）</view>
+
+    <!-- ============ 商品卡 ============ -->
+    <view class="card goods-card">
+      <image class="goods-pic" mode="aspectFill"
+             src="{{imgErr ? '/static/images/default.png' : group.pic}}"
+             data-field="imgErr" binderror="onImgError"></image>
+      <view class="goods-info">
+        <view class="goods-name ellipsis-2">{{group.name}}</view>
+        <view class="price-row">
+          <text class="price group-price"><text class="symbol">￥</text>{{f.fp(group.groupPrice)}}</text>
+          <text class="price-origin">￥{{f.fp(group.originalPrice)}}</text>
+          <text class="saved-tag">已省 ￥{{saved}}</text>
+        </view>
+        <view class="status-row">
+          <text class="status-badge {{statusCls}}">{{statusText}}</text>
+          <text class="required-text">{{group.requiredCount}} 人团</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ============ 成团进度 ============ -->
+    <view class="card progress-card">
+      <view class="progress-title" wx:if="{{group.status === 1}}">还差 <text class="lack-num">{{lack}}</text> 人成团</view>
+      <view class="progress-title" wx:elif="{{group.status === 2}}">已满 {{group.requiredCount}} 人，拼团成功</view>
+      <view class="progress-title" wx:else>拼团已结束</view>
+
+      <view class="progress-bar">
+        <view class="progress-inner {{statusCls}}" style="width:{{progress}}%;"></view>
+      </view>
+      <view class="progress-text">{{group.joinedCount}}/{{group.requiredCount}} 人</view>
+
+      <!-- 成员头像 -->
+      <view class="member-row">
+        <view class="member-wrap" wx:for="{{group.members}}" wx:for-item="m" wx:for-index="mi" wx:key="name">
+          <image class="member-avatar"
+                 src="{{m._imgErr ? '/static/images/default.png' : m.avatar}}"
+                 data-m="{{mi}}" binderror="onMemberImgError"></image>
+          <view class="leader-tag" wx:if="{{m.isLeader}}">团长</view>
+        </view>
+        <view class="avatar-placeholder" wx:for="{{emptySlots}}" wx:for-item="ph" wx:key="*this">+</view>
+      </view>
+
+      <!-- 倒计时 -->
+      <view class="countdown-row" wx:if="{{group.status === 1}}">
+        <text wx:if="{{ended}}" class="countdown ended">已截止</text>
+        <block wx:else>
+          <text class="countdown-label">距结束</text>
+          <text class="countdown">{{remain}}</text>
+        </block>
+      </view>
+    </view>
+
+    <!-- ============ 邀请裂变提示条 ============ -->
+    <view class="invite-tip">🎁 分享拼团得积分，好友通过你的链接注册双方各得优惠券</view>
+
+    <!-- ============ 规则说明 ============ -->
+    <view class="card rules-card">
+      <view class="rules-title">拼团规则</view>
+      <view class="rules-text">{{group.rules}}</view>
+      <view class="rules-text sub">选择规格 → 提交订单并支付 → 邀请好友参团 → 成团发货 / 未成团自动退款</view>
+    </view>
+
+    <view class="demo-tip">演示环境，不产生真实交易</view>
+  </view>
+
+  <!-- ============ 底部操作区 ============ -->
+  <view class="bottom-bar">
+    <!-- 拼团中 + 未参团 -->
+    <block wx:if="{{group.status === 1 && !joined}}">
+      <view class="bar-price">
+        <text class="price"><text class="symbol">￥</text>{{f.fp(group.groupPrice)}}</text>
+        <text class="bar-price-sub">拼团价</text>
+      </view>
+      <view class="btn-primary bar-btn" bindtap="openSku">参团 ￥{{f.fp(group.groupPrice)}}</view>
+    </block>
+    <!-- 拼团中 + 已参团 -->
+    <block wx:elif="{{group.status === 1 && joined}}">
+      <view class="btn-plain bar-btn half" bindtap="goOrder">查看订单</view>
+      <button class="btn-primary bar-btn half share-btn" open-type="share" catchtap="onInviteTap">邀请好友参团</button>
+    </block>
+    <!-- 已成团 -->
+    <block wx:elif="{{group.status === 2}}">
+      <view class="btn-plain bar-btn half" wx:if="{{joined}}" bindtap="goOrder">查看订单</view>
+      <view class="btn-primary bar-btn {{joined ? 'half' : ''}}" bindtap="goHome">再逛一逛</view>
+    </block>
+    <!-- 未成团已退款 -->
+    <block wx:elif="{{group.status === 3}}">
+      <view class="btn-primary bar-btn" bindtap="goRestart">重新发起拼团</view>
+    </block>
+  </view>
+</block>
+
+<!-- ============ 加载失败空态 ============ -->
+<view class="empty-state" wx:if="{{!loading && !group}}">
+  <image class="empty-img" src="/static/images/default.png" binderror="onImgError"></image>
+  <view class="empty-text">拼团不存在或已结束</view>
+</view>
+
+<!-- ============ SKU 半屏弹层（参团） ============ -->
+<block wx:if="{{skuShow && goods}}">
+  <view class="sku-mask" bindtap="closeSku"></view>
+  <view class="sku-panel">
+    <view class="sku-head">
+      <image class="sku-pic" mode="aspectFill"
+             src="{{imgErr ? '/static/images/default.png' : group.pic}}"
+             data-field="imgErr" binderror="onImgError"></image>
+      <view class="sku-head-info">
+        <text class="price sku-price"><text class="symbol">￥</text>{{f.fp(group.groupPrice)}}</text>
+        <text class="sku-stock">拼团价 · 库存 {{curStock}}</text>
+        <text class="sku-chosen ellipsis">{{specText ? '已选：' + specText : '请选择规格'}}</text>
+      </view>
+      <text class="sku-close" bindtap="closeSku">✕</text>
+    </view>
+    <scroll-view scroll-y class="sku-body">
+      <view class="sku-dim" wx:for="{{goods.specs}}" wx:key="name" wx:for-item="dim" wx:for-index="di">
+        <view class="sku-dim-name">{{dim.name}}</view>
+        <view class="sku-values">
+          <view wx:for="{{dim.values}}" wx:key="label" wx:for-item="val" wx:for-index="vi"
+            class="sku-value {{selected[di] === vi ? 'active' : ''}} {{di === 0 && val.stock === 0 ? 'disabled' : ''}}"
+            data-dim="{{di}}" data-index="{{vi}}" bindtap="selectSpec">
+            <text class="sku-value-label">{{val.label}}</text>
+            <text class="sku-value-sub" wx:if="{{di === 0}}">库存{{val.stock}}</text>
+          </view>
+        </view>
+      </view>
+      <view class="sku-count-row">
+        <text class="sku-count-label">数量</text>
+        <view class="stepper">
+          <view class="stepper-btn {{count <= 1 ? 'disabled' : ''}}" bindtap="minusCount">−</view>
+          <text class="stepper-num">{{count}}</text>
+          <view class="stepper-btn {{count >= curStock ? 'disabled' : ''}}" bindtap="plusCount">＋</view>
+        </view>
+      </view>
+    </scroll-view>
+    <view class="sku-confirm {{paying ? 'disabled' : ''}}" bindtap="confirmJoin">
+      {{paying ? '支付中...' : '参团 ￥' + f.fp(group.groupPrice)}}
+    </view>
+    <view class="demo-tip sku-demo">演示环境，不产生真实交易</view>
+  </view>
+</block>

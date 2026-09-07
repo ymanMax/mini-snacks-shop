@@ -1,0 +1,6 @@
+{
+  "usingComponents": {},
+  "navigationBarTitleText": "店铺主页",
+  "enablePullDownRefresh": true,
+  "backgroundColor": "#f5f6f7"
+}

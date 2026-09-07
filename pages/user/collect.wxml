@@ -1,0 +1,48 @@
+<!--pages/user/collect.wxml-->
+<wxs src="../../utils/format.wxs" module="f" />
+<view class="page">
+  <block wx:if="{{!loading}}">
+    <block wx:if="{{list.length}}">
+      <view class="goods-card {{editMode ? 'editing' : ''}}" wx:for="{{list}}" wx:key="id"
+            data-id="{{item.id}}" bindtap="onTapItem" bindlongpress="onLongPress">
+        <view class="check-wrap" wx:if="{{editMode}}">
+          <view class="check-circle {{selected[item.id] ? 'checked' : ''}}">
+            <text wx:if="{{selected[item.id]}}">✓</text>
+          </view>
+        </view>
+        <image class="goods-pic" mode="aspectFill"
+               src="{{item._imgErr ? '/static/images/default.png' : item.pic}}"
+               data-key="{{index}}" data-field="list" binderror="onImgError"></image>
+        <view class="goods-info">
+          <view class="goods-name ellipsis-2">{{item.name}}</view>
+          <view class="goods-tags">
+            <text class="tag" wx:for="{{item.tags}}" wx:for-item="t" wx:key="*this">{{t}}</text>
+          </view>
+          <view class="goods-bottom">
+            <text class="price"><text class="symbol">￥</text>{{f.fp(item.minPrice)}}</text>
+            <text class="sells">已售{{f.sold(item.numberSells)}}</text>
+          </view>
+        </view>
+        <view class="heart" catchtap="onRemove" data-id="{{item.id}}" wx:if="{{!editMode}}">❤️</view>
+      </view>
+
+      <!-- 批量操作栏 -->
+      <view class="edit-bar" wx:if="{{editMode}}">
+        <view class="edit-cancel" bindtap="onCancelEdit">取消</view>
+        <view class="edit-delete" bindtap="onBatchRemove">删除选中</view>
+      </view>
+      <view class="tip-line" wx:else>长按可批量管理收藏</view>
+    </block>
+
+    <view class="empty-state" wx:else>
+      <image class="empty-img" src="/static/images/default.png" binderror="onImgError"></image>
+      <view class="empty-text">还没有收藏商品</view>
+      <view class="empty-btn" bindtap="goHome">去逛逛</view>
+    </view>
+  </block>
+
+  <block wx:else>
+    <view class="skeleton" style="height:220rpx;margin:24rpx;border-radius:16rpx;"></view>
+    <view class="skeleton" style="height:220rpx;margin:24rpx;border-radius:16rpx;"></view>
+  </block>
+</view>

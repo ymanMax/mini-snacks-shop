@@ -1,0 +1,129 @@
+/* pages/seckill/index.wxss —— 限时抢购场次页（主题色 #b4282d） */
+.page { padding-bottom: 40rpx; }
+
+/* ============ 骨架屏 ============ */
+.sk-tabs { display: flex; background: #fff; padding: 20rpx 24rpx; }
+.sk-tab { width: 200rpx; height: 76rpx; border-radius: 12rpx; margin-right: 20rpx; }
+.sk-card { display: flex; }
+.sk-img { width: 220rpx; height: 220rpx; border-radius: 12rpx; flex-shrink: 0; }
+.sk-info { flex: 1; margin-left: 20rpx; }
+.sk-line { height: 30rpx; margin-bottom: 20rpx; }
+
+/* ============ 场次 Tab ============ */
+.tabs {
+  display: flex;
+  background: #fff;
+  padding: 16rpx 24rpx 0;
+}
+.tab {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12rpx 8rpx 16rpx;
+  margin-right: 16rpx;
+  border-radius: 12rpx 12rpx 0 0;
+  border-bottom: 4rpx solid transparent;
+}
+.tab:last-child { margin-right: 0; }
+.tab-title { font-size: 26rpx; color: #333; max-width: 100%; }
+.tab-cd { font-size: 20rpx; margin-top: 6rpx; font-variant-numeric: tabular-nums; }
+/* 状态色：1红 2橙 3灰 */
+.tab.st1 .tab-cd { color: #b4282d; }
+.tab.st2 .tab-cd { color: #e8890c; }
+.tab.st3 .tab-title, .tab.st3 .tab-cd { color: #b0b0b0; }
+.tab.active { border-bottom-color: #b4282d; background: #fbeaea; }
+.tab.active .tab-title { color: #b4282d; font-weight: bold; }
+.tab.active.st3 { border-bottom-color: #b0b0b0; background: #f2f3f5; }
+.tab.active.st3 .tab-title { color: #838383; }
+
+/* ============ 场次操作行 ============ */
+.session-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 16rpx 24rpx 20rpx;
+}
+.session-cd { font-size: 26rpx; font-weight: bold; font-variant-numeric: tabular-nums; }
+.session-cd.st1 { color: #b4282d; }
+.session-cd.st2 { color: #e8890c; }
+.session-cd.st3 { color: #b0b0b0; }
+.session-actions { display: flex; align-items: center; }
+.remind-btn {
+  font-size: 24rpx;
+  color: #e8890c;
+  border: 2rpx solid #e8890c;
+  border-radius: 999rpx;
+  padding: 8rpx 28rpx;
+  margin-right: 16rpx;
+}
+.share-btn {
+  font-size: 24rpx;
+  color: #b4282d;
+  background: #fbeaea;
+  border-radius: 999rpx;
+  padding: 8rpx 28rpx;
+  margin: 0;
+  line-height: 1.6;
+}
+.share-btn::after { border: none; }
+
+/* ============ 商品卡 ============ */
+.goods-card {
+  position: relative;
+  display: flex;
+  background: #fff;
+  border-radius: 16rpx;
+  margin: 24rpx 24rpx 0;
+  padding: 24rpx;
+}
+.goods-card.gray { opacity: 0.6; }
+.goods-img {
+  width: 220rpx;
+  height: 220rpx;
+  border-radius: 12rpx;
+  background: #f5f6f7;
+  flex-shrink: 0;
+}
+.goods-card.gray .goods-img { filter: grayscale(100%); }
+.goods-info { flex: 1; min-width: 0; margin-left: 20rpx; padding-bottom: 64rpx; }
+.goods-name { font-size: 28rpx; font-weight: bold; line-height: 1.4; }
+.goods-price-row { display: flex; align-items: baseline; margin-top: 12rpx; }
+.goods-price-row .price { font-size: 38rpx; font-weight: bold; margin-right: 12rpx; }
+.progress {
+  position: relative;
+  height: 30rpx;
+  border-radius: 999rpx;
+  background: #fbeaea;
+  margin-top: 16rpx;
+  overflow: hidden;
+}
+.progress-inner {
+  height: 100%;
+  border-radius: 999rpx;
+  background: linear-gradient(to right, #e0686c, #b4282d);
+}
+.progress-text {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  text-align: center;
+  font-size: 20rpx;
+  line-height: 30rpx;
+  color: #fff;
+}
+.buy-btn {
+  position: absolute;
+  right: 24rpx;
+  bottom: 24rpx;
+  background: #b4282d;
+  color: #fff;
+  font-size: 26rpx;
+  border-radius: 999rpx;
+  padding: 12rpx 36rpx;
+}
+.buy-btn.soon { background: #e0e0e0; color: #999; }
+.buy-btn.over { background: #f2f3f5; color: #b0b0b0; }
