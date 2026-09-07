@@ -1,0 +1,208 @@
+/* pages/order/review.wxss — 评价晒单页 */
+/* 规范：主题色 #b4282d / 背景 #f5f6f7 / 卡片白底圆角 16rpx / 间距 24rpx */
+
+.review-page {
+  padding-bottom: 24rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 16rpx;
+}
+
+/* ---------- 顶部订单号 ---------- */
+.review-head {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx 0;
+}
+.review-head-label {
+  font-size: 24rpx;
+  color: #838383;
+  margin-right: 12rpx;
+}
+.review-head-no {
+  font-size: 24rpx;
+  color: #333333;
+}
+
+/* ---------- 商品信息行 ---------- */
+.g-row {
+  display: flex;
+  align-items: center;
+  padding-bottom: 20rpx;
+  border-bottom: 2rpx solid #f5f6f7;
+}
+.g-thumb {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  background: #f5f6f7;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.g-name {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 38rpx;
+}
+.g-spec {
+  display: inline-block;
+  margin-top: 8rpx;
+  padding: 4rpx 16rpx;
+  font-size: 22rpx;
+  color: #838383;
+  background: #f2f3f5;
+  border-radius: 999rpx;
+}
+
+/* ---------- 星级行 ---------- */
+.rate-row {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0 8rpx;
+}
+.rate-label {
+  width: 140rpx;
+  font-size: 26rpx;
+  color: #666666;
+  flex-shrink: 0;
+}
+.score-text {
+  margin-left: 16rpx;
+  font-size: 24rpx;
+  color: #b4282d;
+}
+
+/* ---------- 快捷标签 ---------- */
+.tag-pool {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 12rpx 0 4rpx;
+}
+.tag-item {
+  margin: 0 16rpx 16rpx 0;
+  padding: 10rpx 24rpx;
+  font-size: 24rpx;
+  color: #666666;
+  background: #f2f3f5;
+  border-radius: 999rpx;
+  border: 2rpx solid #f2f3f5;
+}
+.tag-on {
+  color: #b4282d;
+  background: #fdeeef;
+  border-color: #b4282d;
+}
+
+/* ---------- 评价输入 ---------- */
+.ta-wrap {
+  position: relative;
+  margin-top: 12rpx;
+  padding: 20rpx;
+  background: #fafafa;
+  border-radius: 12rpx;
+}
+.review-ta {
+  width: 100%;
+  min-height: 140rpx;
+  font-size: 26rpx;
+  color: #333333;
+  line-height: 40rpx;
+}
+.ta-ph {
+  color: #b2b2b2;
+  font-size: 26rpx;
+}
+.ta-count {
+  position: absolute;
+  right: 20rpx;
+  bottom: 12rpx;
+  font-size: 20rpx;
+  color: #b2b2b2;
+}
+
+/* ---------- 晒图 ---------- */
+.img-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 20rpx;
+}
+.img-cell {
+  position: relative;
+  width: 150rpx;
+  height: 150rpx;
+  margin: 0 16rpx 16rpx 0;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+.img-thumb {
+  width: 150rpx;
+  height: 150rpx;
+  background: #f5f6f7;
+}
+.img-del {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 36rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.5);
+  border-bottom-left-radius: 12rpx;
+}
+.img-add {
+  width: 150rpx;
+  height: 150rpx;
+  border: 2rpx dashed #dddddd;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+.img-add-icon {
+  font-size: 44rpx;
+  color: #b2b2b2;
+  line-height: 1;
+}
+.img-add-text {
+  margin-top: 8rpx;
+  font-size: 20rpx;
+  color: #b2b2b2;
+}
+
+/* ---------- 底部提交栏 ---------- */
+.submit-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  background: #ffffff;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  padding: 0 24rpx;
+}
+.submit-bar .demo-tip {
+  padding: 10rpx 0 4rpx;
+}
+.submit-btn {
+  height: 84rpx;
+  line-height: 84rpx;
+  margin: 8rpx 0 16rpx;
+  text-align: center;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #d0342c, #b4282d);
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: bold;
+}
+.submit-btn.btn-disabled {
+  opacity: 0.5;
+}

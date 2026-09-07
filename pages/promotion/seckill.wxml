@@ -1,0 +1,129 @@
+<wxs src="../../utils/format.wxs" module="fmt" />
+
+<view class="page-container seckill-page">
+
+  <!-- ========== 首屏骨架屏 ========== -->
+  <block wx:if="{{loading}}">
+    <view class="sk-head sk-head-skeleton">
+      <view class="skeleton-block sk-sk-line w40"></view>
+      <view class="skeleton-block sk-sk-line w60"></view>
+    </view>
+    <skeleton type="list" rows="{{4}}" />
+  </block>
+
+  <!-- ========== 有促销数据 ========== -->
+  <block wx:elif="{{seckill || fullReduce}}">
+
+    <!-- 秒杀区块 -->
+    <block wx:if="{{seckill}}">
+
+      <!-- 1. 场次头卡（深红渐变）：标题 + 副标题 + 提醒我 + 倒计时翻牌 -->
+      <view class="sk-head">
+        <view class="sk-head-top">
+          <view class="sk-head-titles flex-1">
+            <view class="sk-title ellipsis">{{seckill.title}}</view>
+            <view class="sk-subtitle ellipsis">{{seckill.subtitle}}</view>
+          </view>
+          <view class="sk-remind" bindtap="onRemind">🔔 提醒我</view>
+        </view>
+
+        <view class="sk-countdown" wx:if="{{!ended}}">
+          <text class="sk-cd-label">距结束</text>
+          <view class="sk-cd-digits">
+            <text class="cd-block">{{cd.h1}}</text>
+            <text class="cd-block">{{cd.h2}}</text>
+            <text class="cd-colon">:</text>
+            <text class="cd-block">{{cd.m1}}</text>
+            <text class="cd-block">{{cd.m2}}</text>
+            <text class="cd-colon">:</text>
+            <text class="cd-block">{{cd.s1}}</text>
+            <text class="cd-block">{{cd.s2}}</text>
+          </view>
+        </view>
+        <view class="sk-countdown" wx:else>
+          <text class="sk-ended">本场已结束</text>
+        </view>
+      </view>
+
+      <!-- 2. 秒杀商品列表（每行一卡） -->
+      <view class="sk-goods-card" wx:for="{{seckill.goodsList}}" wx:key="goodsId">
+        <image
+          class="sk-goods-pic"
+          src="{{item.pic}}"
+          mode="aspectFill"
+          lazy-load="{{true}}"
+          data-goods-id="{{item.goodsId}}"
+          data-sold-out="{{item.soldOut}}"
+          data-index="{{index}}"
+          bindtap="onGoDetail"
+          binderror="onImgError"></image>
+
+        <view class="sk-goods-info">
+          <view
+            class="sk-goods-name ellipsis"
+            data-goods-id="{{item.goodsId}}"
+            data-sold-out="{{item.soldOut}}"
+            bindtap="onGoDetail">{{item.name}}</view>
+
+          <view class="sk-price-line">
+            <view class="price sk-price">
+              <text class="price-symbol">￥</text><text class="sk-price-num">{{fmt.priceNum(item.seckillPrice)}}</text>
+            </view>
+            <text class="price-origin">￥{{fmt.priceNum(item.originalPrice)}}</text>
+            <text class="sk-unit" wx:if="{{item.unit}}">/{{item.unit}}</text>
+          </view>
+
+          <!-- 抢购进度条（纯 CSS：红色渐变已抢宽度 + 文案；>=90% 闪烁"即将售罄"） -->
+          <view class="sk-progress-wrap">
+            <view class="sk-progress">
+              <view class="sk-progress-fill" style="width: {{item.soldPercent}}%;"></view>
+              <text class="sk-progress-text {{item.hot ? 'sk-blink' : ''}}">{{item.hot ? '即将售罄' : '已抢' + item.soldPercent + '%'}}</text>
+            </view>
+            <text class="sk-stock" wx:if="{{!item.soldOut}}">剩余 {{item.stock}} 件</text>
+          </view>
+
+          <view class="sk-buy-row">
+            <view
+              class="sk-buy-btn {{item.soldOut ? 'sk-buy-off' : ''}}"
+              data-goods-id="{{item.goodsId}}"
+              data-sold-out="{{item.soldOut}}"
+              bindtap="onGoDetail">{{item.soldOut ? '已抢光' : '立即抢购'}}</view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 秒杀空态 -->
+    <empty-state
+      wx:else
+      text="暂无进行中的秒杀场次"
+      btn-text="去凑单逛逛 →"
+      bind:action="onGoCoudan" />
+
+    <!-- 3. 满减活动卡（type=2）：阶梯胶囊横排 + 去凑单 -->
+    <view class="card fr-card" wx:if="{{fullReduce}}">
+      <view class="fr-head">
+        <text class="fr-title">{{fullReduce.title}}</text>
+        <text class="fr-sub ellipsis" wx:if="{{fullReduce.subtitle}}">{{fullReduce.subtitle}}</text>
+      </view>
+      <view class="fr-rules">
+        <view class="fr-pill" wx:for="{{fullReduce.fullReduceRules}}" wx:key="threshold">
+          满{{item.threshold}}减{{item.reduce}}
+        </view>
+      </view>
+      <view class="fr-go" bindtap="onGoCoudan">去凑单 ›</view>
+    </view>
+
+    <view class="demo-tip">演示环境，不产生真实交易</view>
+    <view class="safe-bottom"></view>
+  </block>
+
+  <!-- ========== 全部空态 ========== -->
+  <block wx:else>
+    <empty-state
+      text="暂无进行中的促销活动"
+      btn-text="重新加载"
+      bind:action="onReload" />
+    <view class="demo-tip">演示环境，不产生真实交易</view>
+  </block>
+</view>

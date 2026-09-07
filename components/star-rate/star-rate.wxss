@@ -1,0 +1,8 @@
+.star-rate {
+  display: inline-flex;
+  align-items: center;
+}
+.star {
+  margin-right: 6rpx;
+  line-height: 1;
+}

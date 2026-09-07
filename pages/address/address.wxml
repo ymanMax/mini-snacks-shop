@@ -1,40 +1,89 @@
-<scroll-view class="scroll" scroll-y="true">
+<wxs src="../../utils/format.wxs" module="fmt" />
 
-<view wx:for="{{addressList}}" wx:for-index="index">
+<view class="page-container address-page">
 
-  <view class="product-name-wrap" bindtap="selectAddress" data-index="{{index}}">
+  <!-- 选择模式顶部提示 -->
+  <view wx:if="{{selectMode}}" class="select-tip">请选择收货地址</view>
 
-    <view class="ui-list-item-info">{{item.consignee}}
-
-      <text decode="{{true}}" space="{{true}}">  </text> {{item.mobile}}
-
-    </view>
-
-    <view class="ui-list-item-address">
-
-      {{item.address}}
-
-    </view>
-
-    <view class="ui-list-item-time">
-
-      <p>{{item.transportDay}}</p>
-
-      <p class="ui-list-item-del" data-id="{{index}}" bindtap="delAddress">删除</p>
-
-    </view>
-
-    <view class="separate"></view>
-
+  <!-- 标签筛选栏（胶囊 Tab） -->
+  <view class="tab-bar">
+    <view
+      class="tab-item {{activeTag === item ? 'tab-on' : ''}}"
+      wx:for="{{tabs}}"
+      wx:key="*this"
+      data-tag="{{item}}"
+      bindtap="onTabTap">{{item}}</view>
   </view>
 
-</view>
+  <!-- 满免门槛 / 配送范围提示 -->
+  <view class="free-hint" wx:if="{{freeHint}}">🚚 {{freeHint}} · 配送范围 {{maxKm}}km 内</view>
 
-</scroll-view>
+  <!-- 首次加载骨架屏 -->
+  <skeleton wx:if="{{firstLoading}}" type="list" rows="{{4}}" />
 
-<view class="add-address" bindtap="addAddress">
+  <!-- 地址列表 -->
+  <block wx:elif="{{viewList.length > 0}}">
+    <view
+      class="card addr-card {{selectMode ? 'addr-card-pick' : ''}} {{item.outOfRange ? 'addr-card-oor' : ''}}"
+      wx:for="{{viewList}}"
+      wx:key="id"
+      data-index="{{index}}"
+      bindtap="onPick">
 
-<image class="add-img"  src="../../image/add.png"></image>
-<text>新增地址</text>
+      <!-- 超范围徽章（卡片右上角） -->
+      <text class="oor-badge" wx:if="{{item.outOfRange}}">超出配送范围</text>
 
+      <view class="addr-main">
+        <view class="radio {{item.isDefault ? 'radio-on' : ''}}"></view>
+        <view class="flex-1">
+          <view class="addr-line1">
+            <text class="addr-name">{{item.name}}</text>
+            <text class="addr-phone">{{item.phone}}</text>
+            <text class="tag" wx:if="{{item.tag}}">{{item.tag}}</text>
+            <text class="default-badge" wx:if="{{item.isDefault}}">默认</text>
+          </view>
+          <view class="addr-full ellipsis-2">{{item.province}}{{item.city}}{{item.district}} {{item.detail}}</view>
+          <!-- 距离 + 预估配送费（仅展示，真实以结算预览为准） -->
+          <view class="addr-meta">
+            <text class="meta-dist">📏 {{item.distanceKm}}km</text>
+            <text class="meta-sep">·</text>
+            <text class="meta-freight">预估配送费 ￥{{fmt.priceNum(item.estFreight)}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 操作区（选择模式下隐藏） -->
+      <view class="addr-ops" wx:if="{{!selectMode}}">
+        <text
+          wx:if="{{!item.isDefault}}"
+          class="set-default"
+          data-id="{{item.id}}"
+          catchtap="onSetDefault">设为默认</text>
+        <text wx:else class="ops-holder"></text>
+        <view class="op-right">
+          <text class="op-btn" data-id="{{item.id}}" catchtap="onEdit">✎ 编辑</text>
+          <text class="op-btn" data-id="{{item.id}}" catchtap="onDelete">🗑 删除</text>
+        </view>
+      </view>
+    </view>
+    <view class="footer-placeholder"></view>
+  </block>
+
+  <!-- 当前标签下无地址（但存在其它地址） -->
+  <empty-state
+    wx:elif="{{list.length > 0}}"
+    text="「{{activeTag}}」标签下暂无地址" />
+
+  <!-- 完全没有地址 -->
+  <empty-state
+    wx:else
+    text="还没有收货地址"
+    btn-text="新增地址"
+    bind:action="onAdd" />
+
+  <!-- 底部固定新增按钮 -->
+  <view class="bottom-bar" wx:if="{{!firstLoading}}">
+    <button class="btn-primary add-btn" bindtap="onAdd">＋ 新增收货地址</button>
+    <view class="safe-bottom"></view>
+  </view>
 </view>

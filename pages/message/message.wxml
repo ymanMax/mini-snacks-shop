@@ -1,0 +1,46 @@
+<view class="page-container message-page">
+
+  <!-- 顶部类型 Tab + 全部已读 -->
+  <view class="tab-bar">
+    <scroll-view scroll-x class="tabs-scroll" enhanced show-scrollbar="{{false}}">
+      <view class="tabs-inner">
+        <view
+          wx:for="{{tabs}}"
+          wx:key="value"
+          class="type-tab {{type === item.value ? 'type-tab-on' : ''}}"
+          data-type="{{item.value}}"
+          bindtap="onTabChange">{{item.label}}</view>
+      </view>
+    </scroll-view>
+    <view class="read-all" bindtap="onReadAll">全部已读</view>
+  </view>
+
+  <!-- 首次加载骨架屏 -->
+  <skeleton wx:if="{{firstLoading}}" type="list" rows="{{4}}" />
+
+  <!-- 消息列表 -->
+  <block wx:elif="{{list.length > 0}}">
+    <view
+      class="card msg-card {{item.isRead ? 'msg-read' : ''}}"
+      wx:for="{{list}}"
+      wx:key="id"
+      data-index="{{index}}"
+      bindtap="onTapMessage">
+      <view class="msg-icon">{{item.icon}}</view>
+      <view class="flex-1 msg-body">
+        <view class="msg-title-row">
+          <text class="msg-title ellipsis">{{item.title}}</text>
+          <view class="msg-dot" wx:if="{{!item.isRead}}"></view>
+        </view>
+        <view class="msg-meta">
+          <text class="tag tag-gray msg-type">{{item.typeText}}</text>
+          <text class="msg-time text-light fs-22">{{item.createTime}}</text>
+        </view>
+        <view class="msg-content ellipsis-2">{{item.content}}</view>
+      </view>
+    </view>
+  </block>
+
+  <!-- 空态 -->
+  <empty-state wx:else text="暂无消息" />
+</view>

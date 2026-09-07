@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "每日签到",
+  "navigationBarBackgroundColor": "#b4282d",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f5f6f7",
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "skeleton": "/components/skeleton/skeleton",
+    "empty-state": "/components/empty-state/empty-state"
+  }
+}

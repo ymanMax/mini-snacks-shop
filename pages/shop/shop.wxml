@@ -1,0 +1,168 @@
+<wxs src="../../utils/format.wxs" module="fmt" />
+
+<view class="page-container shop-page">
+
+  <!-- 首次加载骨架屏 -->
+  <skeleton wx:if="{{firstLoading}}" type="detail" />
+
+  <block wx:elif="{{shop}}">
+
+    <!-- 顶部店铺卡 -->
+    <view class="card shop-card">
+      <view class="sc-top">
+        <image
+          class="sc-logo"
+          src="{{shop.logo}}"
+          mode="aspectFill"
+          data-path="shop.logo"
+          binderror="onImgError"></image>
+        <view class="flex-1 sc-info">
+          <view class="sc-name-row">
+            <text class="sc-name ellipsis">{{shop.name}}</text>
+            <text class="open-badge">营业中</text>
+          </view>
+          <view class="sc-hours text-sub fs-22">营业时间 {{shop.businessHours}}</view>
+          <view class="sc-score-row">
+            <text class="sc-score">{{shop.score}}</text>
+            <text class="fs-20 text-sub sc-score-label">综合评分</text>
+            <view class="sc-subs">
+              <text class="sc-sub">新鲜度 <text class="text-primary">{{shop.subScores.fresh}}</text></text>
+              <text class="sc-sub">配送 <text class="text-primary">{{shop.subScores.speed}}</text></text>
+              <text class="sc-sub">包装 <text class="text-primary">{{shop.subScores.package}}</text></text>
+            </view>
+          </view>
+        </view>
+      </view>
+      <view class="sc-notice ellipsis-2" bindtap="onNoticeTap"><text class="notice-tag">公告</text>{{shop.notice}}</view>
+      <view class="sc-address text-sub fs-24" bindtap="onAddressTap">📍 {{shop.address}}</view>
+    </view>
+
+    <!-- 门店照片 -->
+    <view class="card">
+      <view class="section-title"><text class="title">门店照片</text><text class="more">点击查看大图</text></view>
+      <view class="photos-row">
+        <image
+          wx:for="{{shop.photos}}"
+          wx:key="*this"
+          class="photo-img"
+          src="{{item}}"
+          mode="aspectFill"
+          data-index="{{index}}"
+          data-path="{{'shop.photos[' + index + ']'}}"
+          bindtap="onPreview"
+          binderror="onImgError"></image>
+      </view>
+    </view>
+
+    <!-- 内容 Tab -->
+    <view class="content-tabs">
+      <view class="ct-tab {{tab === 'home' ? 'ct-tab-on' : ''}}" data-tab="home" bindtap="onTabChange">店铺主页</view>
+      <view class="ct-tab {{tab === 'reviews' ? 'ct-tab-on' : ''}}" data-tab="reviews" bindtap="onTabChange">店铺评价</view>
+      <view class="ct-tab {{tab === 'delivery' ? 'ct-tab-on' : ''}}" data-tab="delivery" bindtap="onTabChange">配送说明</view>
+    </view>
+
+    <!-- 店铺主页：招牌推荐 -->
+    <block wx:if="{{tab === 'home'}}">
+      <view class="card">
+        <view class="section-title"><text class="title">招牌推荐</text><text class="more">按销量排序 · 前 6 款</text></view>
+        <scroll-view wx:if="{{goods.length}}" scroll-x class="goods-hscroll">
+          <view class="goods-hinner">
+            <goods-card
+              wx:for="{{goods}}"
+              wx:key="id"
+              goods="{{item}}"
+              mode="mini" />
+          </view>
+        </scroll-view>
+        <empty-state wx:else text="暂无推荐商品" />
+      </view>
+    </block>
+
+    <!-- 店铺评价 -->
+    <block wx:elif="{{tab === 'reviews'}}">
+      <!-- 评分汇总条 -->
+      <view class="card summary-bar" wx:if="{{summary}}">
+        <view class="sum-left">
+          <text class="sum-score">{{shop.score}}</text>
+          <text class="fs-20 text-sub">综合评分</text>
+        </view>
+        <view class="sum-mid">
+          <view class="sum-item"><text class="sum-label">新鲜度</text><text class="sum-val">{{summary.fresh}}</text></view>
+          <view class="sum-item"><text class="sum-label">配送速度</text><text class="sum-val">{{summary.speed}}</text></view>
+          <view class="sum-item"><text class="sum-label">包装</text><text class="sum-val">{{summary.package}}</text></view>
+        </view>
+        <view class="sum-total fs-22 text-sub">共 {{summary.total}} 条评价</view>
+      </view>
+
+      <!-- 评价列表 -->
+      <view class="card review-card" wx:for="{{reviews}}" wx:key="id">
+        <view class="rv-head">
+          <image
+            class="rv-avatar"
+            src="{{item.avatar}}"
+            mode="aspectFill"
+            data-path="{{'reviews[' + index + '].avatar'}}"
+            binderror="onImgError"></image>
+          <view class="flex-1">
+            <view class="rv-name fs-26">{{item.userName}}</view>
+            <view class="rv-time text-light fs-22">{{item.createTime}}</view>
+          </view>
+        </view>
+        <view class="rv-scores">
+          <view class="rv-score-item">
+            <text class="rv-score-label">新鲜度</text>
+            <star-rate value="{{item.scores.fresh}}" readonly size="22" />
+          </view>
+          <view class="rv-score-item">
+            <text class="rv-score-label">速度</text>
+            <star-rate value="{{item.scores.speed}}" readonly size="22" />
+          </view>
+          <view class="rv-score-item">
+            <text class="rv-score-label">包装</text>
+            <star-rate value="{{item.scores.package}}" readonly size="22" />
+          </view>
+        </view>
+        <view class="rv-content">{{item.content}}</view>
+      </view>
+
+      <view class="load-more" wx:if="{{reviewLoading}}">加载中...</view>
+      <view class="load-more" wx:elif="{{reviews.length && !hasMore}}">没有更多了</view>
+      <empty-state wx:elif="{{!reviews.length}}" text="暂无店铺评价" />
+    </block>
+
+    <!-- 配送说明 -->
+    <block wx:else>
+      <view class="card">
+        <view class="section-title"><text class="title">配送费规则</text></view>
+        <view class="rule-tiles">
+          <view class="rule-tile">
+            <view class="rt-num">￥{{fmt.priceNum(shop.deliveryRule.baseFee)}}</view>
+            <view class="rt-label">起步价 · 含 {{shop.deliveryRule.baseKm}}km</view>
+          </view>
+          <view class="rule-tile">
+            <view class="rt-num">￥{{fmt.priceNum(shop.deliveryRule.perKmFee)}}</view>
+            <view class="rt-label">超出部分 · 每 km</view>
+          </view>
+          <view class="rule-tile">
+            <view class="rt-num">满{{fmt.priceNum(shop.deliveryRule.freeThreshold)}}</view>
+            <view class="rt-label">免基础配送费</view>
+          </view>
+        </view>
+        <view class="divider"></view>
+        <view class="dt-row" wx:for="{{shop.deliveryText}}" wx:key="*this">{{item}}</view>
+        <view class="member-tip">👑 会员免配送门槛更低：金卡/铂金/钻石会员享更低免配送费金额</view>
+      </view>
+    </block>
+
+    <view class="footer-placeholder"></view>
+  </block>
+
+  <!-- 底部操作条 -->
+  <view class="bottom-bar" wx:if="{{!firstLoading}}">
+    <view class="bar-inner">
+      <button class="btn-gray bar-btn" bindtap="onService">联系客服</button>
+      <button class="btn-primary bar-btn" bindtap="onGoShop">进店逛逛</button>
+    </view>
+    <view class="safe-bottom"></view>
+  </view>
+</view>

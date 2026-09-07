@@ -1,0 +1,49 @@
+<wxs src="../../utils/format.wxs" module="fmt" />
+
+<!-- 双列网格卡片 -->
+<view wx:if="{{mode === 'grid'}}" class="gc-grid" bindtap="onTapCard">
+  <image class="gc-grid-img" src="{{imgSrc}}" mode="aspectFill" lazy-load binderror="onImgError"></image>
+  <view class="gc-grid-body">
+    <view class="gc-name ellipsis-2">{{goods.name}}</view>
+    <view class="gc-tags" wx:if="{{goods.tags.length}}">
+      <text class="tag" wx:for="{{goods.tags}}" wx:for-item="t" wx:key="*this" wx:if="{{index < 2}}">{{t}}</text>
+    </view>
+    <view class="gc-price-row">
+      <view class="price">
+        <text class="price-symbol">￥</text><text class="gc-price">{{fmt.priceNum(goods.minPrice)}}</text>
+        <text class="price-origin" wx:if="{{goods.originalPrice > goods.minPrice}}">￥{{fmt.priceNum(goods.originalPrice)}}</text>
+      </view>
+      <view wx:if="{{showAdd}}" class="gc-add-btn" catchtap="onAddCart">+</view>
+    </view>
+    <view class="gc-meta">
+      <text>已售{{fmt.formatSales(goods.numberSells)}}</text>
+      <text class="gc-origin ellipsis">{{goods.origin}}</text>
+    </view>
+  </view>
+</view>
+
+<!-- 单列横向卡片 -->
+<view wx:elif="{{mode === 'row'}}" class="gc-row" bindtap="onTapCard">
+  <image class="gc-row-img" src="{{imgSrc}}" mode="aspectFill" lazy-load binderror="onImgError"></image>
+  <view class="gc-row-body flex-column flex-1">
+    <view class="gc-name ellipsis-2">{{goods.name}}</view>
+    <view class="gc-tags" wx:if="{{goods.tags.length}}">
+      <text class="tag" wx:for="{{goods.tags}}" wx:for-item="t" wx:key="*this" wx:if="{{index < 3}}">{{t}}</text>
+    </view>
+    <view class="gc-meta"><text>已售{{fmt.formatSales(goods.numberSells)}} · {{goods.unit}}</text></view>
+    <view class="gc-price-row">
+      <view class="price">
+        <text class="price-symbol">￥</text><text class="gc-price">{{fmt.priceNum(goods.minPrice)}}</text>
+        <text class="price-origin" wx:if="{{goods.originalPrice > goods.minPrice}}">￥{{fmt.priceNum(goods.originalPrice)}}</text>
+      </view>
+      <view wx:if="{{showAdd}}" class="gc-add-btn" catchtap="onAddCart">+</view>
+    </view>
+  </view>
+</view>
+
+<!-- 横滑小卡 -->
+<view wx:else class="gc-mini" bindtap="onTapCard">
+  <image class="gc-mini-img" src="{{imgSrc}}" mode="aspectFill" lazy-load binderror="onImgError"></image>
+  <view class="gc-mini-name ellipsis">{{goods.name}}</view>
+  <view class="price fs-26"><text class="price-symbol">￥</text>{{fmt.priceNum(goods.minPrice)}}</view>
+</view>

@@ -1,0 +1,107 @@
+<wxs src="../../utils/format.wxs" module="fmt" />
+
+<view class="page-container order-list-page">
+
+  <!-- 顶部状态 Tab（横向滚动） -->
+  <scroll-view
+    class="tab-scroll"
+    scroll-x="{{true}}"
+    enhanced="{{true}}"
+    show-scrollbar="{{false}}"
+    scroll-into-view="tab{{status}}"
+    scroll-with-animation="{{true}}">
+    <view
+      class="tab-item {{status === item.status ? 'tab-on' : ''}}"
+      id="tab{{item.status}}"
+      wx:for="{{tabs}}"
+      wx:key="status"
+      data-status="{{item.status}}"
+      bindtap="onTabTap">
+      <text class="tab-text">{{item.name}}</text>
+      <view class="tab-line" wx:if="{{status === item.status}}"></view>
+    </view>
+  </scroll-view>
+
+  <!-- 首屏骨架屏 -->
+  <skeleton wx:if="{{loading}}" type="order" />
+
+  <!-- 订单列表 -->
+  <block wx:elif="{{records.length}}">
+    <view
+      class="card order-card"
+      wx:for="{{records}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onGoDetail">
+
+      <!-- 头部：订单号 + 状态徽章 -->
+      <view class="oc-head">
+        <text class="oc-no ellipsis">订单号：{{item.orderNo}}</text>
+        <text class="oc-status {{item.stClass}}">{{item.statusText}}</text>
+      </view>
+
+      <!-- 中部：商品缩略图横排（最多 4 张） -->
+      <view class="oc-goods">
+        <view class="oc-thumbs">
+          <view class="oc-thumb-wrap" wx:for="{{item.thumbs}}" wx:for-item="g" wx:for-index="ti" wx:key="ti">
+            <image
+              class="oc-thumb"
+              src="{{g.pic}}"
+              mode="aspectFill"
+              lazy-load="{{true}}"
+              data-index="{{index}}"
+              data-ti="{{ti}}"
+              binderror="onImgError"></image>
+            <view class="oc-more" wx:if="{{item.moreThan4 && ti === 3}}">共{{item.goodsKinds}}件</view>
+          </view>
+        </view>
+        <view class="oc-goods-name ellipsis">{{item.firstGoods}}</view>
+      </view>
+
+      <!-- 底部：实付 + 下单时间 -->
+      <view class="oc-foot">
+        <view class="oc-amount">
+          <text class="oc-amount-label">实付</text>
+          <text class="price oc-pay">￥{{fmt.priceNum(item.payAmount)}}</text>
+        </view>
+        <text class="oc-time">{{item.createTime}}</text>
+      </view>
+
+      <!-- 操作按钮组（随状态变化） -->
+      <view class="oc-ops" wx:if="{{item.status >= 1 && item.status <= 5}}">
+        <!-- 待付款：取消订单 / 去支付 -->
+        <block wx:if="{{item.status === 1}}">
+          <text class="oc-demo">演示环境，不产生真实交易</text>
+          <view class="btn-gray btn-mini oc-btn" catchtap="onCancel" data-id="{{item.id}}">取消订单</view>
+          <view class="btn-primary btn-mini oc-btn" catchtap="onPay" data-id="{{item.id}}">去支付</view>
+        </block>
+        <!-- 待发货：申请售后 / 提醒发货 -->
+        <block wx:elif="{{item.status === 2}}">
+          <view wx:if="{{item.canAfterSale}}" class="btn-gray btn-mini oc-btn" catchtap="onAfterSale" data-id="{{item.id}}">申请售后</view>
+          <view wx:elif="{{item.afterSaleOngoing}}" class="btn-plain btn-mini oc-btn" catchtap="onAfterSaleProgress" data-ticket="{{item.afterSaleTicketId}}">售后中</view>
+          <view class="btn-gray btn-mini oc-btn" catchtap="onRemind" data-id="{{item.id}}">提醒发货</view>
+        </block>
+        <!-- 配送中 / 待收货：申请售后 / 查看配送 / 确认收货 -->
+        <block wx:elif="{{item.status === 3 || item.status === 4}}">
+          <view wx:if="{{item.canAfterSale}}" class="btn-gray btn-mini oc-btn" catchtap="onAfterSale" data-id="{{item.id}}">申请售后</view>
+          <view wx:elif="{{item.afterSaleOngoing}}" class="btn-plain btn-mini oc-btn" catchtap="onAfterSaleProgress" data-ticket="{{item.afterSaleTicketId}}">售后中</view>
+          <view class="btn-gray btn-mini oc-btn" catchtap="onGoDetail" data-id="{{item.id}}">查看配送</view>
+          <view class="btn-primary btn-mini oc-btn" catchtap="onConfirmReceive" data-id="{{item.id}}">确认收货</view>
+        </block>
+        <!-- 已完成：申请售后 / 再来一单 / 去评价（未评价） -->
+        <block wx:elif="{{item.status === 5}}">
+          <view wx:if="{{item.canAfterSale}}" class="btn-gray btn-mini oc-btn" catchtap="onAfterSale" data-id="{{item.id}}">申请售后</view>
+          <view wx:elif="{{item.afterSaleOngoing}}" class="btn-plain btn-mini oc-btn" catchtap="onAfterSaleProgress" data-ticket="{{item.afterSaleTicketId}}">售后中</view>
+          <view class="btn-gray btn-mini oc-btn" catchtap="onRebuy" data-id="{{item.id}}">再来一单</view>
+          <view class="btn-primary btn-mini oc-btn" wx:if="{{!item.isReviewed}}" catchtap="onReview" data-id="{{item.id}}">去评价</view>
+        </block>
+      </view>
+    </view>
+
+    <view class="load-more">{{noMore ? '没有更多了' : (loadingMore ? '加载中...' : '上拉加载更多')}}</view>
+    <view class="safe-bottom"></view>
+  </block>
+
+  <!-- 空态 -->
+  <empty-state wx:else text="暂无相关订单" />
+</view>

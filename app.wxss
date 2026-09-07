@@ -1,10 +1,272 @@
-/**app.wxss**/
-.container {
-  height: 100%;
+/**app.wxss — 全局样式与设计规范**/
+/* 主题色 #b4282d（红）：价格高亮 / 按钮主色 / 选中态 / 角标 */
+/* 页面背景 #f5f6f7；卡片白底圆角 16rpx；间距统一 24rpx */
+
+page {
+  --primary: #b4282d;
+  --primary-light: #fdeeef;
+  --price: #b4282d;
+  --text-main: #333333;
+  --text-sub: #838383;
+  --text-light: #b2b2b2;
+  --page-bg: #f5f6f7;
+  --card-bg: #ffffff;
+  --border: #eeeeee;
+  --gold: #f7b500;
+  --star: #ffb400;
+  background: #f5f6f7;
+  color: #333333;
+  font-size: 28rpx;
+  font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  box-sizing: border-box;
+}
+
+view, text, image, scroll-view, swiper, button, input, textarea, navigator {
+  box-sizing: border-box;
+}
+
+/* ---------- 布局工具 ---------- */
+.page-container {
+  min-height: 100vh;
+  background: #f5f6f7;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.flex { display: flex; align-items: center; }
+.flex-between { display: flex; align-items: center; justify-content: space-between; }
+.flex-column { display: flex; flex-direction: column; }
+.flex-1 { flex: 1; min-width: 0; }
+.flex-center { display: flex; align-items: center; justify-content: center; }
+.flex-wrap { flex-wrap: wrap; }
+
+/* ---------- 卡片 ---------- */
+.card {
+  background: #ffffff;
+  border-radius: 16rpx;
+  margin: 24rpx;
+  padding: 24rpx;
+  overflow: hidden;
+}
+.card-flat {
+  background: #ffffff;
+  border-radius: 16rpx;
+  padding: 24rpx;
+}
+
+/* ---------- 文本 ---------- */
+.text-primary { color: #b4282d; }
+.text-sub { color: #838383; }
+.text-light { color: #b2b2b2; }
+.text-bold { font-weight: bold; }
+.text-center { text-align: center; }
+.fs-20 { font-size: 20rpx; }
+.fs-22 { font-size: 22rpx; }
+.fs-24 { font-size: 24rpx; }
+.fs-26 { font-size: 26rpx; }
+.fs-28 { font-size: 28rpx; }
+.fs-32 { font-size: 32rpx; }
+.fs-36 { font-size: 36rpx; }
+.fs-40 { font-size: 40rpx; }
+
+/* 单行 / 两行省略 */
+.ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.ellipsis-2 {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-all;
+}
+
+/* ---------- 价格（主题色加粗突出，统一 wxs formatPrice 输出） ---------- */
+.price {
+  color: #b4282d;
+  font-weight: bold;
+}
+.price-symbol { font-size: 24rpx; }
+.price-origin {
+  color: #b2b2b2;
+  font-size: 24rpx;
+  text-decoration: line-through;
+  font-weight: normal;
+  margin-left: 8rpx;
+}
+
+/* ---------- 标签胶囊（浅色底 + 深色字） ---------- */
+.tag {
+  display: inline-block;
+  font-size: 20rpx;
+  line-height: 1;
+  padding: 8rpx 12rpx;
+  border-radius: 999rpx;
+  background: #fdeeef;
+  color: #b4282d;
+  margin-right: 8rpx;
+}
+.tag-green { background: #e8f7f0; color: #0ea47a; }
+.tag-orange { background: #fff4e5; color: #ff8800; }
+.tag-gray { background: #f2f3f5; color: #838383; }
+
+/* ---------- 按钮 ---------- */
+.btn-primary {
+  background: linear-gradient(90deg, #d0342c, #b4282d);
+  color: #ffffff;
+  border-radius: 999rpx;
+  font-size: 30rpx;
+  font-weight: bold;
+  border: none;
+  line-height: 2.6;
+}
+.btn-primary::after { border: none; }
+.btn-primary.btn-disabled { opacity: 0.5; }
+.btn-plain {
+  background: #ffffff;
+  color: #b4282d;
+  border: 2rpx solid #b4282d;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  line-height: 2.4;
+}
+.btn-plain::after { border: none; }
+.btn-gray {
+  background: #ffffff;
+  color: #666666;
+  border: 2rpx solid #dddddd;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  line-height: 2.4;
+}
+.btn-gray::after { border: none; }
+.btn-mini {
+  font-size: 24rpx;
+  padding: 0 24rpx;
+  line-height: 2.2;
+  border-radius: 999rpx;
+  margin: 0 8rpx;
+}
+
+/* ---------- 角标 ---------- */
+.badge {
+  position: absolute;
+  top: -10rpx;
+  right: -14rpx;
+  min-width: 32rpx;
+  height: 32rpx;
+  line-height: 32rpx;
+  padding: 0 8rpx;
+  border-radius: 999rpx;
+  background: #b4282d;
+  color: #ffffff;
+  font-size: 20rpx;
+  text-align: center;
+  z-index: 10;
+}
+.dot-badge {
+  position: absolute;
+  top: -4rpx;
+  right: -8rpx;
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #b4282d;
+  z-index: 10;
+}
+
+/* ---------- 分割线 ---------- */
+.divider {
+  height: 2rpx;
+  background: #eeeeee;
+  margin: 20rpx 0;
+}
+
+/* ---------- 区块标题 ---------- */
+.section-title {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  padding: 200rpx 0;
+  padding: 8rpx 0 20rpx;
+}
+.section-title .title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  position: relative;
+  padding-left: 20rpx;
+}
+.section-title .title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 8rpx;
+  height: 32rpx;
+  border-radius: 4rpx;
+  background: #b4282d;
+}
+.section-title .more { font-size: 24rpx; color: #838383; }
+
+/* ---------- 加载更多 ---------- */
+.load-more {
+  text-align: center;
+  color: #b2b2b2;
+  font-size: 24rpx;
+  padding: 24rpx 0;
+}
+
+/* ---------- 骨架屏（灰色色块呼吸动画） ---------- */
+@keyframes skeleton-breath {
+  0% { opacity: 1; }
+  50% { opacity: 0.45; }
+  100% { opacity: 1; }
+}
+.skeleton-block {
+  background: #e8e9eb;
+  border-radius: 8rpx;
+  animation: skeleton-breath 1.4s ease-in-out infinite;
+}
+
+/* ---------- 底部安全区占位 ---------- */
+.safe-bottom { height: env(safe-area-inset-bottom); }
+.footer-placeholder { height: 140rpx; }
+
+/* ---------- 通用弹层 ---------- */
+.popup-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+}
+.popup-bottom {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  background: #ffffff;
+  border-radius: 24rpx 24rpx 0 0;
+  z-index: 100;
+  padding-bottom: env(safe-area-inset-bottom);
+  animation: popup-up 0.25s ease;
+}
+@keyframes popup-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* ---------- 演示环境提示 ---------- */
+.demo-tip {
+  font-size: 20rpx;
+  color: #b2b2b2;
+  text-align: center;
+  padding: 12rpx 0;
+}
+
+/* 兼容旧页面 container */
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
-} 
+}

@@ -1,0 +1,147 @@
+<!--pages/member/center/center.wxml — 会员中心-->
+<wxs src="../../../utils/format.wxs" module="fmt" />
+<view class="page-container center-page">
+
+  <!-- 首次加载骨架屏 -->
+  <skeleton wx:if="{{firstLoading}}" type="list" rows="{{4}}" />
+
+  <block wx:else>
+    <!-- ========== 会员卡视觉（红金渐变） ========== -->
+    <view class="member-card" wx:if="{{member}}">
+      <view class="mc-top">
+        <view class="mc-level">
+          <text class="mc-level-icon">{{member.levelIcon}}</text>
+          <text class="mc-level-name">{{member.levelName}}</text>
+        </view>
+        <view class="mc-valid">有效期至 {{member.validDate}}</view>
+      </view>
+      <view class="mc-nick ellipsis">{{userInfo.nickName || '零食爱好者'}}</view>
+      <view class="mc-nums">
+        <view class="mc-num-item">
+          <view class="mc-num">{{member.growthValue}}</view>
+          <view class="mc-num-label">成长值</view>
+        </view>
+        <view class="mc-num-item">
+          <view class="mc-num">{{member.points}}</view>
+          <view class="mc-num-label">积分</view>
+        </view>
+        <view class="mc-num-item">
+          <view class="mc-num">{{member.discountText}}</view>
+          <view class="mc-num-label">专属折扣</view>
+        </view>
+        <view class="mc-num-item">
+          <view class="mc-num">满{{member.freeShipThreshold}}免</view>
+          <view class="mc-num-label">配送费</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 成长值进度 ========== -->
+    <view class="card" wx:if="{{member}}">
+      <view class="section-title">
+        <view class="title">成长值进度</view>
+        <view class="more">{{member.growthValue}} / {{isMaxLevel ? 'MAX' : member.nextLevelGrowth}}</view>
+      </view>
+      <view class="progress-track">
+        <view class="progress-inner" style="width: {{member.progress}}%"></view>
+        <view class="progress-dot" style="left: {{member.progress}}%"></view>
+      </view>
+      <view class="progress-labels">
+        <text>{{member.levelIcon}} {{member.levelName}}</text>
+        <text wx:if="{{!isMaxLevel}}">💎 下一等级</text>
+        <text wx:else>👑 钻石会员</text>
+      </view>
+      <view class="upgrade-text {{isMaxLevel ? 'upgrade-max' : ''}}">
+        <text wx:if="{{isMaxLevel}}">🎉 已是最高等级</text>
+        <text wx:else>{{upgradeText}}</text>
+      </view>
+    </view>
+
+    <!-- ========== 五级成长体系 ========== -->
+    <view class="card">
+      <view class="section-title">
+        <view class="title">五级成长体系</view>
+        <view class="more">购物/签到/评价均可获成长值</view>
+      </view>
+      <view
+        class="level-row {{item.level === currentLevel ? 'level-row-current' : ''}}"
+        wx:for="{{levels}}"
+        wx:key="level">
+        <view wx:if="{{item.level === currentLevel}}" class="level-corner">当前</view>
+        <view class="level-icon">{{item.icon}}</view>
+        <view class="flex-1">
+          <view class="level-name {{item.level === currentLevel ? 'text-primary text-bold' : ''}}">{{item.levelName}}</view>
+          <view class="level-growth text-sub fs-22">需成长值 {{item.growth}}</view>
+        </view>
+        <view class="level-discount">{{item.discountText}}</view>
+      </view>
+    </view>
+
+    <!-- ========== 特权对照表 ========== -->
+    <view class="card">
+      <view class="section-title">
+        <view class="title">会员特权</view>
+        <view class="more">等级越高特权越多</view>
+      </view>
+      <view class="priv-group" wx:for="{{levels}}" wx:key="level" wx:for-item="lv">
+        <view class="priv-head">
+          <text class="priv-head-icon">{{lv.icon}}</text>
+          <text class="priv-head-name {{lv.level === currentLevel ? 'text-primary' : ''}}">{{lv.levelName}}</text>
+          <text wx:if="{{lv.level === currentLevel}}" class="tag priv-head-tag">当前等级</text>
+        </view>
+        <view class="priv-tags">
+          <text class="tag" wx:for="{{lv.privileges}}" wx:key="*this" wx:for-item="p">{{p}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 生日福利 ========== -->
+    <view class="card birthday-card" wx:if="{{member && member.birthday}}">
+      <view class="section-title">
+        <view class="title">🎂 生日福利</view>
+      </view>
+      <block wx:if="{{member.birthday.isBirthdayMonth}}">
+        <view class="birthday-gifts" wx:if="{{member.birthday.gifts.length}}">
+          <text class="tag tag-orange" wx:for="{{member.birthday.gifts}}" wx:key="*this">{{item}}</text>
+        </view>
+        <view class="birthday-body">
+          <text class="fs-26">本月是您的生日月，专属礼包等您领取～</text>
+          <button
+            wx:if="{{!member.birthday.received}}"
+            class="btn-primary birthday-btn"
+            bindtap="onReceiveBirthday">领取生日礼包</button>
+          <view wx:else class="birthday-received">✅ 已领取</view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="birthday-body">
+          <view class="fs-26">您的生日：{{userInfo.birthday || '-'}}（生日月当月可领取专属礼包）</view>
+          <view class="fs-22 text-sub birthday-rule">规则：生日月 1 日起可领取一次生日礼包，包含对应等级的生日优惠券与积分赠送；礼包内容随会员等级升级，领取后可在「我的优惠券」与「积分明细」中查看。</view>
+        </view>
+      </block>
+    </view>
+
+    <!-- ========== 底部入口 ========== -->
+    <view class="bottom-entries">
+      <view class="bottom-entry" bindtap="onGoCheckin">
+        <view class="be-icon">📅</view>
+        <view class="be-text">
+          <view class="be-title">去签到赚成长值</view>
+          <view class="be-sub fs-22 text-sub">每日签到 +2 成长值 +积分</view>
+        </view>
+        <text class="be-arrow">›</text>
+      </view>
+      <view class="bottom-entry" bindtap="onGoPoints">
+        <view class="be-icon">🪙</view>
+        <view class="be-text">
+          <view class="be-title">积分中心</view>
+          <view class="be-sub fs-22 text-sub">积分兑好礼，好物免费换</view>
+        </view>
+        <text class="be-arrow">›</text>
+      </view>
+    </view>
+
+    <view class="demo-tip">演示环境 · 数据均为 Mock，不产生真实交易</view>
+    <view class="safe-bottom"></view>
+  </block>
+</view>

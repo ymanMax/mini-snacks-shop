@@ -1,0 +1,49 @@
+<!-- 商品双列骨架 -->
+<view wx:if="{{type === 'goods'}}" class="sk-goods">
+  <view class="sk-goods-item" wx:for="{{blocks}}" wx:key="*this">
+    <view class="skeleton-block sk-img"></view>
+    <view class="skeleton-block sk-line w80"></view>
+    <view class="skeleton-block sk-line w50"></view>
+    <view class="skeleton-block sk-line w30"></view>
+  </view>
+</view>
+
+<!-- 订单卡骨架 -->
+<view wx:elif="{{type === 'order'}}" class="sk-order">
+  <view class="sk-order-card" wx:for="{{[0,1,2]}}" wx:key="*this">
+    <view class="skeleton-block sk-line w30"></view>
+    <view class="sk-order-row">
+      <view class="skeleton-block sk-thumb"></view>
+      <view class="flex-1">
+        <view class="skeleton-block sk-line w80"></view>
+        <view class="skeleton-block sk-line w50"></view>
+      </view>
+    </view>
+    <view class="skeleton-block sk-line w40"></view>
+  </view>
+</view>
+
+<!-- 详情页骨架 -->
+<view wx:elif="{{type === 'detail'}}" class="sk-detail">
+  <view class="skeleton-block sk-banner"></view>
+  <view class="sk-detail-body">
+    <view class="skeleton-block sk-line w50 h40"></view>
+    <view class="skeleton-block sk-line w80"></view>
+    <view class="skeleton-block sk-line w60"></view>
+    <view class="skeleton-block sk-block-mid"></view>
+    <view class="skeleton-block sk-line w80"></view>
+    <view class="skeleton-block sk-line w40"></view>
+  </view>
+</view>
+
+<!-- 默认：单列行骨架 -->
+<view wx:else class="sk-list">
+  <view class="sk-list-row" wx:for="{{blocks}}" wx:key="*this" wx:if="{{index < rows}}">
+    <view class="skeleton-block sk-thumb"></view>
+    <view class="flex-1">
+      <view class="skeleton-block sk-line w80"></view>
+      <view class="skeleton-block sk-line w50"></view>
+      <view class="skeleton-block sk-line w30"></view>
+    </view>
+  </view>
+</view>

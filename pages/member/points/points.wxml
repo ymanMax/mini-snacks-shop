@@ -1,0 +1,86 @@
+<!--pages/member/points/points.wxml — 积分中心-->
+<wxs src="../../../utils/format.wxs" module="fmt" />
+<view class="page-container points-page">
+
+  <!-- ========== 顶部积分卡（红金渐变） ========== -->
+  <view class="points-hero">
+    <view class="ph-left">
+      <view class="ph-label">当前积分</view>
+      <view class="ph-points">{{totalPoints}}</view>
+      <view class="ph-valid">12个月内有效</view>
+    </view>
+    <view class="ph-sign-btn" bindtap="onGoCheckin">签到赚积分</view>
+  </view>
+
+  <!-- ========== Tab 切换 ========== -->
+  <view class="tabs">
+    <view class="tab-item {{activeTab === 'detail' ? 'tab-active' : ''}}" data-tab="detail" bindtap="onSwitchTab">积分明细</view>
+    <view class="tab-item {{activeTab === 'exchange' ? 'tab-active' : ''}}" data-tab="exchange" bindtap="onSwitchTab">兑换专区</view>
+  </view>
+
+  <!-- 首次加载骨架屏 -->
+  <block wx:if="{{firstLoading}}">
+    <skeleton wx:if="{{activeTab === 'detail'}}" type="list" rows="{{5}}" />
+    <skeleton wx:else type="goods" />
+  </block>
+
+  <block wx:else>
+    <!-- ========== 积分明细（分页） ========== -->
+    <block wx:if="{{activeTab === 'detail'}}">
+      <view class="card record-card" wx:if="{{records.length}}">
+        <view class="record-item" wx:for="{{records}}" wx:key="id">
+          <view class="record-icon">{{item.icon}}</view>
+          <view class="flex-1 record-mid">
+            <view class="record-type">{{typeText[item.type] || '积分变动'}}</view>
+            <view class="record-desc ellipsis">{{item.desc}}</view>
+            <view class="record-time fs-22 text-light">{{item.createTime}}</view>
+          </view>
+          <view class="record-points {{item.positive ? 'points-plus' : 'points-minus'}}">{{item.pointsText}}</view>
+        </view>
+      </view>
+
+      <empty-state wx:elif="{{!listLoading}}" text="暂无积分记录，去签到赚积分吧" btn-text="去签到 →" bind:action="onGoCheckin" />
+
+      <view wx:if="{{records.length}}" class="load-more">
+        <text wx:if="{{listLoading}}">加载中...</text>
+        <text wx:elif="{{!hasMore}}">没有更多了</text>
+      </view>
+    </block>
+
+    <!-- ========== 兑换专区 ========== -->
+    <block wx:else>
+      <view class="exchange-grid">
+        <view class="exchange-card" wx:for="{{exchangeGoods}}" wx:key="id">
+          <image class="ex-img" src="{{item.img}}" mode="aspectFill" data-id="{{item.id}}" binderror="onImgError"></image>
+          <view class="ex-body">
+            <view class="ex-name ellipsis-2">{{item.name}}</view>
+            <view class="ex-desc ellipsis fs-22 text-light">{{item.desc}}</view>
+            <view class="ex-row">
+              <text class="ex-points">{{item.points}} 积分</text>
+              <text class="ex-stock fs-22 text-light">库存 {{item.stock}}</text>
+            </view>
+            <button
+              class="btn-primary btn-mini ex-btn {{(!item.enough || item.stock <= 0) ? 'btn-disabled' : ''}}"
+              data-id="{{item.id}}"
+              bindtap="onExchange">
+              {{item.stock <= 0 ? '已兑完' : (item.enough ? '兑换' : '积分不足')}}
+            </button>
+          </view>
+        </view>
+      </view>
+
+      <!-- 积分规则说明 -->
+      <view class="card" wx:if="{{exchangeRules.length}}">
+        <view class="section-title">
+          <view class="title">积分规则</view>
+        </view>
+        <view class="rule-item" wx:for="{{exchangeRules}}" wx:key="*this">
+          <text class="rule-text">{{item}}</text>
+        </view>
+      </view>
+    </block>
+
+    <view class="demo-tip">演示环境 · 数据均为 Mock，不产生真实交易</view>
+    <view class="safe-bottom"></view>
+  </block>
+</view>

@@ -1,0 +1,169 @@
+/* pages/coupon/coupon.wxss — 优惠券 */
+
+/* ---------- 顶部 Tab ---------- */
+.top-tabs {
+  display: flex;
+  background: #ffffff;
+}
+.top-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 30rpx;
+  color: #838383;
+  padding: 24rpx 0;
+  position: relative;
+}
+.top-tab-on {
+  color: #b4282d;
+  font-weight: bold;
+}
+.top-tab-on::after {
+  content: '';
+  position: absolute;
+  bottom: 8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56rpx;
+  height: 6rpx;
+  border-radius: 4rpx;
+  background: #b4282d;
+}
+
+/* ---------- 子 Tab（未使用/已使用/已过期） ---------- */
+.sub-tabs {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx 0;
+}
+.sub-tab {
+  padding: 10rpx 32rpx;
+  border-radius: 999rpx;
+  background: #ffffff;
+  color: #666666;
+  font-size: 26rpx;
+  margin-right: 20rpx;
+  border: 2rpx solid transparent;
+}
+.sub-tab-on {
+  background: #fdeeef;
+  color: #b4282d;
+  border-color: #b4282d;
+  font-weight: bold;
+}
+
+/* ---------- 优惠券卡 ---------- */
+.coupon-card {
+  display: flex;
+  padding: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 左侧红色金额区 */
+.cc-left {
+  width: 220rpx;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #d0342c, #b4282d);
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 36rpx 12rpx;
+  border-right: 2rpx dashed rgba(255, 255, 255, 0.55);
+}
+.cc-amount {
+  display: flex;
+  align-items: baseline;
+}
+.cc-sym {
+  font-size: 28rpx;
+  font-weight: bold;
+}
+.cc-big {
+  font-size: 68rpx;
+  font-weight: bold;
+  line-height: 1;
+}
+.cc-unit {
+  font-size: 28rpx;
+  font-weight: bold;
+  margin-left: 6rpx;
+}
+.cc-threshold {
+  font-size: 22rpx;
+  margin-top: 14rpx;
+  opacity: 0.92;
+}
+
+/* 右侧信息区 */
+.cc-right {
+  flex: 1;
+  min-width: 0;
+  padding: 24rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.cc-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+}
+.cc-scope {
+  font-size: 22rpx;
+  color: #838383;
+  margin-top: 8rpx;
+}
+.cc-expire {
+  font-size: 22rpx;
+  color: #b2b2b2;
+  margin-top: 8rpx;
+}
+.cc-btn-row {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12rpx;
+}
+.cc-btn {
+  font-size: 24rpx;
+  padding: 8rpx 28rpx;
+  border-radius: 999rpx;
+  line-height: 1.6;
+}
+.cc-btn-on {
+  background: linear-gradient(90deg, #d0342c, #b4282d);
+  color: #ffffff;
+  font-weight: bold;
+}
+.cc-btn-disabled {
+  background: #f2f3f5;
+  color: #b2b2b2;
+}
+.cc-source {
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+
+/* 已使用/已过期：整卡置灰 + 印章 */
+.coupon-gray .cc-left {
+  background: #c9cacf;
+}
+.coupon-gray .cc-name,
+.coupon-gray .cc-scope,
+.coupon-gray .cc-expire {
+  color: #b2b2b2;
+}
+.cc-stamp {
+  position: absolute;
+  right: 20rpx;
+  top: 16rpx;
+  transform: rotate(-12deg);
+  border: 4rpx solid #b2b2b2;
+  border-radius: 10rpx;
+  color: #b2b2b2;
+  font-size: 22rpx;
+  padding: 2rpx 12rpx;
+  opacity: 0.75;
+  line-height: 1.5;
+}

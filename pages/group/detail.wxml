@@ -1,0 +1,225 @@
+<wxs src="../../utils/format.wxs" module="fmt" />
+
+<view class="page-container group-detail-page">
+
+  <!-- 首屏骨架屏 -->
+  <skeleton wx:if="{{loading}}" type="detail" />
+
+  <!-- 团不存在空态 -->
+  <empty-state
+    wx:elif="{{notFound || !group}}"
+    text="拼团不存在或已结束"
+    btn-text="去拼团专区"
+    bind:action="onGoGroupList" />
+
+  <block wx:else>
+
+    <!-- ========== 1. 商品头卡 ========== -->
+    <view class="card goods-head">
+      <image
+        class="gh-img"
+        src="{{group.pic}}"
+        mode="aspectFill"
+        data-path="group.pic"
+        binderror="onImgError"></image>
+      <view class="gh-name ellipsis-2">{{group.name}}</view>
+      <view class="gh-price-row">
+        <text class="gh-price"><text class="gh-symbol">￥</text>{{fmt.priceNum(group.groupPrice)}}</text>
+        <text class="price-origin">￥{{fmt.priceNum(group.originalPrice)}}</text>
+      </view>
+      <view class="gh-tags">
+        <text class="tag gh-save">省 {{fmt.priceNum(group.save)}} 元</text>
+        <text class="tag gh-team">{{group.requiredCount}} 人团</text>
+        <text class="tag gh-status st-{{group.status}}">{{group.statusText}}</text>
+      </view>
+    </view>
+
+    <!-- ========== 2. 拼团进度卡 ========== -->
+    <view class="card progress-card">
+      <view class="member-slots">
+        <view class="member" wx:for="{{group.slots}}" wx:for-item="m" wx:for-index="si" wx:key="key">
+          <block wx:if="{{!m.empty}}">
+            <view class="member-avatar-wrap">
+              <image
+                class="member-avatar"
+                src="{{m.avatar}}"
+                mode="aspectFill"
+                data-path="{{'group.slots[' + si + '].avatar'}}"
+                binderror="onImgError"></image>
+              <text class="crown" wx:if="{{m.isLeader}}">👑</text>
+            </view>
+            <view class="member-name ellipsis">{{m.name}}</view>
+          </block>
+          <block wx:else>
+            <view class="member-empty">?</view>
+            <view class="member-name text-light">虚位以待</view>
+          </block>
+        </view>
+      </view>
+
+      <view class="progress-text {{group.status === 2 ? 'text-success' : ''}}">{{group.progressText}}</view>
+
+      <!-- 倒计时（黑底白字数字块，每秒刷新） -->
+      <view class="cd-row" wx:if="{{group.status === 1}}">
+        <block wx:if="{{!group.expired}}">
+          <text class="cd-label">仅剩</text>
+          <text class="cd-block">{{group.cd.h}}</text>
+          <text class="cd-colon">:</text>
+          <text class="cd-block">{{group.cd.m}}</text>
+          <text class="cd-colon">:</text>
+          <text class="cd-block">{{group.cd.s}}</text>
+        </block>
+        <text wx:else class="cd-ended">已结束</text>
+      </view>
+    </view>
+
+    <!-- ========== 3. 规格选择区（内联卡片） ========== -->
+    <view class="card spec-card" wx:if="{{goods}}">
+      <view class="card-title">选择规格</view>
+      <block wx:for="{{goods.specs}}" wx:for-item="dim" wx:for-index="di" wx:key="name">
+        <view class="spec-dim-name">{{dim.name}}</view>
+        <view class="spec-values">
+          <view
+            wx:for="{{dim.values}}"
+            wx:for-item="val"
+            wx:for-index="vi"
+            wx:key="label"
+            class="spec-value {{specSel[di] === vi ? 'spec-value-on' : ''}} {{val.stock !== undefined && val.stock <= 0 ? 'spec-value-off' : ''}}"
+            data-di="{{di}}"
+            data-vi="{{vi}}"
+            bindtap="onSelectSpec">{{val.label}}</view>
+        </view>
+      </block>
+
+      <view class="spec-price-row">
+        <text class="text-sub fs-24">拼团价</text>
+        <text class="price fs-36"><text class="price-symbol">￥</text>{{fmt.priceNum(group.groupPrice)}}</text>
+      </view>
+
+      <view class="spec-count-row">
+        <text class="fs-26">数量</text>
+        <view class="stepper">
+          <view class="step-btn {{count <= 1 ? 'step-disabled' : ''}}" bindtap="onMinus">-</view>
+          <view class="step-num">{{count}}</view>
+          <view class="step-btn {{count >= curStock ? 'step-disabled' : ''}}" bindtap="onPlus">+</view>
+        </view>
+        <text class="text-light fs-22">库存 {{curStock}} 件</text>
+      </view>
+      <view class="spec-selected fs-22 text-sub ellipsis">已选：{{specText || '请选择规格'}}</view>
+    </view>
+
+    <!-- ========== 4. 拼团玩法说明 + 流程示意 ========== -->
+    <view class="card rules-card">
+      <view class="card-title">拼团玩法</view>
+      <view class="rule-line" wx:for="{{group.rules}}" wx:for-item="r" wx:key="*this">· {{r}}</view>
+      <view class="flow">
+        <view class="flow-step">
+          <view class="flow-dot">1</view>
+          <view class="flow-txt">发起拼团</view>
+        </view>
+        <view class="flow-arrow">→</view>
+        <view class="flow-step">
+          <view class="flow-dot">2</view>
+          <view class="flow-txt">邀请好友</view>
+        </view>
+        <view class="flow-arrow">→</view>
+        <view class="flow-step">
+          <view class="flow-dot">3</view>
+          <view class="flow-txt">成团发货</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 5. 邀请好友得券横幅 + 分享得积分说明 ========== -->
+    <view class="card invite-card">
+      <view class="invite-row">
+        <view class="flex-1">
+          <view class="invite-title">🎁 邀请好友得券</view>
+          <view class="invite-desc fs-24 text-sub">邀请新用户参团，双方各得满39减8优惠券</view>
+        </view>
+        <button class="btn-primary btn-mini invite-btn" bindtap="onInvite">模拟邀请成功</button>
+      </view>
+      <view class="divider"></view>
+      <view class="share-note fs-22 text-light">🔗 分享得积分：每次分享拼团 +5 积分，每日上限 3 次</view>
+    </view>
+
+    <!-- ========== 6. 该商品其他在拼的团 ========== -->
+    <view class="card other-card">
+      <view class="card-title">该商品其他在拼的团</view>
+      <block wx:if="{{otherGroups.length}}">
+        <view
+          class="other-item"
+          wx:for="{{otherGroups}}"
+          wx:for-item="og"
+          wx:key="id"
+          data-id="{{og.id}}"
+          bindtap="onTapOther">
+          <image
+            class="other-img"
+            src="{{og.pic}}"
+            mode="aspectFill"
+            data-path="{{'otherGroups[' + index + '].pic'}}"
+            binderror="onImgError"></image>
+          <view class="flex-1 other-info">
+            <view class="other-lack fs-24">还差 <text class="text-primary text-bold">{{og.lack}}</text> 人成团</view>
+            <view class="other-meta">
+              <text class="price fs-28">￥{{fmt.priceNum(og.groupPrice)}}</text>
+              <text class="text-light fs-22">⏰ {{og.countdownText}}</text>
+            </view>
+          </view>
+          <view class="btn-primary btn-mini other-go">去参团</view>
+        </view>
+      </block>
+      <block wx:else>
+        <view class="other-empty text-sub fs-24">暂无其他团，自己开一个吧</view>
+        <button class="btn-plain other-create-btn" bindtap="onCreate">我要开团</button>
+      </block>
+    </view>
+
+    <!-- ========== 7. 商品详情入口 ========== -->
+    <view class="card goods-entry" bindtap="onGoGoods" hover-class="entry-hover">
+      <text class="fs-28">查看商品详情</text>
+      <text class="text-light fs-28"> ></text>
+    </view>
+
+    <view class="demo-tip">演示环境，不产生真实交易</view>
+    <view class="footer-placeholder"></view>
+
+    <!-- ========== 底部固定操作栏（按状态） ========== -->
+    <view class="footer-bar">
+      <!-- status=1 拼团中 -->
+      <block wx:if="{{group.status === 1}}">
+        <block wx:if="{{!isMember}}">
+          <button wx:if="{{group.expired}}" class="btn-primary footer-btn btn-disabled" disabled>拼团已结束</button>
+          <button wx:else class="btn-primary footer-btn" bindtap="onJoin">立即参团 ￥{{fmt.priceNum(group.groupPrice)}}</button>
+        </block>
+        <block wx:else>
+          <button class="btn-gray footer-btn-sm" bindtap="onViewMyOrder">我的拼团订单</button>
+          <button class="btn-primary footer-btn-sm" open-type="share">邀请好友参团</button>
+        </block>
+      </block>
+      <!-- status=2 已成团 -->
+      <block wx:elif="{{group.status === 2}}">
+        <view class="footer-badge badge-green">已成团</view>
+        <button class="btn-primary footer-btn" bindtap="onViewMyOrder">查看订单</button>
+      </block>
+      <!-- status=3 已退款 -->
+      <block wx:else>
+        <view class="footer-badge badge-gray">已退款</view>
+        <button class="btn-primary footer-btn" bindtap="onCreate">再开一团</button>
+      </block>
+    </view>
+  </block>
+
+  <!-- ========== 参团成功弹层（去支付 / 邀请好友） ========== -->
+  <view wx:if="{{showJoinSuccess}}" class="popup-mask" bindtap="onCloseSuccess" catchtouchmove="noop"></view>
+  <view wx:if="{{showJoinSuccess}}" class="popup-bottom join-success" catchtouchmove="noop">
+    <view class="js-emoji">🎉</view>
+    <view class="js-title">参团成功</view>
+    <view class="js-msg">{{joinMsg}}</view>
+    <view class="js-tip text-light fs-22">演示环境，不产生真实交易</view>
+    <button class="btn-primary js-btn" bindtap="onGoPayOrder">去支付</button>
+    <button class="btn-plain js-btn" open-type="share">邀请好友参团</button>
+    <view class="js-later" bindtap="onCloseSuccess">稍后再说</view>
+  </view>
+</view>

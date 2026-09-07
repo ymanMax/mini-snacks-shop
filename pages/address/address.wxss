@@ -1,100 +1,206 @@
-page {
+/* pages/address/address.wxss — 收货地址列表 */
 
-  display: flex;
-
-  flex-direction: column;
-
-  height: 100%;
-
-}
-
-.product-name-wrap {
-
-  margin: 0px 10px;
-
-  font-size: 14px;
-
-  color: #404040;
-
-  height: 120rpx;
-
-}
-
-.ui-list-item-info {
-
-  margin: 5px 0px;
-
-}
-
-.ui-list-item-address {
-
-  color: #585c64;
-
-}
-
-.ui-list-item-time {
-
-  margin: 5px 0px;
-
-}
-
-.ui-list-item-del {
-
-  position: absolute;
-
-  right: 10px;
-
-  color: #585c64;
-
-}
-
-/* 分割线 */
-
-.separate {
-
-  margin: 5px 0px;
-
-  height: 2rpx;
-
-  background-color: #f2f2f2;
-
-}
-
-.add-address {
-
-  margin: 0 auto;
-
-  margin-top: 30px;
-
-  width: 150px;
-
-  height: 35px;
-
-  border: 1px #000 solid;
-
-  line-height: 35px;
-
+.select-tip {
+  background: #fdeeef;
+  color: #b4282d;
+  font-size: 26rpx;
   text-align: center;
-
-  color: #000;
-
-  border-radius: 5rpx;
-
-  display: block;
-
+  padding: 16rpx 0;
 }
 
-.add-img {
-  padding-top: 10rpx;
-  margin-right: 15rpx;
-
-  width: 15px;
-
-  height: 15px;
-
+/* ---------- 标签筛选栏（胶囊 Tab，吸顶） ---------- */
+.tab-bar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  padding: 20rpx 24rpx;
+  background: #f5f6f7;
+}
+.tab-item {
+  padding: 12rpx 34rpx;
+  margin-right: 20rpx;
+  border-radius: 999rpx;
+  background: #ffffff;
+  color: #666666;
+  font-size: 26rpx;
+  border: 2rpx solid #eeeeee;
+}
+.tab-on {
+  background: #b4282d;
+  color: #ffffff;
+  border-color: #b4282d;
+  font-weight: bold;
 }
 
-.add-address text {
+/* ---------- 满免 / 配送范围提示 ---------- */
+.free-hint {
+  margin: 0 24rpx 8rpx;
+  padding: 12rpx 20rpx;
+  font-size: 22rpx;
+  color: #838383;
+  background: #ffffff;
+  border-radius: 12rpx;
+}
+
+/* ---------- 地址卡 ---------- */
+.addr-card {
   position: relative;
-  top: -5rpx;
+  padding-bottom: 8rpx;
+}
+.addr-card-pick:active {
+  background: #fdf6f6;
+}
+/* 超范围卡片：整体降透明度 */
+.addr-card-oor {
+  opacity: 0.6;
+}
+/* 右上角灰色徽章 */
+.oor-badge {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  padding: 6rpx 14rpx;
+  border-radius: 999rpx;
+  background: #f2f3f5;
+  color: #838383;
+  font-size: 20rpx;
+  line-height: 1.4;
+  z-index: 2;
+}
+/* 有徽章时首行右侧留白，避免与姓名/标签重叠 */
+.addr-card-oor .addr-line1 {
+  padding-right: 160rpx;
+}
+.addr-main {
+  display: flex;
+  align-items: flex-start;
+}
+
+
+/* 左侧单选圆框（isDefault 主题色实心 + 白勾） */
+.radio {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 3rpx solid #cccccc;
+  margin-right: 20rpx;
+  margin-top: 8rpx;
+  flex-shrink: 0;
+  position: relative;
+  background: #ffffff;
+}
+.radio-on {
+  border-color: #b4282d;
+  background: #b4282d;
+}
+.radio-on::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  width: 16rpx;
+  height: 8rpx;
+  border-left: 4rpx solid #ffffff;
+  border-bottom: 4rpx solid #ffffff;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
+
+/* 姓名 + 电话 + 标签 + 默认徽章 */
+.addr-line1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.addr-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-right: 16rpx;
+}
+.addr-phone {
+  font-size: 26rpx;
+  color: #838383;
+  margin-right: 16rpx;
+}
+.default-badge {
+  background: #b4282d;
+  color: #ffffff;
+  font-size: 20rpx;
+  line-height: 1;
+  padding: 8rpx 12rpx;
+  border-radius: 8rpx;
+}
+
+/* 完整地址（两行省略） */
+.addr-full {
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.5;
+  margin-top: 12rpx;
+}
+
+/* 距离 + 预估配送费小字 */
+.addr-meta {
+  display: flex;
+  align-items: center;
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #838383;
+}
+.meta-dist {
+  color: #b4282d;
+}
+.meta-sep {
+  margin: 0 12rpx;
+  color: #dddddd;
+}
+.meta-freight {
+  color: #838383;
+}
+
+
+/* ---------- 操作区 ---------- */
+.addr-ops {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 2rpx solid #f5f6f7;
+  margin-top: 20rpx;
+  padding: 12rpx 0 8rpx;
+  min-height: 72rpx;
+}
+.set-default {
+  color: #b4282d;
+  font-size: 26rpx;
+  padding: 8rpx 16rpx 8rpx 0;
+}
+.ops-holder {
+  flex: 1;
+}
+.op-right {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+.op-btn {
+  font-size: 26rpx;
+  color: #838383;
+  padding: 8rpx 20rpx;
+}
+
+/* ---------- 底部固定新增按钮 ---------- */
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
+  z-index: 10;
+}
+.add-btn {
+  width: 100%;
 }

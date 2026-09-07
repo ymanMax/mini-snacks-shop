@@ -1,0 +1,144 @@
+<wxs src="../../utils/format.wxs" module="fmt" />
+
+<view class="page-container aftersale-page">
+
+  <!-- 骨架屏 -->
+  <skeleton wx:if="{{loading}}" type="detail" />
+
+  <block wx:elif="{{order}}">
+
+    <!-- 1. 售后商品卡（订单商品 + 实付） -->
+    <view class="card">
+      <view class="card-title">
+        售后商品
+        <text class="card-title-sub">订单号 {{order.orderNo}}</text>
+      </view>
+      <view class="goods-row" wx:for="{{order.items}}" wx:key="index">
+        <image
+          class="goods-thumb"
+          src="{{item.pic}}"
+          mode="aspectFill"
+          lazy-load="{{true}}"
+          data-index="{{index}}"
+          binderror="onImgError"></image>
+        <view class="flex-1">
+          <view class="goods-name ellipsis-2">{{item.name}}</view>
+          <view class="goods-spec ellipsis" wx:if="{{item.specText}}">{{item.specText}}</view>
+        </view>
+        <view class="goods-right">
+          <view class="price"><text class="price-symbol">￥</text>{{fmt.priceNum(item.price)}}</view>
+          <view class="goods-count">×{{item.count}}</view>
+        </view>
+      </view>
+      <view class="divider"></view>
+      <view class="pay-row">
+        <text class="pay-label">
+          订单实付<text class="pay-sub">（共 {{goodsCount}} 件）</text>
+          <text class="tag" wx:if="{{order.statusText}}">{{order.statusText}}</text>
+        </text>
+        <text class="price pay-amount">￥{{fmt.priceNum(order.payAmount)}}</text>
+      </view>
+    </view>
+
+    <!-- 2. 待付款订单限制提示 -->
+    <view class="pending-tip" wx:if="{{pendingOrder}}">
+      <text class="pending-icon">⚠️</text>
+      <text class="flex-1">待付款订单请直接取消订单，无需申请售后</text>
+      <text class="pending-go" bindtap="onGoOrder">去取消订单</text>
+    </view>
+
+    <!-- 3. 售后类型三选一 -->
+    <view class="card">
+      <view class="card-title">售后类型<text class="required">*</text></view>
+      <view class="type-list">
+        <view
+          class="type-item {{type === item.value ? 'type-on' : ''}}"
+          wx:for="{{types}}"
+          wx:key="value"
+          data-type="{{item.value}}"
+          bindtap="onTypeTap">
+          <view class="type-icon">{{item.icon}}</view>
+          <view class="type-body">
+            <view class="type-name">{{item.name}}</view>
+            <view class="type-desc">{{item.desc}}</view>
+          </view>
+          <view class="type-check" wx:if="{{type === item.value}}">✓</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 4. 原因 / 描述 / 凭证 -->
+    <view class="card">
+      <view class="form-row">
+        <text class="form-label">售后原因<text class="required">*</text></text>
+        <picker
+          class="flex-1"
+          mode="selector"
+          range="{{reasonOptions}}"
+          value="{{reasonIndex}}"
+          disabled="{{!type}}"
+          bindchange="onReasonChange">
+          <view class="picker-value">
+            <text class="{{reason ? '' : 'picker-ph'}}">{{reason || (type ? reasonPlaceholder : '请先选择售后类型')}}</text>
+            <text class="picker-arrow">›</text>
+          </view>
+        </picker>
+      </view>
+
+      <view class="divider"></view>
+
+      <view class="form-label form-label-block">问题描述<text class="form-tip">选填，详细描述有助于快速审核</text></view>
+      <view class="ta-wrap">
+        <textarea
+          class="as-ta"
+          value="{{desc}}"
+          placeholder="如：收到时两袋漏气、包装破损、口感与描述不符…"
+          placeholder-class="ta-ph"
+          maxlength="{{maxLen}}"
+          bindinput="onDescInput"></textarea>
+        <text class="ta-count">{{desc.length}}/{{maxLen}}</text>
+      </view>
+
+      <view class="form-label form-label-block">上传凭证<text class="form-tip">最多 {{maxImg}} 张</text></view>
+      <view class="img-grid">
+        <view class="img-cell" wx:for="{{images}}" wx:key="*this">
+          <image
+            class="img-thumb"
+            src="{{item}}"
+            mode="aspectFill"
+            data-ii="{{index}}"
+            bindtap="onPreviewImage"
+            binderror="onUploadImgError"></image>
+          <text class="img-del" data-ii="{{index}}" catchtap="onDeleteImage">×</text>
+        </view>
+        <view class="img-add" wx:if="{{images.length < maxImg}}" bindtap="onChooseImage">
+          <text class="img-add-icon">＋</text>
+          <text class="img-add-text">凭证 {{images.length}}/{{maxImg}}</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 5. 退款金额展示行 -->
+    <view class="card" wx:if="{{type}}">
+      <view class="refund-row">
+        <text class="refund-label">{{showRefund ? '退款金额' : '换货说明'}}</text>
+        <text wx:if="{{showRefund}}" class="price refund-amount">￥{{fmt.priceNum(refundAmount)}}</text>
+        <text wx:else class="refund-none">换货不涉及退款</text>
+      </view>
+      <view class="refund-tip">{{refundTip}}</view>
+    </view>
+
+    <view class="demo-tip">演示环境，售后流程为 Mock 模拟</view>
+    <view class="footer-placeholder"></view>
+  </block>
+
+  <!-- 订单不存在 -->
+  <empty-state wx:else text="订单不存在或已被删除" />
+
+  <!-- 6. 底部固定提交栏 -->
+  <view class="submit-bar" wx:if="{{!loading && order}}">
+    <view class="demo-tip">{{pendingOrder ? '待付款订单请直接取消订单，不产生真实交易' : '演示环境，售后流程为 Mock 模拟 · 不产生真实交易'}}</view>
+    <view class="submit-btn {{valid && !submitting ? '' : 'btn-disabled'}}" bindtap="onSubmit">提交申请</view>
+    <view class="safe-bottom"></view>
+  </view>
+</view>

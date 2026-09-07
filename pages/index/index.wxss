@@ -1,101 +1,179 @@
-@import '../../pages/list/list.wxss';
+/* pages/index/index.wxss */
 
-/* 轮播图 */
-.swiperContainer {
-  margin-top: 15rpx;
-  bottom: 8rpx;
-  position: relative;
-  margin-bottom: 12rpx;
+.index-page {
+  padding-bottom: 40rpx;
 }
 
-.imageContainer {
-  width: 100%;
-  margin-top: 10rpx;
-  height: 350rpx;
+/* ---------- 搜索栏 ---------- */
+.search-bar {
+  padding: 20rpx 24rpx 12rpx;
+  background: linear-gradient(180deg, #b4282d 0%, #c8392f 55%, #f5f6f7 100%);
+}
+.search-pill {
+  display: flex;
+  align-items: center;
+  height: 72rpx;
+  background: #ffffff;
+  border-radius: 999rpx;
+  padding: 0 28rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+.search-icon {
+  font-size: 30rpx;
+  margin-right: 12rpx;
+}
+.search-ph {
+  font-size: 26rpx;
+  color: #b2b2b2;
 }
 
-.turnItem {
-  height: 340rpx;
+/* ---------- 轮播 ---------- */
+.banner-card {
+  margin: 24rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: #ffffff;
 }
-
-.itemImg {
-  position: absolute;
-  width: 99%;
+.banner-swiper {
   height: 300rpx;
-  margin-top: 20rpx;
-  border-radius: 15rpx;
+  border-radius: 16rpx;
 }
-
-.imgActive {
-  opacity: 1;
-  height: 340rpx;
-  margin-top: 0rpx;
-  transition: all .2s ease-in 0s;
+.banner-item {
+  position: relative;
+  width: 100%;
+  height: 300rpx;
 }
-
-/* 指示点修饰 */
-.dots {
+.banner-img {
+  width: 100%;
+  height: 300rpx;
+  display: block;
+  background: #f2f3f5;
+}
+.banner-caption {
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 25rpx;
-  display: flex;
-  justify-content: center;
+  bottom: 0;
+  padding: 40rpx 24rpx 20rpx;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.55) 100%);
+  color: #ffffff;
+}
+.banner-name {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+.banner-desc {
+  font-size: 24rpx;
+  opacity: 0.9;
+  margin-top: 4rpx;
 }
 
-.dot {
-  margin: 0 8rpx;
-  width: 18rpx;
-  height: 18rpx;
-  background-color: rgb(233, 255, 247);
-  border-radius: 8rpx;
-  transition: all .5s;
-}
-
-.dot.active {
-  width: 24rpx;
-  background: #15eda3;
-}
-
-/* 轮播图到这里结束 */
-
-/* 精选 */
-.select-title{
+/* ---------- 秒杀 ---------- */
+.seckill-scroll {
+  white-space: nowrap;
   width: 100%;
-  padding: 0 0 30rpx 0;
-  height: 30rpx;
-  color: #127780;
-  text-align: center;
+}
+.seckill-item {
+  display: inline-block;
+  width: 180rpx;
+  margin-right: 20rpx;
+  vertical-align: top;
+}
+.seckill-item:last-child {
+  margin-right: 0;
+}
+.seckill-img {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 12rpx;
+  background: #f2f3f5;
+  display: block;
+}
+.seckill-name {
+  font-size: 24rpx;
+  color: #333333;
+  margin-top: 8rpx;
+  width: 180rpx;
+}
+.seckill-price {
+  color: #b4282d;
+  font-weight: bold;
+  margin-top: 4rpx;
+}
+.seckill-origin {
+  color: #b2b2b2;
+  font-size: 22rpx;
+  text-decoration: line-through;
+}
+
+/* ---------- 主题区 ---------- */
+.theme-row {
+  display: flex;
+  justify-content: space-between;
+}
+.theme-item {
+  width: 210rpx;
+  background: #f8f9fa;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+.theme-img {
+  width: 210rpx;
+  height: 150rpx;
+  display: block;
+  background: #f2f3f5;
+}
+.theme-name {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #333333;
+  padding: 10rpx 12rpx 2rpx;
+}
+.theme-desc {
+  font-size: 20rpx;
+  color: #838383;
+  padding: 0 12rpx 12rpx;
+}
+
+/* ---------- 新品双列 ---------- */
+.newest-wrap {
+  padding-top: 8rpx;
 }
 .newest-title {
-  width: 100%;
-  padding: 30rpx 0 0rpx 0;
-  height: 40rpx;
-  color: #127780;
-  text-align: center;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
 }
-.newest-title text,
-.select-title text{
-  font-family:Arial, Helvetica, sans-serif;
-  font-weight:normal;
+.goods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 24rpx;
 }
-.select-top-small {
-  width: 375rpx;
-  height: 375rpx;
-  float: left;
-}
-.select-bottom,
-.select-top {
-  width: 100%;
-  height: 375rpx;
-}
-.select-top-small image,
-.select-bottom image,
-.select-top-small navigator,
-.select-bottom navigator {
-  display: block;
-  width: 100%;
-  height: 100%;
+.goods-grid > goods-card {
+  width: 342rpx;
+  margin-bottom: 20rpx;
 }
 
-/* 精选结束 */
+/* ---------- 悬浮购物车 ---------- */
+.float-cart {
+  position: fixed;
+  right: 28rpx;
+  bottom: 120rpx;
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 6rpx 24rpx rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+.float-cart-hover {
+  transform: scale(0.94);
+  background: #fdeeef;
+}
+.float-cart-icon {
+  font-size: 46rpx;
+  line-height: 1;
+}

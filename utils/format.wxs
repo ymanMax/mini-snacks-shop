@@ -1,0 +1,24 @@
+/* WXS 过滤器：wxml 内金额/销量格式化（与 utils/format.js 规则保持一致） */
+var formatPrice = function (price) {
+  var n = Number(price);
+  if (isNaN(n)) return '￥0.00';
+  return '￥' + n.toFixed(2);
+};
+
+var priceNum = function (price) {
+  var n = Number(price);
+  if (isNaN(n)) return '0.00';
+  return n.toFixed(2);
+};
+
+var formatSales = function (n) {
+  n = Number(n) || 0;
+  if (n >= 10000) return (n / 10000).toFixed(1) + '万';
+  return '' + n;
+};
+
+module.exports = {
+  formatPrice: formatPrice,
+  priceNum: priceNum,
+  formatSales: formatSales
+};

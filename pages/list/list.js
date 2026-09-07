@@ -1,81 +1,91 @@
-const {
-  getBanner,
-  getThemeInfo
-} = require('../../api/api.js');
+// pages/list/list.js — 主题商品列表页（重构）
+const api = require('../../api/index.js');
 
-// 获取应用实例
-const app = getApp()
+const DEFAULT_IMG = '/static/images/default.png';
 
 Page({
-
-  /**
-   * 页面的初始数据
-   */
   data: {
-    products: [],
-    pic: ""
+    themeId: null,
+    themeName: '商品列表',
+    theme: null,
+
+    list: [],
+    current: 0,
+    size: 10,
+    total: 0,
+    hasMore: true,
+    loading: false,
+    firstLoading: true
   },
 
-  /**
-   * 生命周期函数--监听页面加载
-   */
-  onLoad: function (options) {
-    const that = this;
-    let item = options.item
+  onLoad(options) {
+    const themeId = options && options.themeId ? Number(options.themeId) : null;
+    let name = options && options.name ? decodeURIComponent(options.name) : '';
+    this.setData({
+      themeId,
+      themeName: name || '商品列表'
+    });
+    wx.setNavigationBarTitle({ title: name || '商品列表' });
 
-    getThemeInfo(item).then(res => {
-      that.setData({
-        products: res.products,
-        pic: res.head_img.url
-      })
-    })
-  },
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady() {
-
+    if (themeId) this.loadTheme(themeId);
+    this.loadList(true);
   },
 
-  /**
-   * 生命周期函数--监听页面显示
-   */
-  onShow() {
-
+  loadTheme(themeId) {
+    api.home.themeDetail(themeId).then((res) => {
+      const theme = res.data;
+      if (!theme) return;
+      this.setData({ theme });
+      if (theme.name) {
+        wx.setNavigationBarTitle({ title: theme.name });
+      }
+    }).catch(() => {});
   },
 
-  /**
-   * 生命周期函数--监听页面隐藏
-   */
-  onHide() {
-
+  loadList(reset, opts) {
+    opts = opts || {};
+    if (this.data.loading) {
+      if (opts.stopRefresh) wx.stopPullDownRefresh();
+      return;
+    }
+    if (!reset && !this.data.hasMore) {
+      if (opts.stopRefresh) wx.stopPullDownRefresh();
+      return;
+    }
+    const target = reset ? 1 : this.data.current + 1;
+    this.setData({ loading: true });
+    const params = { current: target, size: this.data.size };
+    if (this.data.themeId) params.themeId = this.data.themeId;
+    api.goods.page(params).then((res) => {
+      const d = res.data || {};
+      const records = d.records || [];
+      const total = d.total || 0;
+      const list = reset ? records : this.data.list.concat(records);
+      this.setData({
+        list,
+        total,
+        current: target,
+        hasMore: list.length < total,
+        loading: false,
+        firstLoading: false
+      });
+      if (opts.stopRefresh) wx.stopPullDownRefresh();
+    }).catch(() => {
+      this.setData({ loading: false, firstLoading: false });
+      if (opts.stopRefresh) wx.stopPullDownRefresh();
+    });
   },
 
-  /**
-   * 生命周期函数--监听页面卸载
-   */
-  onUnload() {
-
-  },
-
-  /**
-   * 页面相关事件处理函数--监听用户下拉动作
-   */
-  onPullDownRefresh() {
-
-  },
-
-  /**
-   * 页面上拉触底事件的处理函数
-   */
   onReachBottom() {
-
+    this.loadList(false);
   },
 
-  /**
-   * 用户点击右上角分享
-   */
-  onShareAppMessage() {
+  onPullDownRefresh() {
+    if (this.data.themeId) this.loadTheme(this.data.themeId);
+    this.loadList(true, { stopRefresh: true });
+  },
 
+  onThemeImgError() {
+    this.setData({ 'theme.topic_img': DEFAULT_IMG });
   }
-})
+});

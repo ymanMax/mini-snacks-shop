@@ -1,0 +1,86 @@
+/* pages/collect/collect.wxss */
+
+.collect-page {
+  padding-top: 20rpx;
+  padding-bottom: 40rpx;
+}
+
+/* ---------- 商品双列 ---------- */
+.goods-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 24rpx;
+}
+/* 足迹：goods-card 为直接子元素 */
+.goods-grid > goods-card {
+  width: 342rpx;
+  margin-bottom: 20rpx;
+}
+
+/* ---------- 收藏：卡片 + 取消收藏角标 ---------- */
+.collect-cell {
+  position: relative;
+  width: 342rpx;
+  margin-bottom: 20rpx;
+}
+.collect-cell > goods-card {
+  display: block;
+  width: 100%;
+}
+.fav-btn {
+  position: absolute;
+  top: 12rpx;
+  right: 12rpx;
+  width: 54rpx;
+  height: 54rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #b4282d;
+  font-size: 32rpx;
+  line-height: 54rpx;
+  text-align: center;
+  box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.18);
+  z-index: 5;
+}
+
+/* ---------- 足迹工具条 ---------- */
+.fp-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32rpx 16rpx;
+}
+.fp-count {
+  font-size: 26rpx;
+  color: #838383;
+}
+.fp-clear {
+  font-size: 26rpx;
+  color: #b4282d;
+  padding: 6rpx 20rpx;
+  border: 2rpx solid #b4282d;
+  border-radius: 999rpx;
+}
+
+/* ---------- 足迹分组 ---------- */
+.fp-group {
+  margin-bottom: 8rpx;
+}
+.fp-date {
+  position: relative;
+  padding: 12rpx 32rpx 16rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333333;
+}
+.fp-date::before {
+  content: '';
+  display: inline-block;
+  width: 8rpx;
+  height: 28rpx;
+  border-radius: 4rpx;
+  background: #b4282d;
+  margin-right: 12rpx;
+  vertical-align: -4rpx;
+}

@@ -1,0 +1,433 @@
+/* pages/service/tickets.wxss — 售后服务工单页 */
+/* 规范：主题色 #b4282d / 背景 #f5f6f7 / 卡片白底圆角 16rpx / 间距 24rpx */
+
+.tickets-page {
+  padding-bottom: 24rpx;
+}
+
+/* ---------- 状态 Tab ---------- */
+.tab-scroll {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  width: 100%;
+  white-space: nowrap;
+  background: #ffffff;
+  box-shadow: 0 2rpx 12rpx rgba(0, 0, 0, 0.04);
+}
+.tab-item {
+  position: relative;
+  display: inline-block;
+  padding: 24rpx 28rpx 20rpx;
+  text-align: center;
+}
+.tab-text {
+  font-size: 28rpx;
+  color: #666666;
+}
+.tab-on .tab-text {
+  color: #b4282d;
+  font-weight: bold;
+}
+.tab-line {
+  position: absolute;
+  left: 50%;
+  bottom: 8rpx;
+  transform: translateX(-50%);
+  width: 48rpx;
+  height: 6rpx;
+  border-radius: 4rpx;
+  background: #b4282d;
+}
+
+.list-tip {
+  padding: 24rpx 32rpx 0;
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+
+/* ---------- 工单卡 ---------- */
+.tk-card {
+  padding: 0 24rpx;
+}
+.tk-head {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0 20rpx;
+  border-bottom: 2rpx solid #f5f6f7;
+}
+.tk-type {
+  flex-shrink: 0;
+  font-size: 20rpx;
+  line-height: 1;
+  padding: 8rpx 16rpx;
+  border-radius: 999rpx;
+}
+/* 类型胶囊：仅退款红 / 退货退款橙 / 换货蓝 */
+.tp-1 { background: #fdeeef; color: #b4282d; }
+.tp-2 { background: #fff4e5; color: #ff8800; }
+.tp-3 { background: #e9f1fd; color: #2b6cd4; }
+
+.tk-no {
+  flex: 1;
+  min-width: 0;
+  margin-left: 16rpx;
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+.tk-status {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  font-size: 26rpx;
+  font-weight: bold;
+}
+/* 状态徽章：待审核橙 / 处理中蓝 / 已完成绿 / 已拒绝灰 / 已撤销灰 */
+.st-1 { color: #ff8800; }
+.st-2 { color: #2b6cd4; }
+.st-3 { color: #0ea47a; }
+.st-4 { color: #838383; }
+.st-5 { color: #b2b2b2; }
+
+.tk-body {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0;
+}
+.tk-thumb {
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 12rpx;
+  background: #f5f6f7;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.tk-name {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 38rpx;
+}
+.tk-reason {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #838383;
+}
+.tk-refund {
+  margin-left: 16rpx;
+  text-align: right;
+  flex-shrink: 0;
+}
+.tk-refund-label {
+  display: block;
+  font-size: 20rpx;
+  color: #b2b2b2;
+}
+.tk-refund-amount {
+  font-size: 30rpx;
+}
+.tk-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20rpx 0 24rpx;
+  border-top: 2rpx solid #f5f6f7;
+}
+.tk-time {
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+.tk-more {
+  font-size: 24rpx;
+  color: #b4282d;
+}
+
+/* ---------- 底部悬浮「联系客服」 ---------- */
+.fab-placeholder {
+  height: 100rpx;
+}
+.fab-chat {
+  position: fixed;
+  right: 24rpx;
+  bottom: calc(48rpx + env(safe-area-inset-bottom));
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  padding: 0 32rpx;
+  height: 84rpx;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #d0342c, #b4282d);
+  color: #ffffff;
+  font-size: 26rpx;
+  font-weight: bold;
+  box-shadow: 0 8rpx 24rpx rgba(180, 40, 45, 0.35);
+}
+.fab-icon {
+  margin-right: 8rpx;
+  font-size: 30rpx;
+}
+
+/* ---------- 弹层通用头部（app.wxss 未提供，页面内定义） ---------- */
+.popup-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 32rpx;
+  border-bottom: 2rpx solid #f0f0f0;
+}
+.popup-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+}
+.popup-close {
+  font-size: 32rpx;
+  color: #999999;
+  padding: 0 8rpx;
+}
+
+/* ---------- 工单详情弹层 ---------- */
+.dt-popup {
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
+}
+.dt-loading {
+  padding: 80rpx 0;
+  text-align: center;
+  font-size: 26rpx;
+  color: #b2b2b2;
+}
+.dt-body {
+  flex: 1;
+  min-height: 0;
+  max-height: 56vh;
+  padding: 0 32rpx;
+}
+.dt-status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 0 8rpx;
+}
+.dt-type {
+  font-size: 22rpx;
+  line-height: 1;
+  padding: 10rpx 20rpx;
+  border-radius: 999rpx;
+}
+.dt-status {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+.dt-goods {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid #f5f6f7;
+}
+.dt-thumb {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  background: #f5f6f7;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.dt-goods-name {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 38rpx;
+}
+.dt-order-no {
+  margin-top: 10rpx;
+  font-size: 22rpx;
+  color: #b4282d;
+}
+.dt-info {
+  padding: 12rpx 0;
+}
+.dt-info-row {
+  display: flex;
+  align-items: flex-start;
+  padding: 10rpx 0;
+}
+.dt-info-label {
+  width: 150rpx;
+  flex-shrink: 0;
+  font-size: 26rpx;
+  color: #838383;
+}
+.dt-info-value {
+  flex: 1;
+  min-width: 0;
+  font-size: 26rpx;
+  color: #333333;
+  line-height: 38rpx;
+  word-break: break-all;
+}
+.dt-sec-title {
+  padding: 20rpx 0 12rpx;
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333333;
+}
+.dt-imgs {
+  display: flex;
+  flex-wrap: wrap;
+}
+.dt-img {
+  width: 150rpx;
+  height: 150rpx;
+  border-radius: 12rpx;
+  background: #f5f6f7;
+  margin: 0 16rpx 16rpx 0;
+}
+
+/* ---------- 状态跟踪 timeline ---------- */
+.tl {
+  padding: 4rpx 0 8rpx 4rpx;
+}
+.tl-item {
+  display: flex;
+}
+.tl-left {
+  width: 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.tl-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #dddddd;
+  margin-top: 10rpx;
+}
+.tl-dot-on {
+  width: 22rpx;
+  height: 22rpx;
+  margin-top: 6rpx;
+  background: #b4282d;
+  box-shadow: 0 0 0 6rpx #fdeeef;
+}
+.tl-line {
+  flex: 1;
+  width: 2rpx;
+  background: #eeeeee;
+  margin: 6rpx 0;
+}
+.tl-body {
+  flex: 1;
+  min-width: 0;
+  padding: 0 0 28rpx 16rpx;
+}
+.tl-status {
+  font-size: 26rpx;
+  font-weight: bold;
+  color: #838383;
+}
+.tl-status-on {
+  color: #b4282d;
+}
+.tl-remark {
+  margin-top: 4rpx;
+  font-size: 26rpx;
+  color: #838383;
+  line-height: 38rpx;
+}
+.tl-remark-on {
+  color: #333333;
+}
+.tl-time {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+
+/* ---------- 详情操作区 ---------- */
+.dt-ops {
+  flex-shrink: 0;
+  padding: 16rpx 32rpx 8rpx;
+  border-top: 2rpx solid #f0f0f0;
+  background: #ffffff;
+}
+.dt-done-tip {
+  padding: 12rpx 20rpx;
+  margin-bottom: 16rpx;
+  font-size: 24rpx;
+  color: #0ea47a;
+  background: #e8f7f0;
+  border-radius: 12rpx;
+}
+.dt-btn-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+.dt-btn {
+  margin-left: 16rpx;
+  height: 72rpx;
+  line-height: 68rpx;
+  padding: 0 32rpx;
+  text-align: center;
+  font-size: 28rpx;
+}
+.dt-btn.btn-plain {
+  line-height: 68rpx;
+}
+.dt-ops-tip {
+  padding: 12rpx 0 4rpx;
+  font-size: 20rpx;
+  color: #b2b2b2;
+  text-align: right;
+}
+
+/* ---------- 评价售后弹层（层级高于详情弹层） ---------- */
+.rate-mask {
+  z-index: 120;
+}
+.rate-popup {
+  z-index: 121;
+  padding: 0 32rpx;
+}
+.rate-row {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 0 8rpx;
+}
+.rate-label {
+  width: 180rpx;
+  font-size: 28rpx;
+  color: #666666;
+  flex-shrink: 0;
+}
+.rate-score {
+  margin-left: 16rpx;
+  font-size: 24rpx;
+  color: #b4282d;
+}
+.rate-input-wrap {
+  margin: 20rpx 0 8rpx;
+  padding: 0 24rpx;
+  height: 80rpx;
+  display: flex;
+  align-items: center;
+  background: #fafafa;
+  border-radius: 12rpx;
+}
+.rate-input {
+  width: 100%;
+  height: 80rpx;
+  font-size: 26rpx;
+  color: #333333;
+}
+.input-ph {
+  color: #b2b2b2;
+  font-size: 26rpx;
+}
+.rate-submit {
+  margin: 24rpx 0 8rpx;
+  height: 84rpx;
+  line-height: 84rpx;
+  text-align: center;
+}

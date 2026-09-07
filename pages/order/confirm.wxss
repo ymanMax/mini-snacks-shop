@@ -1,0 +1,483 @@
+/* pages/order/confirm.wxss — 订单确认页 */
+/* 规范：主题色 #b4282d / 背景 #f5f6f7 / 卡片白底圆角 16rpx / 间距 24rpx */
+
+.confirm-page {
+  padding-bottom: 40rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 20rpx;
+}
+.card-title-sub {
+  margin-left: 12rpx;
+  font-size: 22rpx;
+  font-weight: normal;
+  color: #838383;
+}
+.arrow-right {
+  margin-left: 12rpx;
+  font-size: 36rpx;
+  color: #b2b2b2;
+  line-height: 1;
+}
+
+/* ---------- 1. 收货地址 ---------- */
+.addr-card-wrap {
+  padding-bottom: 12rpx;
+}
+.addr-row {
+  display: flex;
+  align-items: center;
+}
+.addr-oor .addr-row {
+  opacity: 0.9;
+}
+.addr-icon {
+  width: 48rpx;
+  font-size: 32rpx;
+  text-align: center;
+  margin-right: 8rpx;
+}
+.addr-line1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.addr-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-right: 16rpx;
+}
+.addr-phone {
+  font-size: 26rpx;
+  color: #838383;
+  margin-right: 12rpx;
+}
+.addr-full {
+  margin-top: 10rpx;
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 38rpx;
+}
+.addr-empty {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #b4282d;
+}
+.addr-empty-sub {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #b2b2b2;
+}
+
+/* 超范围红色警示条 */
+.oor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 16rpx;
+  padding: 14rpx 18rpx;
+  background: #fdeeef;
+  border: 2rpx solid #f3c9cb;
+  border-radius: 10rpx;
+}
+.oor-text {
+  flex: 1;
+  font-size: 24rpx;
+  color: #b4282d;
+  line-height: 34rpx;
+}
+.oor-change {
+  flex-shrink: 0;
+  margin-left: 16rpx;
+  padding: 8rpx 22rpx;
+  font-size: 24rpx;
+  color: #ffffff;
+  background: #b4282d;
+  border-radius: 999rpx;
+}
+
+/* ---------- 2. 配送时间（日期 + 时段 两列） ---------- */
+.del-sub-label {
+  font-size: 24rpx;
+  color: #838383;
+  margin: 4rpx 0 14rpx;
+}
+.date-list {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20rpx;
+}
+.date-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 180rpx;
+  padding: 14rpx 24rpx;
+  margin: 0 16rpx 12rpx 0;
+  border: 2rpx solid #eeeeee;
+  border-radius: 12rpx;
+  background: #fafafa;
+}
+.date-on {
+  border-color: #b4282d;
+  background: #fdeeef;
+}
+.date-label {
+  font-size: 28rpx;
+  color: #333333;
+}
+.date-on .date-label {
+  color: #b4282d;
+  font-weight: bold;
+}
+.date-md {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+.date-on .date-md {
+  color: #b4282d;
+}
+.slot-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+.slot-item {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 200rpx;
+  padding: 16rpx 20rpx;
+  margin: 0 16rpx 16rpx 0;
+  border: 2rpx solid #eeeeee;
+  border-radius: 12rpx;
+  background: #fafafa;
+}
+.slot-on {
+  border-color: #b4282d;
+  background: #fdeeef;
+}
+.slot-text {
+  font-size: 26rpx;
+  color: #333333;
+}
+.slot-on .slot-text {
+  color: #b4282d;
+  font-weight: bold;
+}
+.slot-dot {
+  margin-left: 8rpx;
+  font-size: 24rpx;
+  color: #b4282d;
+}
+.slot-date {
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+
+/* ---------- 3. 商品清单 ---------- */
+.goods-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #f5f6f7;
+}
+.goods-row:last-child {
+  border-bottom: none;
+}
+.goods-thumb {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 12rpx;
+  background: #f5f6f7;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.goods-name {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 38rpx;
+}
+.goods-spec {
+  display: inline-block;
+  margin-top: 8rpx;
+  padding: 4rpx 16rpx;
+  font-size: 22rpx;
+  color: #838383;
+  background: #f2f3f5;
+  border-radius: 999rpx;
+}
+.goods-right {
+  margin-left: 16rpx;
+  text-align: right;
+  flex-shrink: 0;
+}
+.goods-right .price {
+  font-size: 28rpx;
+}
+.goods-count {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #838383;
+}
+
+/* ---------- 通用行 ---------- */
+.line-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 60rpx;
+}
+.line-label {
+  font-size: 28rpx;
+  color: #333333;
+}
+.line-value {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+}
+.coupon-name {
+  margin-left: 12rpx;
+  font-size: 22rpx;
+  color: #838383;
+  font-weight: normal;
+}
+.auto-coupon-tip {
+  margin-top: 14rpx;
+  padding: 12rpx 16rpx;
+  font-size: 22rpx;
+  color: #b4282d;
+  background: #fdeeef;
+  border-radius: 8rpx;
+  line-height: 34rpx;
+}
+
+/* ---------- 5. 备注 / 支付方式 ---------- */
+.remark-input {
+  flex: 1;
+  margin-left: 24rpx;
+  text-align: right;
+  font-size: 26rpx;
+  color: #333333;
+}
+.remark-ph {
+  color: #b2b2b2;
+  font-size: 24rpx;
+}
+.pay-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+}
+.radio {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  border: 2rpx solid #cccccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background: #ffffff;
+}
+.radio-on {
+  border-color: #b4282d;
+}
+.radio-dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  background: #b4282d;
+}
+.pay-name {
+  margin-left: 16rpx;
+  font-size: 28rpx;
+  color: #333333;
+}
+.pay-sub {
+  margin-left: auto;
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+
+/* ---------- 6. 金额明细 ---------- */
+.amount-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10rpx 0;
+}
+.amount-label {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  color: #666666;
+}
+.amount-sub {
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+.amount-value {
+  font-size: 26rpx;
+  color: #333333;
+}
+.amount-pay {
+  font-size: 34rpx;
+  font-weight: bold;
+}
+.info-icon {
+  margin-left: 8rpx;
+  font-size: 26rpx;
+  color: #b2b2b2;
+}
+.freight-detail {
+  margin: 2rpx 0 6rpx;
+  font-size: 20rpx;
+  color: #b2b2b2;
+  line-height: 30rpx;
+}
+.full-reduce-tip {
+  margin-top: 8rpx;
+  padding: 12rpx 16rpx;
+  font-size: 22rpx;
+  color: #b4282d;
+  background: #fdeeef;
+  border-radius: 8rpx;
+  line-height: 34rpx;
+}
+
+/* ---------- 优惠券弹层 ---------- */
+.popup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 24rpx 16rpx;
+}
+.popup-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+}
+.popup-close {
+  font-size: 44rpx;
+  color: #b2b2b2;
+  line-height: 1;
+  padding: 0 8rpx;
+}
+.coupon-scroll {
+  max-height: 640rpx;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+}
+.coupon-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  margin-bottom: 20rpx;
+  border: 2rpx solid #eeeeee;
+  border-radius: 16rpx;
+  background: #ffffff;
+}
+.coupon-on {
+  border-color: #b4282d;
+  background: #fffafa;
+}
+.coupon-amount {
+  width: 140rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+.coupon-num {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: #b4282d;
+}
+.coupon-item-name {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: bold;
+}
+.coupon-item-sub {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #838383;
+}
+.coupon-item .radio {
+  margin-left: 16rpx;
+}
+.coupon-empty {
+  padding: 40rpx 0 60rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #b2b2b2;
+}
+
+/* ---------- 配送费说明弹层 ---------- */
+.freight-popup {
+  padding: 0 24rpx 24rpx;
+}
+.freight-line {
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 48rpx;
+}
+.freight-ok {
+  margin-top: 24rpx;
+  height: 84rpx;
+  line-height: 84rpx;
+  text-align: center;
+}
+
+/* ---------- 7. 底部提交栏 ---------- */
+.submit-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  background: #ffffff;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+.submit-bar .demo-tip {
+  padding: 8rpx 0 0;
+}
+.submit-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 104rpx;
+  padding: 0 24rpx;
+}
+.submit-amount {
+  display: flex;
+  align-items: baseline;
+}
+.submit-label {
+  font-size: 26rpx;
+  color: #333333;
+  margin-right: 8rpx;
+}
+.submit-num {
+  font-size: 44rpx;
+}
+.submit-btn {
+  min-width: 260rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  text-align: center;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #d0342c, #b4282d);
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: bold;
+}
+.submit-btn.btn-disabled {
+  opacity: 0.5;
+}

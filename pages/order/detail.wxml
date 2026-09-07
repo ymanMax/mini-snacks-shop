@@ -1,0 +1,175 @@
+<wxs src="../../utils/format.wxs" module="fmt" />
+
+<view class="page-container order-detail-page">
+
+  <!-- 骨架屏 -->
+  <skeleton wx:if="{{loading}}" type="detail" />
+
+  <block wx:elif="{{order}}">
+    <!-- 1. 状态头部（主题色渐变大卡） -->
+    <view class="status-hero {{order.status === 6 ? 'hero-gray' : ''}}">
+      <view class="hero-status">{{order.statusText}}</view>
+      <view class="hero-desc">{{statusDesc}}</view>
+      <view class="hero-tip">演示环境，不产生真实交易</view>
+    </view>
+
+    <!-- 2. 骑手卡片（配送中 / 待收货） -->
+    <view class="card rider-card" wx:if="{{order.rider && (order.status === 3 || order.status === 4)}}">
+      <image class="rider-avatar" src="{{order.rider.avatar}}" mode="aspectFill" binderror="onRiderImgError"></image>
+      <view class="flex-1">
+        <view class="rider-name">
+          <text>{{order.rider.name}}</text>
+          <text class="tag">配送骑手</text>
+        </view>
+        <view class="rider-sub">{{order.rider.phone}} · 演示环境虚拟号码</view>
+      </view>
+      <view class="btn-plain btn-mini" bindtap="onCallRider">拨打</view>
+    </view>
+
+    <!-- 配送 timeline（倒序，最新节点主题色高亮） -->
+    <view class="card" wx:if="{{timeline.length}}">
+      <view class="card-title">配送进度</view>
+      <view class="tl">
+        <view class="tl-item" wx:for="{{timeline}}" wx:key="index">
+          <view class="tl-left">
+            <view class="tl-dot {{item.latest ? 'tl-dot-on' : ''}}"></view>
+            <view class="tl-line" wx:if="{{index !== timeline.length - 1}}"></view>
+          </view>
+          <view class="tl-body">
+            <view class="tl-remark {{item.latest ? 'tl-remark-on' : ''}}">{{item.remark}}</view>
+            <view class="tl-time">{{item.time}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 3. 地址快照卡 -->
+    <view class="card" wx:if="{{order.addressSnapshot}}">
+      <view class="addr-line1">
+        <text class="addr-icon">📍</text>
+        <text class="addr-name">{{order.addressSnapshot.name}}</text>
+        <text class="addr-phone">{{order.addressSnapshot.phone}}</text>
+        <text class="tag" wx:if="{{order.addressSnapshot.tag}}">{{order.addressSnapshot.tag}}</text>
+      </view>
+      <view class="addr-full">{{order.fullAddress}}</view>
+    </view>
+
+    <!-- 4. 商品清单卡 -->
+    <view class="card">
+      <view class="card-title">商品清单<text class="card-title-sub">共 {{totalPieces}} 件</text></view>
+      <view
+        class="goods-row"
+        wx:for="{{order.items}}"
+        wx:key="index"
+        data-goods-id="{{item.goodsId}}"
+        bindtap="onGoGoods">
+        <image class="goods-thumb" src="{{item.pic}}" mode="aspectFill" lazy-load="{{true}}"
+               data-index="{{index}}" binderror="onImgError"></image>
+        <view class="flex-1">
+          <view class="goods-name ellipsis-2">{{item.name}}</view>
+          <view class="goods-spec ellipsis" wx:if="{{item.specText}}">{{item.specText}}</view>
+        </view>
+        <view class="goods-right">
+          <view class="price"><text class="price-symbol">￥</text>{{fmt.priceNum(item.price)}}</view>
+          <view class="goods-count">×{{item.count}}</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 5. 金额明细卡 -->
+    <view class="card">
+      <view class="card-title">金额明细</view>
+      <view class="amount-row">
+        <text class="amount-label">商品金额</text>
+        <text class="amount-value">￥{{fmt.priceNum(order.totalAmount)}}</text>
+      </view>
+      <view class="amount-row" wx:if="{{order.discountAmount > 0}}">
+        <text class="amount-label">优惠券<text class="amount-sub" wx:if="{{order.couponTitle}}">（{{order.couponTitle}}）</text></text>
+        <text class="amount-value price">-￥{{fmt.priceNum(order.discountAmount)}}</text>
+      </view>
+      <view class="amount-row">
+        <view class="amount-label">
+          <text>配送费</text>
+          <text class="info-icon" catchtap="onFreightTip">ⓘ</text>
+        </view>
+        <text wx:if="{{order.freight > 0}}" class="amount-value">￥{{fmt.priceNum(order.freight)}}</text>
+        <text wx:else class="amount-value text-light">免配送费</text>
+      </view>
+      <view class="divider"></view>
+      <view class="amount-row">
+        <text class="amount-label text-bold">{{order.status === 6 ? '退款金额' : '实付金额'}}</text>
+        <text class="amount-value price amount-pay">￥{{fmt.priceNum(order.payAmount)}}</text>
+      </view>
+    </view>
+
+    <!-- 6. 订单信息卡 -->
+    <view class="card">
+      <view class="card-title">订单信息</view>
+      <view class="info-row">
+        <text class="info-label">订单编号</text>
+        <view class="info-value">
+          <text>{{order.orderNo}}</text>
+          <text class="copy-btn" bindtap="onCopyOrderNo">复制</text>
+        </view>
+      </view>
+      <view class="info-row">
+        <text class="info-label">下单时间</text>
+        <text class="info-value">{{order.createTime}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">配送时间</text>
+        <text class="info-value">{{order.deliveryDate}} {{order.deliverySlot}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">支付方式</text>
+        <text class="info-value">{{payTypeText}}</text>
+      </view>
+      <view class="info-row">
+        <text class="info-label">订单备注</text>
+        <text class="info-value">{{order.remark || '无'}}</text>
+      </view>
+    </view>
+
+    <view class="footer-placeholder" wx:if="{{showFooter}}"></view>
+    <view class="safe-bottom"></view>
+
+    <!-- 7. 底部操作栏（fixed，随状态变化） -->
+    <view class="action-bar" wx:if="{{showFooter}}">
+      <view class="demo-tip">
+        {{justCreated && order.status === 1 ? '订单已创建，请尽快完成支付 · 演示环境，不产生真实交易' : '演示环境，不产生真实交易'}}
+      </view>
+      <view class="action-row">
+        <!-- 售后入口（状态 2~5）：可申请「申请售后」/ 进行中「售后处理中 >」 -->
+        <view class="btn-gray btn-mini ab-btn" wx:if="{{canAfterSale}}" bindtap="onAfterSale">申请售后</view>
+        <view class="btn-plain btn-mini ab-btn" wx:elif="{{afterSaleOngoing}}" bindtap="onAfterSaleProgress">售后处理中 ></view>
+        <!-- 待付款 -->
+        <block wx:if="{{order.status === 1}}">
+          <view class="btn-gray btn-mini ab-btn" bindtap="onCancel">取消订单</view>
+          <view class="btn-primary btn-mini ab-btn {{justCreated ? 'ab-glow' : ''}}" bindtap="onPay">
+            去支付 ￥{{fmt.priceNum(order.payAmount)}}
+          </view>
+        </block>
+        <!-- 待发货 -->
+        <block wx:elif="{{order.status === 2}}">
+          <view class="btn-plain btn-mini ab-btn" bindtap="onAdvance">模拟配送进度</view>
+          <view class="btn-primary btn-mini ab-btn" bindtap="onRemind">提醒发货</view>
+        </block>
+        <!-- 配送中 / 待收货 -->
+        <block wx:elif="{{order.status === 3 || order.status === 4}}">
+          <view class="btn-plain btn-mini ab-btn" bindtap="onAdvance">模拟配送进度</view>
+          <view class="btn-primary btn-mini ab-btn" bindtap="onConfirmReceive">确认收货</view>
+        </block>
+        <!-- 已完成 -->
+        <block wx:elif="{{order.status === 5}}">
+          <view class="btn-gray btn-mini ab-btn" bindtap="onRebuy">再来一单</view>
+          <view class="btn-primary btn-mini ab-btn" wx:if="{{!order.isReviewed}}" bindtap="onReview">去评价</view>
+        </block>
+      </view>
+      <view class="advance-tip" wx:if="{{canAdvance}}">{{advanceTip}}</view>
+      <view class="safe-bottom"></view>
+    </view>
+  </block>
+
+  <!-- 订单不存在 -->
+  <empty-state wx:else text="订单不存在或已被删除" />
+</view>

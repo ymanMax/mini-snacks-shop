@@ -1,0 +1,470 @@
+/* pages/group/group.wxss — 拼团特惠 */
+
+/* ---------- 顶部 Tab ---------- */
+.top-tabs {
+  display: flex;
+  background: #ffffff;
+}
+.top-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 30rpx;
+  color: #838383;
+  padding: 24rpx 0;
+  position: relative;
+}
+.top-tab-on {
+  color: #b4282d;
+  font-weight: bold;
+}
+.top-tab-on::after {
+  content: '';
+  position: absolute;
+  bottom: 8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 56rpx;
+  height: 6rpx;
+  border-radius: 4rpx;
+  background: #b4282d;
+}
+
+/* ---------- 拼团卡 ---------- */
+.grp-top {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+}
+.grp-img {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 12rpx;
+  background: #f2f3f5;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.grp-info {
+  min-width: 0;
+  padding-right: 100rpx;
+}
+.grp-name {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.4;
+}
+.grp-price-row {
+  display: flex;
+  align-items: baseline;
+  margin-top: 16rpx;
+  flex-wrap: wrap;
+}
+.grp-price {
+  font-size: 40rpx;
+}
+.team-tag {
+  margin-left: 8rpx;
+}
+
+/* 状态徽章：1拼团中红 / 2已成团绿 / 3已退款灰 */
+.grp-status {
+  position: absolute;
+  top: 0;
+  right: 0;
+  font-size: 20rpx;
+  line-height: 1;
+  padding: 8rpx 14rpx;
+  border-radius: 999rpx;
+}
+.st-1 {
+  background: #fdeeef;
+  color: #b4282d;
+}
+.st-2 {
+  background: #e8f7f0;
+  color: #0ea47a;
+}
+.st-3 {
+  background: #f2f3f5;
+  color: #838383;
+}
+
+/* ---------- 成员头像排 ---------- */
+.member-slots {
+  display: flex;
+  align-items: flex-start;
+  margin-top: 20rpx;
+}
+.member {
+  width: 120rpx;
+  margin-right: 24rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.member-avatar-wrap {
+  position: relative;
+}
+.member-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: #f2f3f5;
+  border: 2rpx solid #eeeeee;
+}
+.leader-tag {
+  position: absolute;
+  bottom: -8rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #b4282d;
+  color: #ffffff;
+  font-size: 18rpx;
+  line-height: 1;
+  padding: 4rpx 10rpx;
+  border-radius: 999rpx;
+  white-space: nowrap;
+}
+.member-name {
+  font-size: 20rpx;
+  color: #838383;
+  margin-top: 12rpx;
+  max-width: 120rpx;
+  text-align: center;
+}
+/* 空位：虚线圆 + 虚位以待 */
+.member-empty {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  border: 2rpx dashed #cccccc;
+  background: #fafafa;
+  color: #b2b2b2;
+  font-size: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  line-height: 1.3;
+  padding: 8rpx;
+  word-break: break-all;
+}
+
+/* ---------- 进度 + 倒计时 ---------- */
+.grp-progress {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24rpx;
+  background: #fdf6f6;
+  border-radius: 12rpx;
+  padding: 16rpx 20rpx;
+}
+.lack {
+  font-size: 24rpx;
+  color: #333333;
+}
+.cd {
+  font-size: 24rpx;
+  color: #b4282d;
+  font-weight: bold;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- 操作行 ---------- */
+.grp-btn-row {
+  display: flex;
+  align-items: center;
+  margin-top: 20rpx;
+}
+.mine-flag {
+  background: #fff4e5;
+  color: #ff8800;
+}
+.grp-btn {
+  margin: 0;
+}
+
+/* ---------- 拼团规则 ---------- */
+.grp-rules {
+  border-top: 2rpx solid #f5f6f7;
+  margin-top: 20rpx;
+  padding-top: 16rpx;
+}
+.rule-line {
+  font-size: 22rpx;
+  color: #b2b2b2;
+  line-height: 1.7;
+}
+
+/* ---------- 团购批发卡 ---------- */
+.ws-top {
+  display: flex;
+  align-items: center;
+}
+.ws-img {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 12rpx;
+  background: #f2f3f5;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.ws-info {
+  min-width: 0;
+}
+.ws-title {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: bold;
+  line-height: 1.4;
+}
+.ws-hint {
+  margin-top: 12rpx;
+}
+.ws-btn {
+  flex-shrink: 0;
+}
+
+/* 阶梯价表格 */
+.ladder {
+  margin-top: 20rpx;
+  border: 2rpx solid #f2f3f5;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+.ladder-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16rpx 24rpx;
+  font-size: 24rpx;
+  color: #666666;
+  border-bottom: 2rpx solid #f2f3f5;
+}
+.ladder-row:last-child {
+  border-bottom: none;
+}
+.ladder-head {
+  background: #f7f8fa;
+  color: #838383;
+  font-size: 22rpx;
+}
+.ladder-best {
+  background: #fdf3f3;
+}
+.ladder-price {
+  display: flex;
+  align-items: center;
+}
+.best-tag {
+  background: #b4282d;
+  color: #ffffff;
+  font-size: 18rpx;
+  line-height: 1;
+  padding: 6rpx 10rpx;
+  border-radius: 8rpx;
+  margin-left: 12rpx;
+}
+
+/* ---------- 卡片点击态 ---------- */
+.card-hover {
+  background: #fafafa;
+}
+
+/* ---------- 我要开团入口 ---------- */
+.create-bar {
+  padding: 24rpx 24rpx 0;
+}
+.create-btn {
+  width: 100%;
+  margin: 0;
+}
+
+/* ---------- 邀请好友得券横幅（与拼团详情页复用同款样式） ---------- */
+.invite-banner {
+  background: linear-gradient(135deg, #fff6f0, #ffffff);
+}
+.invite-row {
+  display: flex;
+  align-items: center;
+}
+.invite-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #b4282d;
+}
+.invite-desc {
+  margin-top: 8rpx;
+}
+.invite-btn {
+  flex-shrink: 0;
+  margin: 0;
+}
+
+/* ---------- 阶梯行：批量加购按钮 ---------- */
+.ladder-add {
+  flex-shrink: 0;
+  margin: 0;
+  font-size: 22rpx;
+  padding: 0 18rpx;
+  line-height: 2;
+}
+
+/* ---------- 我要开团：商品选择半屏层 ---------- */
+.create-popup {
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+.cp-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 28rpx 32rpx 20rpx;
+  border-bottom: 2rpx solid #f5f6f7;
+}
+.cp-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+}
+.cp-close {
+  font-size: 32rpx;
+  color: #b2b2b2;
+  padding: 0 8rpx;
+}
+.cp-body {
+  flex: 1;
+  min-height: 0;
+  max-height: 56vh;
+  padding: 0 32rpx;
+}
+.cp-goods {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 16rpx;
+  border-radius: 12rpx;
+  border: 2rpx solid transparent;
+  position: relative;
+}
+.cp-goods-on {
+  background: #fdf3f3;
+  border-color: #b4282d;
+}
+.cp-img {
+  width: 110rpx;
+  height: 110rpx;
+  border-radius: 12rpx;
+  background: #f2f3f5;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.cp-info {
+  min-width: 0;
+  padding-right: 40rpx;
+}
+.cp-name {
+  font-size: 26rpx;
+  color: #333333;
+  line-height: 1.4;
+}
+.cp-spec {
+  margin-top: 6rpx;
+}
+.cp-price {
+  display: flex;
+  align-items: baseline;
+  margin-top: 6rpx;
+}
+.cp-check {
+  position: absolute;
+  top: 16rpx;
+  right: 16rpx;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 40rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: #b4282d;
+  color: #ffffff;
+  font-size: 24rpx;
+}
+.cp-count {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24rpx 16rpx 8rpx;
+  border-top: 2rpx solid #f5f6f7;
+  margin-top: 12rpx;
+}
+.cp-tip {
+  padding: 12rpx 16rpx 24rpx;
+}
+.cp-foot {
+  padding: 16rpx 32rpx 24rpx;
+  border-top: 2rpx solid #f5f6f7;
+}
+.cp-confirm {
+  width: 100%;
+  margin: 0;
+}
+
+/* 数量 stepper */
+.stepper {
+  display: flex;
+  align-items: center;
+}
+.step-btn {
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 52rpx;
+  text-align: center;
+  background: #f5f6f7;
+  color: #333333;
+  font-size: 34rpx;
+  border-radius: 8rpx;
+}
+.step-disabled {
+  color: #cccccc;
+}
+.step-num {
+  min-width: 72rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #333333;
+}
+
+/* ---------- 参团成功弹层（与拼团详情页复用同款样式） ---------- */
+.join-success {
+  padding: 48rpx 40rpx 40rpx;
+  text-align: center;
+}
+.js-emoji {
+  font-size: 88rpx;
+  line-height: 1;
+}
+.js-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-top: 16rpx;
+}
+.js-msg {
+  font-size: 26rpx;
+  color: #666666;
+  margin-top: 12rpx;
+  line-height: 1.5;
+}
+.js-tip {
+  margin-top: 8rpx;
+}
+.js-btn {
+  margin-top: 24rpx;
+  width: 100%;
+}
+.js-later {
+  font-size: 26rpx;
+  color: #b2b2b2;
+  margin-top: 28rpx;
+  padding: 8rpx;
+}

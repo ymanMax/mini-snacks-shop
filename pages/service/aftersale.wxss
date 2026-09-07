@@ -1,0 +1,351 @@
+/* pages/service/aftersale.wxss — 申请售后页 */
+/* 规范：主题色 #b4282d / 背景 #f5f6f7 / 卡片白底圆角 16rpx / 间距 24rpx */
+
+.aftersale-page {
+  padding-bottom: 24rpx;
+}
+
+.card-title {
+  display: flex;
+  align-items: center;
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 20rpx;
+}
+.card-title-sub {
+  margin-left: 12rpx;
+  font-size: 22rpx;
+  font-weight: normal;
+  color: #838383;
+}
+.required {
+  margin-left: 6rpx;
+  font-size: 26rpx;
+  font-weight: normal;
+  color: #b4282d;
+}
+
+/* ---------- 1. 售后商品卡 ---------- */
+.goods-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #f5f6f7;
+}
+.goods-row:last-child {
+  border-bottom: none;
+}
+.goods-thumb {
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 12rpx;
+  background: #f5f6f7;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.goods-name {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 38rpx;
+}
+.goods-spec {
+  display: inline-block;
+  margin-top: 8rpx;
+  padding: 4rpx 16rpx;
+  font-size: 22rpx;
+  color: #838383;
+  background: #f2f3f5;
+  border-radius: 999rpx;
+}
+.goods-right {
+  margin-left: 16rpx;
+  text-align: right;
+  flex-shrink: 0;
+}
+.goods-right .price {
+  font-size: 28rpx;
+}
+.goods-count {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #838383;
+}
+.pay-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pay-label {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  color: #666666;
+}
+.pay-sub {
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+.pay-label .tag {
+  margin-left: 12rpx;
+  margin-right: 0;
+}
+.pay-amount {
+  font-size: 36rpx;
+}
+
+/* ---------- 2. 待付款提示 ---------- */
+.pending-tip {
+  display: flex;
+  align-items: center;
+  margin: 0 24rpx;
+  padding: 20rpx 24rpx;
+  background: #fff4e5;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  color: #ff8800;
+  line-height: 36rpx;
+}
+.pending-icon {
+  margin-right: 12rpx;
+  font-size: 28rpx;
+}
+.pending-go {
+  margin-left: 12rpx;
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: #b4282d;
+  text-decoration: underline;
+}
+
+/* ---------- 3. 售后类型三选一 ---------- */
+.type-list {
+  display: flex;
+  flex-direction: column;
+}
+.type-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding: 24rpx 20rpx;
+  margin-bottom: 20rpx;
+  background: #fafafa;
+  border: 2rpx solid #f0f0f0;
+  border-radius: 16rpx;
+}
+.type-item:last-child {
+  margin-bottom: 0;
+}
+.type-on {
+  background: #fdeeef;
+  border-color: #b4282d;
+}
+.type-icon {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36rpx;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.type-body {
+  flex: 1;
+  min-width: 0;
+}
+.type-name {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333333;
+}
+.type-on .type-name {
+  color: #b4282d;
+}
+.type-desc {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #838383;
+  line-height: 32rpx;
+}
+.type-check {
+  position: absolute;
+  top: -2rpx;
+  right: -2rpx;
+  width: 44rpx;
+  height: 44rpx;
+  line-height: 44rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #ffffff;
+  background: #b4282d;
+  border-radius: 0 16rpx 0 16rpx;
+}
+
+/* ---------- 4. 表单：原因 / 描述 / 凭证 ---------- */
+.form-row {
+  display: flex;
+  align-items: center;
+}
+.form-label {
+  font-size: 28rpx;
+  color: #333333;
+  flex-shrink: 0;
+}
+.form-label-block {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 0 16rpx;
+}
+.form-tip {
+  margin-left: 12rpx;
+  font-size: 20rpx;
+  color: #b2b2b2;
+}
+.picker-value {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 28rpx;
+  color: #333333;
+}
+.picker-ph {
+  color: #b2b2b2;
+}
+.picker-arrow {
+  margin-left: 12rpx;
+  font-size: 32rpx;
+  color: #c8c8c8;
+  transform: rotate(90deg);
+}
+.ta-wrap {
+  position: relative;
+  padding: 20rpx;
+  background: #fafafa;
+  border-radius: 12rpx;
+}
+.as-ta {
+  width: 100%;
+  min-height: 160rpx;
+  font-size: 26rpx;
+  color: #333333;
+  line-height: 40rpx;
+}
+.ta-ph {
+  color: #b2b2b2;
+  font-size: 26rpx;
+}
+.ta-count {
+  position: absolute;
+  right: 20rpx;
+  bottom: 12rpx;
+  font-size: 20rpx;
+  color: #b2b2b2;
+}
+.img-grid {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 4rpx;
+}
+.img-cell {
+  position: relative;
+  width: 150rpx;
+  height: 150rpx;
+  margin: 0 16rpx 16rpx 0;
+  border-radius: 12rpx;
+  overflow: hidden;
+}
+.img-thumb {
+  width: 150rpx;
+  height: 150rpx;
+  background: #f5f6f7;
+}
+.img-del {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 40rpx;
+  height: 40rpx;
+  line-height: 36rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #ffffff;
+  background: rgba(0, 0, 0, 0.5);
+  border-bottom-left-radius: 12rpx;
+}
+.img-add {
+  width: 150rpx;
+  height: 150rpx;
+  border: 2rpx dashed #dddddd;
+  border-radius: 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #fafafa;
+}
+.img-add-icon {
+  font-size: 44rpx;
+  color: #b2b2b2;
+  line-height: 1;
+}
+.img-add-text {
+  margin-top: 8rpx;
+  font-size: 20rpx;
+  color: #b2b2b2;
+}
+
+/* ---------- 5. 退款金额 ---------- */
+.refund-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.refund-label {
+  font-size: 28rpx;
+  color: #333333;
+}
+.refund-amount {
+  font-size: 40rpx;
+}
+.refund-none {
+  font-size: 28rpx;
+  color: #838383;
+}
+.refund-tip {
+  margin-top: 12rpx;
+  font-size: 22rpx;
+  color: #b2b2b2;
+  line-height: 32rpx;
+}
+
+/* ---------- 6. 底部提交栏 ---------- */
+.submit-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  background: #ffffff;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+  padding: 0 24rpx;
+}
+.submit-bar .demo-tip {
+  padding: 10rpx 0 4rpx;
+}
+.submit-btn {
+  height: 84rpx;
+  line-height: 84rpx;
+  margin: 8rpx 0 16rpx;
+  text-align: center;
+  border-radius: 999rpx;
+  background: linear-gradient(90deg, #d0342c, #b4282d);
+  color: #ffffff;
+  font-size: 30rpx;
+  font-weight: bold;
+}
+.submit-btn.btn-disabled {
+  opacity: 0.5;
+}

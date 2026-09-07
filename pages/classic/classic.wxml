@@ -1,29 +1,149 @@
+<wxs src="../../utils/format.wxs" module="fmt" />
 
-<view class="main">
-    <view class="categroy-left">
-        <view wx:for="{{detail}}" wx:key="index" data-id="{{item.id}}" data-index="{{index}}"
-            bindtap="switchTab"
-            class="cate-list {{curIndex === index?'on':''}}">{{item.name}}</view>
+<view class="classic-page">
+
+  <!-- ========== 左侧：竖向分类导航 ========== -->
+  <scroll-view class="cate-nav" scroll-y enhanced show-scrollbar="{{false}}" scroll-into-view="{{cateAnchor}}" scroll-with-animation="{{true}}">
+    <view wx:if="{{cateLoading}}" class="cate-sk">
+      <view class="skeleton-block cate-sk-item" wx:for="{{[0,1,2,3,4,5,6,7]}}" wx:key="*this"></view>
     </view>
-    <scroll-view class="categroy-right" scroll-y="{{isScroll}}" scroll-into-view="{{toView}}" scroll-with-animation="true">
-         <block wx:for="{{detail}}" wx:for-index wx:key="idx">
-            <view id="{{'s'+item.id}}" class="cate-box">
-                <view class="cate-banner">
-                    <image src="{{'https://hanmashanghu.qiaomai365.com' + item.img.url}}"></image>
-                </view>
-                <view class="cate-title">
-                    <text>{{item.name}}</text>
-                </view>
-                <view class="product">
-                    <view class="product-list" wx:for="{{classs[index]}}" wx:key="index" wx:for-item="val">
-                        <navigator url="../detail/detail?product_id={{val.id}}">
-                            <image src="{{'https://hanmashanghu.qiaomai365.com' + val.main_img_url}}"></image>
-                            <view class="classname"><text>{{val.name}}</text></view>
-                        </navigator>
-                    </view>
-                </view>
-            </view>
-        </block> 
+    <block wx:else>
+      <view
+        wx:for="{{categories}}"
+        wx:key="id"
+        id="cate-{{item.id}}"
+        class="cate-item {{curCategoryId === item.id ? 'cate-item-on' : ''}}"
+        data-id="{{item.id}}"
+        data-index="{{index}}"
+        bindtap="onTapCategory">
+        <image
+          class="cate-icon"
+          src="{{item.iconSrc}}"
+          mode="aspectFill"
+          lazy-load
+          data-index="{{index}}"
+          binderror="onCateIconError"></image>
+        <text class="cate-name ellipsis">{{item.name}}</text>
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- ========== 右侧：吸顶筛选栏 + 商品列表 ========== -->
+  <view class="goods-panel">
+
+    <!-- 排序 Tab + 筛选入口（固定布局，不随列表滚动） -->
+    <view class="filter-bar">
+      <view class="sort-tabs">
+        <view class="sort-tab {{sort === 'comprehensive' ? 'sort-on' : ''}}" data-sort="comprehensive" bindtap="onTapSort">综合</view>
+        <view class="sort-tab {{sort === 'sales' ? 'sort-on' : ''}}" data-sort="sales" bindtap="onTapSort">销量</view>
+        <view class="sort-tab {{sort === 'priceAsc' || sort === 'priceDesc' ? 'sort-on' : ''}}" data-sort="price" bindtap="onTapSort">
+          <text>价格</text>
+          <text class="sort-arrows">
+            <text class="arrow {{sort === 'priceAsc' ? 'arrow-on' : ''}}">↑</text>
+            <text class="arrow {{sort === 'priceDesc' ? 'arrow-on' : ''}}">↓</text>
+          </text>
+        </view>
+      </view>
+      <view class="filter-entry {{hasFilter ? 'filter-entry-on' : ''}}" bindtap="onOpenFilter">
+        <view class="filter-ico">
+          <view class="fi-line fi-1"></view>
+          <view class="fi-line fi-2"></view>
+          <view class="fi-line fi-3"></view>
+        </view>
+        <text>筛选</text>
+        <view class="dot-badge" wx:if="{{hasFilter}}"></view>
+      </view>
+    </view>
+
+    <!-- 当前分类 + 商品总数 -->
+    <view class="result-bar">
+      <text class="result-name ellipsis">{{curCategoryName}}</text>
+      <text class="result-total">共 {{total}} 件商品</text>
+    </view>
+
+    <!-- 商品列表：scroll-view 上拉分页 -->
+    <scroll-view
+      class="goods-scroll"
+      scroll-y
+      enhanced
+      show-scrollbar="{{false}}"
+      scroll-top="{{scrollTop}}"
+      lower-threshold="100"
+      bindscroll="onScroll"
+      bindscrolltolower="onLoadMore"
+      refresher-enabled
+      refresher-triggered="{{refreshing}}"
+      bindrefresherrefresh="onRefresh">
+
+      <!-- 首屏骨架屏 -->
+      <skeleton wx:if="{{firstLoading}}" type="list" rows="{{5}}" />
+
+      <block wx:else>
+        <view class="goods-item" wx:for="{{records}}" wx:key="id">
+          <goods-card goods="{{item}}" mode="row" />
+        </view>
+
+        <!-- 分页状态 -->
+        <view class="load-more" wx:if="{{loadingMore}}">加载中...</view>
+        <view class="load-more" wx:elif="{{noMore && records.length > 0}}">没有更多了</view>
+
+        <!-- 空态 -->
+        <empty-state
+          wx:if="{{records.length === 0}}"
+          text="没有符合条件的商品"
+          btn-text="清除筛选"
+          bind:action="onClearFilter" />
+      </block>
+    </scroll-view>
+  </view>
+
+  <!-- ========== 半屏筛选面板（右侧弹出 + 遮罩） ========== -->
+  <view wx:if="{{showFilter}}" class="popup-mask" bindtap="onCloseFilter" catchtouchmove="noop"></view>
+  <view wx:if="{{showFilter}}" class="filter-panel" catchtouchmove="noop">
+    <view class="fp-head">
+      <text class="fp-title">筛选</text>
+      <text class="fp-close" bindtap="onCloseFilter">✕</text>
+    </view>
+
+    <scroll-view class="fp-body" scroll-y>
+      <!-- 价格区间（单选） -->
+      <view class="fp-group">
+        <view class="fp-label">价格区间</view>
+        <view class="fp-options">
+          <view
+            wx:for="{{priceRanges}}"
+            wx:key="label"
+            class="fp-opt {{draftPriceIndex === index ? 'fp-opt-on' : ''}}"
+            data-index="{{index}}"
+            bindtap="onTapPriceRange">{{item.label}}</view>
+        </view>
+      </view>
+
+      <!-- 产地（多选） -->
+      <view class="fp-group">
+        <view class="fp-label">产地<text class="fp-tip">（可多选）</text></view>
+        <view class="fp-options">
+          <view
+            wx:for="{{draftOrigins}}"
+            wx:key="name"
+            class="fp-opt {{item.checked ? 'fp-opt-on' : ''}}"
+            data-index="{{index}}"
+            bindtap="onTapOrigin">{{item.name}}</view>
+        </view>
+      </view>
+
+      <!-- 仅看有货 -->
+      <view class="fp-group">
+        <view class="fp-row">
+          <text class="fp-label">仅看有货</text>
+          <switch checked="{{draftInStock}}" color="#b4282d" bindchange="onToggleInStock" />
+        </view>
+      </view>
     </scroll-view>
 
+    <view class="fp-foot">
+      <view class="fp-btn fp-btn-reset" bindtap="onResetFilter">重置</view>
+      <view class="fp-btn fp-btn-ok" bindtap="onConfirmFilter">确定</view>
+    </view>
+  </view>
 </view>

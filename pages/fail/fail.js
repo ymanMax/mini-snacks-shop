@@ -15,12 +15,17 @@ Page({
 
   },
   toOrderDetail() {
-    wx.navigateBack({
-      delta: 1,
-      success: (res) => {},
-      fail: (res) => {},
-      complete: (res) => {},
-    })
+    wx.redirectTo({
+      url: '/pages/order/list?status=0',
+      fail: () => wx.navigateBack({ delta: 1 })
+    });
+  },
+  // 图片兜底：加载失败回退本地默认图
+  onImgError(e) {
+    // fail 页使用本地 /image/cry.png，双保险回退默认图
+    if (e && e.target) {
+      this.setData({ imgFallback: '/static/images/default.png' });
+    }
   },
   /**
    * 生命周期函数--监听页面初次渲染完成

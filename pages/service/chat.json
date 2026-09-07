@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "在线客服",
+  "navigationBarBackgroundColor": "#b4282d",
+  "navigationBarTextStyle": "white",
+  "backgroundColor": "#f5f6f7",
+  "usingComponents": {
+    "star-rate": "../../components/star-rate/star-rate"
+  }
+}

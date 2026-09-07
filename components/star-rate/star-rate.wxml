@@ -1,0 +1,9 @@
+<view class="star-rate">
+  <text
+    wx:for="{{stars}}"
+    wx:key="index"
+    class="star {{item ? 'star-on' : ''}}"
+    style="font-size:{{size}}rpx;color:{{item ? activeColor : '#dddddd'}}"
+    data-index="{{index}}"
+    bindtap="onTap">★</text>
+</view>

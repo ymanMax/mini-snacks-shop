@@ -1,50 +1,211 @@
-<view class="J-shopping-cart-empty" hidden="{{iscart}}">
-  <view class="shopping-cart-empty">
-    <view class="bg"></view>
-    <image src="../../image/cry.png"></image>
-    <text class='empty-text'>购物车空空如也</text>
-  </view>
-</view>
+<wxs src="../../utils/format.wxs" module="fmt" />
 
-<view class="main" hidden="{{hidden}}">
-  <scroll-view class="scroll" scroll-y="true">
-    <view class="separate"></view>
-    <view class="cart-box">
-      <view class="cart-list" wx:for="{{carts}}" wx:key="{{index}}">
-        <view wx:if="{{!item.isSelect}}">
-          <icon class="cart-pro-select" bindtap="switchSelect" data-index="{{index}}" data-id="{{index}}" type="circle" size="20"></icon>
+<view class="page-container cart-page">
+
+  <!-- 首次加载骨架屏 -->
+  <skeleton wx:if="{{loading}}" type="list" rows="{{5}}" />
+
+  <!-- 空态 + 猜你喜欢 -->
+  <block wx:elif="{{!hasAny}}">
+    <empty-state text="购物车还是空的" btn-text="去逛逛 →" bind:action="onGoIndex" />
+
+    <view class="guess-wrap" wx:if="{{guessList.length}}">
+      <view class="section-title guess-title">
+        <text class="title">猜你喜欢</text>
+      </view>
+      <scroll-view class="guess-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+        <view class="guess-item" wx:for="{{guessList}}" wx:key="id">
+          <goods-card goods="{{item}}" mode="mini" bind:added="onGuessAdded" />
         </view>
-        <view wx:elif="{{item.isSelect}}">
-          <icon class="cart-pro-select" bindtap="switchSelect" data-index="{{index}}" data-id="{{index}}" type="success" color="#f0145a" size="20"></icon>
+      </scroll-view>
+    </view>
+  </block>
+
+  <!-- 购物车主体 -->
+  <block wx:else>
+    <!-- 顶部右上角：编辑 / 完成 -->
+    <view class="cart-topbar">
+      <text class="topbar-count" wx:if="{{!editing}}">共 {{summary.validCount}} 种商品</text>
+      <text class="topbar-count" wx:else>已选 {{editSelectedCount}} 件，可批量删除</text>
+      <text class="edit-toggle" bindtap="onToggleEdit">{{editing ? '完成' : '编辑'}}</text>
+    </view>
+
+    <!-- 正常商品列表 -->
+    <view class="cart-list" wx:if="{{items.length}}">
+      <view class="cart-row" wx:for="{{items}}" wx:key="id">
+        <view
+          class="row-inner {{slideId === item.id ? 'row-open' : ''}}"
+          data-id="{{item.id}}"
+          bindtouchstart="onTouchStart"
+          bindtouchmove="onTouchMove"
+          bindlongpress="onLongPress"
+          bindtap="onRowTap">
+
+          <!-- 圆形勾选框（编辑模式下作用于批量选择） -->
+          <view class="cbox {{editing ? (item._sel ? 'cbox-on' : '') : (item.checked ? 'cbox-on' : '')}}"
+                catchtap="onToggleCheck" data-id="{{item.id}}">
+            <text wx:if="{{editing ? item._sel : item.checked}}" class="cbox-tick">✓</text>
+          </view>
+
+          <image class="row-thumb" src="{{item.pic}}" mode="aspectFill" lazy-load="{{true}}"
+                 data-goods-id="{{item.goodsId}}" catchtap="onGoDetail"
+                 data-group="items" data-index="{{index}}" binderror="onImgError"></image>
+
+          <view class="row-info">
+            <view class="row-name ellipsis-2" data-goods-id="{{item.goodsId}}" catchtap="onGoDetail">{{item.name}}</view>
+            <view class="row-spec ellipsis" wx:if="{{item.specText}}">{{item.specText}}</view>
+            <view class="row-bottom">
+              <view class="price">
+                <text class="price-symbol">￥</text><text class="row-price">{{fmt.priceNum(item.price)}}</text>
+              </view>
+              <view class="stepper" wx:if="{{!editing}}">
+                <text class="step-btn {{item.count <= 1 ? 'step-off' : ''}}" catchtap="onMinus" data-id="{{item.id}}">-</text>
+                <text class="step-num">{{item.count}}</text>
+                <text class="step-btn {{item.stock > 0 && item.count >= item.stock ? 'step-off' : ''}}" catchtap="onPlus" data-id="{{item.id}}">+</text>
+              </view>
+              <view class="stock-tip" wx:else>库存 {{item.stock}}</view>
+            </view>
+          </view>
+
+          <!-- 右上角快速删除 -->
+          <text class="row-x" wx:if="{{!editing}}" catchtap="onDeleteItem" data-id="{{item.id}}">×</text>
         </view>
-        <navigator url="../detail/detail?product_id={{item.id}}">
-          <image class="cart-thumb" src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
-        </navigator>
-        <text class="cart-pro-name">{{item.name}}</text>
-        <text class="cart-pro-price">￥{{item.price}}</text>
-        <view class="cart-count-box">
-          <text class="cart-count-down" bindtap="delCount" data-obj="{{obj}}" data-index="{{index}}">-</text>
-          <text class="cart-count-num">{{item.count}}</text>
-          <text class="cart-count-add" bindtap="addCount" data-index="{{index}}">+</text>
-        </view>
-        <image class="cart-del" bindtap="delGoods" data-index="{{index}}" src="/image/delete.png"></image>
+
+        <!-- 左滑露出的删除按钮 -->
+        <view class="row-del" catchtap="onDeleteItem" data-id="{{item.id}}">删除</view>
       </view>
     </view>
 
+    <!-- 失效商品折叠区 -->
+    <view class="invalid-card" wx:if="{{invalidItems.length}}">
+      <view class="invalid-head" bindtap="onToggleInvalid">
+        <text class="invalid-title">失效商品 {{invalidItems.length}} 件</text>
+        <text class="invalid-arrow {{invalidExpanded ? 'up' : ''}}">∨</text>
+        <text class="invalid-clear" catchtap="onClearInvalid">清空</text>
+      </view>
+      <view class="invalid-body" wx:if="{{invalidExpanded}}">
+        <view class="invalid-row" wx:for="{{invalidItems}}" wx:key="id">
+          <view class="invalid-thumb-wrap">
+            <image class="row-thumb" src="{{item.pic}}" mode="aspectFill" lazy-load="{{true}}"
+                   data-group="invalid" data-index="{{index}}" binderror="onImgError"></image>
+            <view class="invalid-mask"></view>
+          </view>
+          <view class="row-info">
+            <view class="row-name invalid-name ellipsis-2">【失效】{{item.name}}</view>
+            <view class="row-spec ellipsis" wx:if="{{item.specText}}">{{item.specText}}</view>
+            <view class="invalid-price">￥{{fmt.priceNum(item.price)}} × {{item.count}}</view>
+          </view>
+          <text class="row-x" catchtap="onDeleteItem" data-id="{{item.id}}">×</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 仅剩失效商品时同样给出「猜你喜欢」 -->
+    <view class="guess-wrap" wx:if="{{!items.length && guessList.length}}">
+      <view class="section-title guess-title">
+        <text class="title">猜你喜欢</text>
+      </view>
+      <scroll-view class="guess-scroll" scroll-x="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+        <view class="guess-item" wx:for="{{guessList}}" wx:key="id">
+          <goods-card goods="{{item}}" mode="mini" bind:added="onGuessAdded" />
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 促销提示条占位：避免固定 footer（含提示条）遮挡列表末尾内容 -->
+    <view wx:if="{{!editing && promoTips.length}}" style="height: {{promoTips.length * 52}}rpx;"></view>
+
+    <!-- 优惠明细小面板（结算栏上方弹出，bottom 随促销提示条行数联动） -->
+    <view class="popup-mask" wx:if="{{showDiscount}}" bindtap="onCloseDiscount"></view>
+    <view class="discount-panel" wx:if="{{showDiscount}}" style="bottom: calc({{panelBottom}}rpx + env(safe-area-inset-bottom));">
+      <view class="dp-row">
+        <text class="dp-label">满减优惠</text>
+        <text class="dp-value price">-￥{{fmt.priceNum(summary.fullReduce)}}</text>
+      </view>
+      <view class="dp-note">满 59 减 8 / 满 99 减 20 / 满 199 减 50，系统自动取最优</view>
+
+      <!-- 最优券（summary.promo.bestCoupon，接口自动选取） -->
+      <block wx:if="{{summary.promo.bestCoupon}}">
+        <view class="dp-row dp-row-gap">
+          <text class="dp-label">优惠券 · {{summary.promo.bestCoupon.name}}</text>
+          <text class="dp-value price">-￥{{fmt.priceNum(summary.promo.bestCoupon.cutAmount)}}</text>
+        </view>
+        <view class="dp-note">自动为你选择最优券，结算页可更换</view>
+      </block>
+
+      <!-- 免配送费进度（summary.promo.freeShipDiff / freeThreshold） -->
+      <block wx:if="{{freeShipPercent >= 0}}">
+        <view class="dp-row dp-row-gap">
+          <text class="dp-label">配送费</text>
+          <text class="dp-value dp-ship-diff" wx:if="{{summary.promo.freeShipDiff > 0}}">还差 ￥{{fmt.priceNum(summary.promo.freeShipDiff)}} 免基础配送费</text>
+          <text class="dp-value dp-ship-free" wx:else>✓ 已免基础配送费</text>
+        </view>
+        <view class="dp-ship-bar">
+          <view class="dp-ship-fill" style="width: {{freeShipPercent}}%;"></view>
+        </view>
+        <view class="dp-note">满 {{summary.promo.freeThreshold}} 元免基础配送费，配送费以结算页为准</view>
+      </block>
+      <view class="dp-note" wx:else>配送费以结算页为准，满 59 免基础配送费</view>
+    </view>
+
+    <!-- 底部固定结算栏 -->
     <view class="cart-footer">
-      <view wx:if="{{!isAllSelect}}">
-        <icon class="total-select" bindtap="allSelect" type="circle" size="20"></icon>
+      <!-- 促销提示条（V1.1：读 summary.promo，纵向堆叠，浅红底红字；已享满减为绿色对勾样式） -->
+      <view class="promo-tips" wx:if="{{!editing && promoTips.length}}">
+        <view
+          class="promo-tip"
+          wx:for="{{promoTips}}"
+          wx:key="type"
+          data-type="{{item.type}}"
+          bindtap="onTipTap">
+          <text class="promo-tip-tick" wx:if="{{item.type === 'done'}}">✓</text>
+          <text class="promo-tip-text ellipsis">{{item.text}}</text>
+          <text class="promo-tip-action" wx:if="{{item.action}}">{{item.action}}</text>
+        </view>
       </view>
-      <view wx:elif="{{isAllSelect}}">
-        <icon class="total-select" bindtap="allSelect" type="success" color="#f0145a" size="20"></icon>
+      <view class="demo-tip">演示环境，不产生真实交易</view>
+      <view class="footer-bar">
+        <view class="footer-left" bindtap="onCheckAll">
+          <view class="cbox {{editing ? (allSel ? 'cbox-on' : '') : (summary.allChecked ? 'cbox-on' : '')}}">
+            <text wx:if="{{editing ? allSel : summary.allChecked}}" class="cbox-tick">✓</text>
+          </view>
+          <text class="footer-all-text">全选</text>
+        </view>
+
+        <!-- 普通模式：合计 + 优惠明细 + 结算 -->
+        <block wx:if="{{!editing}}">
+          <view class="footer-mid" bindtap="onToggleDiscount">
+            <view class="footer-total">
+              <text class="footer-total-label">合计</text>
+              <text class="price footer-amount">￥{{fmt.priceNum(summary.checkedAmount)}}</text>
+            </view>
+            <view class="footer-discount">
+              <text wx:if="{{summary.fullReduce > 0}}" class="footer-reduce">已享满减 -￥{{fmt.priceNum(summary.fullReduce)}}</text>
+              <text wx:else class="footer-discount-text">优惠明细</text>
+              <text class="footer-arrow {{showDiscount ? 'up' : ''}}">∧</text>
+            </view>
+          </view>
+          <view class="settle-btn {{summary.checkedCount > 0 ? '' : 'settle-off'}}" bindtap="onSettle">
+            结算({{summary.checkedCount}})
+          </view>
+        </block>
+
+        <!-- 编辑模式：删除所选 -->
+        <block wx:else>
+          <view class="footer-mid">
+            <view class="footer-total">
+              <text class="footer-total-label">已选 {{editSelectedCount}} 件</text>
+            </view>
+            <view class="footer-discount">
+              <text class="footer-discount-text">编辑模式下勾选用于批量删除</text>
+            </view>
+          </view>
+          <view class="settle-btn del-btn {{editSelectedCount > 0 ? '' : 'settle-off'}}" bindtap="onDeleteSelected">
+            删除所选({{editSelectedCount}})
+          </view>
+        </block>
       </view>
-      <view class="order-icon">
-        <navigator  bindtap="goBuy">
-          <image src="/image/buy.png"></image>
-        </navigator>
-      </view>
-      <text>全选</text>
-      <text class="cart-toatl-price">￥{{totalMoney}}</text>
+      <view class="safe-bottom"></view>
     </view>
-  </scroll-view>
+  </block>
 </view>

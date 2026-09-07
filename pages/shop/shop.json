@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "零食商城·直营店",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "goods-card": "../../components/goods-card/goods-card",
+    "star-rate": "../../components/star-rate/star-rate",
+    "empty-state": "../../components/empty-state/empty-state",
+    "skeleton": "../../components/skeleton/skeleton"
+  }
+}

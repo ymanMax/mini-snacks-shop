@@ -1,0 +1,91 @@
+<view class="page-container coupon-page">
+
+  <!-- 顶部 Tab：领券中心 / 我的优惠券 -->
+  <view class="top-tabs">
+    <view class="top-tab {{tab === 'available' ? 'top-tab-on' : ''}}" data-tab="available" bindtap="onTabChange">领券中心</view>
+    <view class="top-tab {{tab === 'mine' ? 'top-tab-on' : ''}}" data-tab="mine" bindtap="onTabChange">我的优惠券</view>
+  </view>
+
+  <!-- 我的优惠券子 Tab -->
+  <view class="sub-tabs" wx:if="{{tab === 'mine'}}">
+    <view
+      wx:for="{{subTabs}}"
+      wx:key="value"
+      class="sub-tab {{subStatus === item.value ? 'sub-tab-on' : ''}}"
+      data-status="{{item.value}}"
+      bindtap="onSubChange">{{item.label}}</view>
+  </view>
+
+  <!-- 首次加载骨架屏 -->
+  <skeleton wx:if="{{firstLoading}}" type="list" rows="{{4}}" />
+
+  <!-- 领券中心 -->
+  <block wx:elif="{{tab === 'available'}}">
+    <block wx:if="{{availableList.length > 0}}">
+      <view class="card coupon-card" wx:for="{{availableList}}" wx:key="id">
+        <view class="cc-left">
+          <view class="cc-amount">
+            <block wx:if="{{item.isDiscount}}">
+              <text class="cc-big">{{item.bigText}}</text><text class="cc-unit">折</text>
+            </block>
+            <block wx:else>
+              <text class="cc-sym">￥</text><text class="cc-big">{{item.bigText}}</text>
+            </block>
+          </view>
+          <view class="cc-threshold">{{item.thresholdText}}</view>
+        </view>
+        <view class="cc-right">
+          <view class="cc-name ellipsis">{{item.name}}</view>
+          <view class="cc-scope ellipsis">{{item.scope}}</view>
+          <view class="cc-expire">领取后 {{item.expireDays}} 天内有效</view>
+          <view class="cc-btn-row">
+            <view wx:if="{{item.received}}" class="cc-btn cc-btn-disabled">已领取</view>
+            <view wx:else class="cc-btn cc-btn-on" data-index="{{index}}" bindtap="onReceive">立即领取</view>
+          </view>
+        </view>
+      </view>
+    </block>
+    <empty-state wx:else text="暂无可领取的优惠券" />
+  </block>
+
+  <!-- 我的优惠券 -->
+  <block wx:else>
+    <block wx:if="{{mineList.length > 0}}">
+      <view
+        class="card coupon-card {{item.status > 1 ? 'coupon-gray' : ''}}"
+        wx:for="{{mineList}}"
+        wx:key="id">
+        <view class="cc-left">
+          <view class="cc-amount">
+            <block wx:if="{{item.isDiscount}}">
+              <text class="cc-big">{{item.bigText}}</text><text class="cc-unit">折</text>
+            </block>
+            <block wx:else>
+              <text class="cc-sym">￥</text><text class="cc-big">{{item.bigText}}</text>
+            </block>
+          </view>
+          <view class="cc-threshold">{{item.thresholdText}}</view>
+        </view>
+        <view class="cc-right">
+          <view class="cc-name ellipsis">{{item.name}}</view>
+          <view class="cc-scope ellipsis">{{item.scope}}</view>
+          <view class="cc-expire">有效期至 {{item.expireTime}}</view>
+          <view class="cc-btn-row">
+            <view wx:if="{{item.status === 1}}" class="cc-btn cc-btn-on" bindtap="onUse">去使用</view>
+            <view wx:else class="cc-source">{{item.source}}</view>
+          </view>
+          <!-- 状态印章（已使用 / 已过期） -->
+          <view wx:if="{{item.statusText}}" class="cc-stamp">{{item.statusText}}</view>
+        </view>
+      </view>
+    </block>
+    <empty-state
+      wx:else
+      text="暂无优惠券，去领券中心看看"
+      btn-text="去领券中心"
+      bind:action="onGoAvailable" />
+  </block>
+
+  <!-- 演示环境提示（常驻底部） -->
+  <view class="demo-tip">演示环境，优惠券为 Mock 数据</view>
+</view>

@@ -1,0 +1,117 @@
+/* pages/message/message.wxss — 消息中心 */
+
+/* ---------- 顶部 Tab 行 ---------- */
+.tab-bar {
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding-right: 24rpx;
+}
+.tabs-scroll {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+}
+.tabs-inner {
+  display: flex;
+  align-items: center;
+  padding: 0 24rpx;
+}
+.type-tab {
+  flex-shrink: 0;
+  font-size: 28rpx;
+  color: #838383;
+  padding: 24rpx 24rpx;
+  position: relative;
+}
+.type-tab-on {
+  color: #b4282d;
+  font-weight: bold;
+}
+.type-tab-on::after {
+  content: '';
+  position: absolute;
+  bottom: 10rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 44rpx;
+  height: 6rpx;
+  border-radius: 4rpx;
+  background: #b4282d;
+}
+.read-all {
+  flex-shrink: 0;
+  font-size: 24rpx;
+  color: #b4282d;
+  padding: 8rpx 0 8rpx 16rpx;
+  border-left: 2rpx solid #eeeeee;
+  margin-left: 8rpx;
+}
+
+/* ---------- 消息卡 ---------- */
+.msg-card {
+  display: flex;
+  align-items: flex-start;
+}
+.msg-icon {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: #fdeeef;
+  font-size: 40rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.msg-body {
+  min-width: 0;
+}
+.msg-title-row {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+.msg-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+  max-width: 520rpx;
+}
+/* 未读红点 */
+.msg-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #b4282d;
+  margin-left: 12rpx;
+  flex-shrink: 0;
+}
+.msg-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8rpx;
+}
+.msg-type {
+  margin-right: 0;
+}
+.msg-content {
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 1.5;
+  margin-top: 8rpx;
+}
+
+/* 已读：整体淡化 */
+.msg-read .msg-icon {
+  background: #f2f3f5;
+}
+.msg-read .msg-title {
+  font-weight: normal;
+  color: #666666;
+}
+.msg-read .msg-content {
+  color: #b2b2b2;
+}

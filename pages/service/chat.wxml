@@ -1,0 +1,177 @@
+<view class="chat-page">
+
+  <!-- ========== 顶部客服信息条（右侧「评价」按钮，会话≥2条后可用） ========== -->
+  <view class="chat-top">
+    <view class="top-cs">
+      <view class="top-avatar">🐿️</view>
+      <view class="flex-1">
+        <view class="top-name">客服小零</view>
+        <view class="top-sub">
+          <text class="online-dot"></text>
+          <text>在线 · 08:00-22:00 · 演示环境 Mock 自动回复</text>
+        </view>
+      </view>
+    </view>
+    <view class="rate-entry {{canRate ? '' : 'rate-entry-off'}}" bindtap="openRate">评价</view>
+  </view>
+
+  <!-- ========== 会话流（新消息自动滚到底：scroll-into-view 双锚点交替） ========== -->
+  <scroll-view
+    class="chat-body"
+    scroll-y="{{true}}"
+    scroll-into-view="{{scrollInto}}"
+    scroll-with-animation="{{true}}"
+    enhanced="{{true}}"
+    show-scrollbar="{{false}}">
+
+    <view class="chat-notice">客服会话为演示环境 Mock 模拟，不产生真实工单</view>
+    <view class="chat-loading" wx:if="{{loading}}">正在为您接入客服...</view>
+
+    <block wx:for="{{msgs}}" wx:key="id">
+
+      <!-- 客服消息（左：🐿️ 头像 + 白气泡） -->
+      <view class="msg-row" wx:if="{{item.type === 'cs'}}">
+        <view class="cs-avatar">🐿️</view>
+        <view class="msg-main">
+          <view class="cs-bubble">
+            <text class="bubble-text" user-select="{{true}}">{{item.text}}</text>
+            <!-- 未命中规则：回答末尾附常见问题快捷胶囊引导 -->
+            <view class="bubble-quick" wx:if="{{item.quick.length}}">
+              <view class="bubble-quick-title">您可以这样问我：</view>
+              <view
+                class="quick-chip"
+                wx:for="{{item.quick}}"
+                wx:for-item="q"
+                wx:key="*this"
+                data-q="{{q}}"
+                bindtap="onQuickTap">{{q}}</view>
+            </view>
+          </view>
+          <view class="msg-time">{{item.time}}</view>
+        </view>
+      </view>
+
+      <!-- 用户消息（右：主题色气泡白字） -->
+      <view class="msg-row msg-row-me" wx:elif="{{item.type === 'me'}}">
+        <view class="msg-main msg-main-me">
+          <view class="me-bubble">{{item.text}}</view>
+          <view class="msg-time msg-time-me">{{item.time}}</view>
+        </view>
+      </view>
+
+      <!-- 对方正在输入...（灰点动画气泡） -->
+      <view class="msg-row" wx:elif="{{item.type === 'typing'}}">
+        <view class="cs-avatar">🐿️</view>
+        <view class="msg-main">
+          <view class="cs-bubble typing-bubble">
+            <text class="typing-text">对方正在输入</text>
+            <view class="typing-dots">
+              <view class="tdot tdot-1"></view>
+              <view class="tdot tdot-2"></view>
+              <view class="tdot tdot-3"></view>
+            </view>
+          </view>
+        </view>
+      </view>
+
+      <!-- 常见问题快捷区（胶囊，点击即作为用户消息发送） -->
+      <view class="quick-area" wx:elif="{{item.type === 'quick'}}">
+        <view class="quick-area-title">常见问题</view>
+        <view class="quick-area-body">
+          <view
+            class="quick-chip"
+            wx:for="{{hotQuestions}}"
+            wx:for-item="q"
+            wx:key="*this"
+            data-q="{{q}}"
+            bindtap="onQuickTap">{{q}}</view>
+        </view>
+      </view>
+
+      <!-- 运营卡片：售后自助 -->
+      <view class="msg-row" wx:elif="{{item.type === 'card'}}">
+        <view class="cs-avatar">🐿️</view>
+        <view class="msg-main">
+          <view class="ops-card">
+            <view class="ops-title">🛠️ 售后自助</view>
+            <view class="ops-sub">退款 / 退货 / 换货，进度随时查</view>
+            <view class="ops-btn" bindtap="onCardApply">
+              <text class="ops-btn-icon">📝</text>
+              <view class="flex-1">
+                <view class="ops-btn-name">申请售后</view>
+                <view class="ops-btn-tip">需先选择订单（订单详情 → 申请售后）</view>
+              </view>
+              <text class="ops-arrow">›</text>
+            </view>
+            <view class="ops-btn" bindtap="onCardProgress">
+              <text class="ops-btn-icon">🔍</text>
+              <view class="flex-1">
+                <view class="ops-btn-name">查看售后进度</view>
+                <view class="ops-btn-tip">售后工单列表与状态跟踪</view>
+              </view>
+              <text class="ops-arrow">›</text>
+            </view>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 底部滚动锚点（双锚点交替触发 scroll-into-view） -->
+    <view id="chat-end-a" class="chat-anchor"></view>
+    <view id="chat-end-b" class="chat-anchor"></view>
+  </scroll-view>
+
+  <!-- ========== 底部固定输入栏 ========== -->
+  <view class="chat-input-bar">
+    <view class="input-row">
+      <view class="input-wrap">
+        <input
+          class="chat-input"
+          value="{{inputValue}}"
+          type="text"
+          maxlength="200"
+          placeholder="请描述您的问题，如：配送要多久？"
+          placeholder-class="input-ph"
+          confirm-type="send"
+          confirm-hold="{{false}}"
+          cursor-spacing="20"
+          adjust-position="{{true}}"
+          bindinput="onInput"
+          bindconfirm="onSend" />
+      </view>
+      <view class="send-btn {{inputValue.length ? '' : 'send-btn-off'}}" bindtap="onSend">发送</view>
+    </view>
+    <view class="safe-bottom"></view>
+  </view>
+
+  <!-- ========== 客服评价半屏弹层 ========== -->
+  <view wx:if="{{rateOpen}}" class="popup-mask rate-mask" bindtap="closeRate"></view>
+  <view wx:if="{{rateOpen}}" class="popup-bottom rate-popup">
+    <view class="popup-header">
+      <text class="popup-title">客服服务评价</text>
+      <text class="popup-close" bindtap="closeRate">✕</text>
+    </view>
+    <view class="rate-row">
+      <text class="rate-label">响应速度</text>
+      <star-rate value="{{rate.speed}}" size="{{44}}" readonly="{{false}}" data-key="speed" bind:change="onRateChange" />
+      <text class="rate-score">{{rateText.speed}}</text>
+    </view>
+    <view class="rate-row">
+      <text class="rate-label">解决问题</text>
+      <star-rate value="{{rate.solve}}" size="{{44}}" readonly="{{false}}" data-key="solve" bind:change="onRateChange" />
+      <text class="rate-score">{{rateText.solve}}</text>
+    </view>
+    <view class="rate-input-wrap">
+      <input
+        class="rate-input"
+        value="{{rate.content}}"
+        maxlength="{{maxLen}}"
+        placeholder="还有什么想对客服说的？（选填）"
+        placeholder-class="input-ph"
+        bindinput="onRateInput" />
+    </view>
+    <view class="btn-primary rate-submit {{rateSubmitting ? 'btn-disabled' : ''}}" bindtap="submitRate">提交评价</view>
+    <view class="demo-tip">演示环境 · 评价数据仅在本地生效</view>
+    <view class="safe-bottom"></view>
+  </view>
+</view>

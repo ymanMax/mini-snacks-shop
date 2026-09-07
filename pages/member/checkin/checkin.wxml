@@ -1,0 +1,103 @@
+<!--pages/member/checkin/checkin.wxml — 每日签到-->
+<wxs src="../../../utils/format.wxs" module="fmt" />
+<view class="page-container checkin-page">
+
+  <!-- 首次加载骨架屏（info 为空时兜底展示，避免空数据渲染报错） -->
+  <skeleton wx:if="{{firstLoading || !info}}" type="list" rows="{{4}}" />
+
+  <block wx:else>
+    <!-- ========== 顶部积分卡 ========== -->
+    <view class="points-hero">
+      <view class="ph-label">当前积分</view>
+      <view class="ph-points">{{info.totalPoints}}</view>
+      <view class="ph-continuous">已连续签到 <text class="ph-days">{{info.continuousDays}}</text> 天</view>
+      <view class="ph-link" bindtap="onGoPoints">积分明细 ›</view>
+    </view>
+
+    <!-- ========== 签到按钮（大圆按钮 + 上浮动画） ========== -->
+    <view class="sign-area">
+      <view class="sign-btn-wrap">
+        <view
+          class="sign-btn {{info.todaySigned ? 'sign-btn-done' : ''}}"
+          bindtap="onSign">
+          <block wx:if="{{info.todaySigned}}">
+            <view class="sign-btn-text">今日已签到</view>
+            <view class="sign-btn-sub">明天记得再来哦</view>
+          </block>
+          <block wx:else>
+            <view class="sign-btn-text">立即签到</view>
+            <view class="sign-btn-sub">+{{info.nextReward}} 积分</view>
+          </block>
+        </view>
+        <!-- +N 积分上浮渐隐动画（纯 CSS） -->
+        <view wx:if="{{showFloat}}" class="float-points">+{{floatPoints}} 积分</view>
+      </view>
+    </view>
+
+    <!-- ========== 连续奖励梯度条 ========== -->
+    <view class="card">
+      <view class="section-title">
+        <view class="title">连续签到奖励</view>
+        <view class="more">7 天一循环，第 7 天大奖</view>
+      </view>
+      <view class="reward-row">
+        <view
+          class="reward-cell {{item.status}} {{item.isBig ? 'reward-big' : ''}}"
+          wx:for="{{rewardCells}}"
+          wx:key="day">
+          <view class="reward-circle">
+            <text wx:if="{{item.status === 'done'}}">✓</text>
+            <text wx:elif="{{item.isBig}}">🎁</text>
+            <text wx:else>+{{item.points}}</text>
+          </view>
+          <view class="reward-day">{{item.isBig ? '大奖' : '第' + item.day + '天'}}</view>
+          <view class="reward-points">+{{item.points}}分</view>
+        </view>
+      </view>
+    </view>
+
+    <!-- ========== 当月签到日历（纯 CSS grid） ========== -->
+    <view class="card">
+      <view class="section-title">
+        <view class="title">{{info.year}}年{{info.monthNum}}月</view>
+        <view class="more">本月已签 {{info.monthRecords.length}} 天</view>
+      </view>
+      <view class="calendar">
+        <view class="cal-head" wx:for="{{weekHead}}" wx:key="*this">{{item}}</view>
+        <view
+          class="cal-cell"
+          wx:for="{{cells}}"
+          wx:key="index"
+          wx:for-item="cell">
+          <block wx:if="{{cell}}">
+            <view
+              class="cal-day {{cell.signed ? 'cal-signed' : ''}} {{cell.isToday && !cell.signed ? 'cal-today' : ''}} {{cell.isToday ? 'cal-is-today' : ''}}">
+              <text wx:if="{{cell.signed}}">{{cell.day}}</text>
+              <text wx:elif="{{cell.isToday}}">签</text>
+              <text wx:else>{{cell.day}}</text>
+              <view wx:if="{{cell.signed}}" class="cal-check">✓</view>
+            </view>
+          </block>
+        </view>
+      </view>
+      <view class="cal-legend">
+        <view class="legend-item"><view class="legend-dot legend-signed"></view>已签到</view>
+        <view class="legend-item"><view class="legend-dot legend-today"></view>今天</view>
+      </view>
+    </view>
+
+    <!-- ========== 签到规则说明 ========== -->
+    <view class="card">
+      <view class="section-title">
+        <view class="title">签到规则</view>
+      </view>
+      <view class="rule-item" wx:for="{{info.rules}}" wx:key="*this">
+        <text class="rule-dot">•</text>
+        <text class="rule-text">{{item}}</text>
+      </view>
+    </view>
+
+    <view class="demo-tip">演示环境 · 数据均为 Mock，不产生真实交易</view>
+    <view class="safe-bottom"></view>
+  </block>
+</view>

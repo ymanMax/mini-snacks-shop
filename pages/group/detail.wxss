@@ -1,0 +1,433 @@
+/* pages/group/detail.wxss — 拼团详情 */
+
+.group-detail-page {
+  padding-bottom: 0;
+}
+
+/* 通用卡片标题 */
+.card-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 20rpx;
+}
+
+/* ========== 1. 商品头卡 ========== */
+.goods-head {
+  padding: 0 0 24rpx;
+}
+.gh-img {
+  width: 100%;
+  height: 420rpx;
+  background: #f2f3f5;
+  display: block;
+}
+.gh-name {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+  line-height: 1.4;
+  padding: 20rpx 24rpx 0;
+}
+.gh-price-row {
+  display: flex;
+  align-items: baseline;
+  padding: 12rpx 24rpx 0;
+}
+.gh-price {
+  color: #b4282d;
+  font-weight: bold;
+  font-size: 52rpx;
+  line-height: 1;
+}
+.gh-symbol {
+  font-size: 28rpx;
+}
+.gh-tags {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 16rpx 24rpx 0;
+}
+.gh-save {
+  background: #fff4e5;
+  color: #ff8800;
+}
+.gh-team {
+  background: #fdeeef;
+  color: #b4282d;
+}
+.gh-status {
+  margin-left: auto;
+  margin-right: 0;
+}
+.st-1 { background: #fdeeef; color: #b4282d; }
+.st-2 { background: #e8f7f0; color: #0ea47a; }
+.st-3 { background: #f2f3f5; color: #838383; }
+
+/* ========== 2. 拼团进度卡 ========== */
+.member-slots {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.member {
+  width: 130rpx;
+  margin: 0 12rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.member-avatar-wrap {
+  position: relative;
+}
+.member-avatar {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: #f2f3f5;
+  border: 2rpx solid #eeeeee;
+}
+/* 团长皇冠角标 */
+.crown {
+  position: absolute;
+  top: -14rpx;
+  right: -8rpx;
+  font-size: 32rpx;
+  line-height: 1;
+  z-index: 2;
+}
+.member-name {
+  font-size: 20rpx;
+  color: #838383;
+  margin-top: 12rpx;
+  max-width: 130rpx;
+  text-align: center;
+}
+/* 空位：虚线圆 + ? */
+.member-empty {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  border: 2rpx dashed #cccccc;
+  background: #fafafa;
+  color: #cccccc;
+  font-size: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.progress-text {
+  text-align: center;
+  font-size: 28rpx;
+  color: #b4282d;
+  font-weight: bold;
+  margin-top: 24rpx;
+}
+.progress-text.text-success {
+  color: #0ea47a;
+}
+
+/* 倒计时：黑底白字数字块 */
+.cd-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 16rpx;
+}
+.cd-label {
+  font-size: 24rpx;
+  color: #838383;
+  margin-right: 12rpx;
+}
+.cd-block {
+  min-width: 44rpx;
+  height: 44rpx;
+  line-height: 44rpx;
+  padding: 0 6rpx;
+  background: #333333;
+  color: #ffffff;
+  font-size: 26rpx;
+  font-weight: bold;
+  border-radius: 8rpx;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+.cd-colon {
+  color: #333333;
+  font-weight: bold;
+  margin: 0 6rpx;
+  font-size: 26rpx;
+}
+.cd-ended {
+  font-size: 24rpx;
+  color: #b2b2b2;
+}
+
+/* ========== 3. 规格选择区 ========== */
+.spec-dim-name {
+  font-size: 26rpx;
+  color: #333333;
+  margin: 16rpx 0 12rpx;
+}
+.spec-values {
+  display: flex;
+  flex-wrap: wrap;
+}
+.spec-value {
+  padding: 12rpx 28rpx;
+  background: #f5f6f7;
+  color: #333333;
+  font-size: 26rpx;
+  border-radius: 999rpx;
+  margin: 0 16rpx 16rpx 0;
+  border: 2rpx solid transparent;
+}
+.spec-value-on {
+  background: #fdeeef;
+  color: #b4282d;
+  border-color: #b4282d;
+  font-weight: bold;
+}
+.spec-value-off {
+  color: #cccccc;
+  background: #fafafa;
+  text-decoration: line-through;
+}
+.spec-price-row {
+  display: flex;
+  align-items: baseline;
+  margin-top: 8rpx;
+}
+.spec-price-row .price {
+  margin-left: 12rpx;
+}
+.spec-count-row {
+  display: flex;
+  align-items: center;
+  margin-top: 20rpx;
+}
+.stepper {
+  display: flex;
+  align-items: center;
+  margin: 0 20rpx;
+}
+.step-btn {
+  width: 56rpx;
+  height: 56rpx;
+  line-height: 52rpx;
+  text-align: center;
+  background: #f5f6f7;
+  color: #333333;
+  font-size: 34rpx;
+  border-radius: 8rpx;
+}
+.step-disabled {
+  color: #cccccc;
+}
+.step-num {
+  min-width: 72rpx;
+  text-align: center;
+  font-size: 28rpx;
+  color: #333333;
+}
+.spec-selected {
+  margin-top: 16rpx;
+}
+
+/* ========== 4. 玩法说明 + 流程示意 ========== */
+.rule-line {
+  font-size: 24rpx;
+  color: #838383;
+  line-height: 1.8;
+}
+.flow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 24rpx;
+  padding: 24rpx 12rpx;
+  background: #faf7f7;
+  border-radius: 12rpx;
+}
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.flow-dot {
+  width: 48rpx;
+  height: 48rpx;
+  line-height: 48rpx;
+  text-align: center;
+  border-radius: 50%;
+  background: #b4282d;
+  color: #ffffff;
+  font-size: 24rpx;
+  font-weight: bold;
+}
+.flow-txt {
+  font-size: 22rpx;
+  color: #666666;
+  margin-top: 10rpx;
+}
+.flow-arrow {
+  color: #cccccc;
+  font-size: 28rpx;
+  flex: 1;
+  text-align: center;
+}
+
+/* ========== 5. 邀请好友得券横幅 ========== */
+.invite-card {
+  background: linear-gradient(135deg, #fff6f0, #ffffff);
+}
+.invite-row {
+  display: flex;
+  align-items: center;
+}
+.invite-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #b4282d;
+}
+.invite-desc {
+  margin-top: 8rpx;
+}
+.invite-btn {
+  flex-shrink: 0;
+  margin: 0;
+}
+.share-note {
+  line-height: 1.6;
+}
+
+/* ========== 6. 其他在拼的团 ========== */
+.other-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #f5f6f7;
+}
+.other-item:last-child {
+  border-bottom: none;
+}
+.other-img {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 12rpx;
+  background: #f2f3f5;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+.other-info {
+  min-width: 0;
+}
+.other-lack {
+  color: #333333;
+}
+.other-meta {
+  display: flex;
+  align-items: baseline;
+  margin-top: 8rpx;
+}
+.other-meta .text-light {
+  margin-left: 12rpx;
+}
+.other-go {
+  flex-shrink: 0;
+  margin: 0;
+}
+.other-empty {
+  text-align: center;
+  padding: 24rpx 0 8rpx;
+}
+.other-create-btn {
+  margin-top: 16rpx;
+}
+
+/* ========== 7. 商品详情入口 ========== */
+.goods-entry {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #333333;
+}
+.entry-hover {
+  background: #fafafa;
+}
+
+/* ========== 底部固定操作栏 ========== */
+.footer-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  background: #ffffff;
+  padding: 16rpx 24rpx;
+  padding-bottom: calc(16rpx + env(safe-area-inset-bottom));
+  box-shadow: 0 -2rpx 12rpx rgba(0, 0, 0, 0.06);
+  z-index: 50;
+}
+.footer-btn {
+  flex: 1;
+  margin: 0;
+}
+.footer-btn-sm {
+  flex: 1;
+  margin: 0 8rpx;
+}
+.footer-badge {
+  font-size: 26rpx;
+  font-weight: bold;
+  padding: 12rpx 24rpx;
+  border-radius: 999rpx;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+.badge-green {
+  background: #e8f7f0;
+  color: #0ea47a;
+}
+.badge-gray {
+  background: #f2f3f5;
+  color: #838383;
+}
+
+/* ========== 参团成功弹层 ========== */
+.join-success {
+  padding: 48rpx 40rpx 40rpx;
+  text-align: center;
+}
+.js-emoji {
+  font-size: 88rpx;
+  line-height: 1;
+}
+.js-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-top: 16rpx;
+}
+.js-msg {
+  font-size: 26rpx;
+  color: #666666;
+  margin-top: 12rpx;
+  line-height: 1.5;
+}
+.js-tip {
+  margin-top: 8rpx;
+}
+.js-btn {
+  margin-top: 24rpx;
+  width: 100%;
+}
+.js-later {
+  font-size: 26rpx;
+  color: #b2b2b2;
+  margin-top: 28rpx;
+  padding: 8rpx;
+}

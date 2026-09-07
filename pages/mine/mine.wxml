@@ -1,52 +1,196 @@
-<!--pages/mine/mine.wxml-->
-<view wx:if="{{!isLogined}}" class="first">
-  <view class='header'>
-    <image src='https://636c-cloud1-1g8ynlo793b33c64-1309106795.tcb.qcloud.la/wx_login.png?sign=1eac53668a2446a318f1bf108115d134&t=1657608211'></image>
-  </view>
-  <view class='content'>
-    <view>申请获取以下权限</view>
-    <text>获得你的公开信息(昵称，头像等)</text>
-  </view>
-  <button class='bottom' type='primary' lang="zh_CN" bindtap="login">
-    授权登录
-  </button>
-</view>
+<!--pages/mine/mine.wxml — 个人中心（重构）-->
+<wxs src="../../utils/format.wxs" module="fmt" />
+<view class="page-container mine-page">
 
-<view class="main" wx:else>
-  <view class="header-new">
-    <image src="{{avatarUrl}}" class="thumb"></image>
-    <text class="nickname">{{nickName}}</text>
-    <text class="about">关于我们</text>
-  </view>
+  <!-- ========== 头部用户卡（主题色渐变） ========== -->
+  <view class="header-card">
+    <!-- 消息入口（右上角） -->
+    <view class="msg-entry" bindtap="onGoMessage">
+      <text class="msg-bell">🔔</text>
+      <view wx:if="{{unreadMessages > 0}}" class="msg-badge">{{unreadMessages > 99 ? '99+' : unreadMessages}}</view>
+    </view>
 
-  <view class="address-box">
-    <view class="address-manage">
-      <navigator url="/pages/address/address">地址管理</navigator>
-    </view>
-    <view wx:if="{{hasAddress}}" class="address-list">
-      <view>{{address.consignee}}</view>
-      <view>{{address.mobile}}</view>
-      <view>{{address.address}}</view>
-    </view>
-  </view>
-  <view class="orders-box">
-    <view class="orders">我的订单</view>
-    <scroll-view scroll-y="true" bindscrolltolower="searchScrollLower" class="newsListView"  style="height: {{scrollHeight}}rpx;">
-      <view class="orders-list" wx:for="{{orders}}" wx:key="index">
-        <view class="orders-number">订单编号：{{item.order_no}}</view>
-        <view class="orders-detail">
-          <image src="{{'https://hanmashanghu.qiaomai365.com' + item.snap_img}}"></image>
-          <view class="">{{item.snap_name}}</view>
-          <view class="">{{item.total_count}}</view>
-          <text class="orders-status">未付款</text>
-        </view>
-        <view class="orders-footer">
-          <text>实付：￥{{item.total_price}}</text>
-          <button size="mini" class="orders-btn" bindtap="payOrders">付款</button>
+    <!-- 已登录 -->
+    <block wx:if="{{isLogined && userInfo}}">
+      <view class="user-row">
+        <image class="avatar" src="{{avatar}}" mode="aspectFill" data-key="avatar" binderror="onImgError" bindtap="onChangeAvatar"></image>
+        <view class="user-info flex-1">
+          <view class="nick-row">
+            <text class="nickname ellipsis">{{userInfo.nickName}}</text>
+            <view class="level-badge" bindtap="onGoMember">
+              <text class="level-icon">{{userInfo.levelIcon}}</text>
+              <text class="level-name">{{userInfo.levelName}}</text>
+            </view>
+          </view>
+          <view class="phone text-sub-light">{{userInfo.phone}}</view>
         </view>
       </view>
-      <view class="loading" hidden="{{!searchLoading}}">正在载入更多...</view>
-      <view class="loading complete" hidden="{{!searchLoadingComplete}}">已加载全部</view>
-    </scroll-view>
+
+      <!-- 成长值进度条 -->
+      <view class="growth-box" wx:if="{{member}}" bindtap="onGoMember">
+        <view class="growth-bar">
+          <view class="growth-inner" style="width: {{member.progress}}%"></view>
+        </view>
+        <view class="growth-text">成长值 {{member.growthValue}}/{{member.nextLevelGrowth}}</view>
+      </view>
+
+      <!-- 三个快捷数字入口 -->
+      <view class="quick-nums">
+        <view class="quick-item" bindtap="onGoPoints">
+          <view class="quick-num">{{userInfo.points}}</view>
+          <view class="quick-label">积分</view>
+        </view>
+        <view class="quick-item" bindtap="onGoCoupon">
+          <view class="quick-num">{{userInfo.couponCount}}</view>
+          <view class="quick-label">优惠券</view>
+        </view>
+        <view class="quick-item" bindtap="onGoCollect">
+          <view class="quick-num">{{userInfo.collectCount}}</view>
+          <view class="quick-label">收藏</view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 未登录（仅用户主动退出后出现，游客态可浏览全部功能） -->
+    <block wx:else>
+      <view class="user-row" bindtap="onLogin">
+        <view class="avatar avatar-placeholder">👤</view>
+        <view class="user-info flex-1">
+          <view class="nickname">点击登录</view>
+          <view class="phone text-sub-light">登录后可查看订单、积分与会员权益</view>
+        </view>
+        <view class="login-btn">授权登录</view>
+      </view>
+      <view class="quick-nums">
+        <view class="quick-item" bindtap="onGoPoints">
+          <view class="quick-num">-</view>
+          <view class="quick-label">积分</view>
+        </view>
+        <view class="quick-item" bindtap="onGoCoupon">
+          <view class="quick-num">-</view>
+          <view class="quick-label">优惠券</view>
+        </view>
+        <view class="quick-item" bindtap="onGoCollect">
+          <view class="quick-num">-</view>
+          <view class="quick-label">收藏</view>
+        </view>
+      </view>
+    </block>
+  </view>
+
+  <!-- ========== 订单快捷入口条 ========== -->
+  <view class="card order-card">
+    <view class="section-title">
+      <view class="title">我的订单</view>
+      <view class="more" bindtap="onGoOrderAll">全部订单 ></view>
+    </view>
+    <view class="order-entries">
+      <view class="order-entry" data-status="1" bindtap="onGoOrder">
+        <view class="entry-icon-wrap">
+          <text class="entry-icon">💰</text>
+          <view wx:if="{{statusCount.s1 > 0}}" class="badge entry-badge">{{statusCount.s1}}</view>
+        </view>
+        <view class="entry-text">待付款</view>
+      </view>
+      <view class="order-entry" data-status="2" bindtap="onGoOrder">
+        <view class="entry-icon-wrap">
+          <text class="entry-icon">📦</text>
+          <view wx:if="{{statusCount.s2 > 0}}" class="badge entry-badge">{{statusCount.s2}}</view>
+        </view>
+        <view class="entry-text">待发货</view>
+      </view>
+      <view class="order-entry" data-status="3" bindtap="onGoOrder">
+        <view class="entry-icon-wrap">
+          <text class="entry-icon">🛵</text>
+          <view wx:if="{{statusCount.s3 > 0}}" class="badge entry-badge">{{statusCount.s3}}</view>
+        </view>
+        <view class="entry-text">配送中</view>
+      </view>
+      <view class="order-entry" data-status="4" bindtap="onGoOrder">
+        <view class="entry-icon-wrap">
+          <text class="entry-icon">🏠</text>
+          <view wx:if="{{statusCount.s4 > 0}}" class="badge entry-badge">{{statusCount.s4}}</view>
+        </view>
+        <view class="entry-text">待收货</view>
+      </view>
+      <view class="order-entry" data-status="7" bindtap="onGoOrder">
+        <view class="entry-icon-wrap">
+          <text class="entry-icon">✍️</text>
+          <view wx:if="{{statusCount.review > 0}}" class="badge entry-badge">{{statusCount.review}}</view>
+        </view>
+        <view class="entry-text">待评价</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- ========== 菜单分组 ========== -->
+  <view class="card menu-card" wx:for="{{menuGroups}}" wx:key="title" wx:for-item="group">
+    <view class="menu-title">{{group.title}}</view>
+    <view
+      class="menu-cell"
+      wx:for="{{group.items}}"
+      wx:key="text"
+      data-url="{{item.url}}"
+      data-tab="{{item.tab}}"
+      bindtap="onMenuTap">
+      <text class="cell-icon">{{item.icon}}</text>
+      <view class="cell-text flex-1">{{item.text}}</view>
+      <view wx:if="{{item.dotKey === 'checkinDot' && checkinDot}}" class="dot-badge cell-dot"></view>
+      <text class="cell-arrow">›</text>
+    </view>
+  </view>
+
+  <!-- 其他（联系客服 / 关于我们 / 设置） -->
+  <view class="card menu-card">
+    <view class="menu-title">其他</view>
+    <view class="menu-cell" data-action="service" bindtap="onMenuTap">
+      <text class="cell-icon">🎧</text>
+      <view class="cell-text flex-1">联系客服</view>
+      <text class="cell-arrow">›</text>
+    </view>
+    <view class="menu-cell" data-action="about" bindtap="onMenuTap">
+      <text class="cell-icon">ℹ️</text>
+      <view class="cell-text flex-1">关于我们</view>
+      <text class="cell-arrow">›</text>
+    </view>
+    <view class="menu-cell" data-action="setting" bindtap="onMenuTap">
+      <text class="cell-icon">⚙️</text>
+      <view class="cell-text flex-1">设置</view>
+      <text class="cell-arrow {{settingOpen ? 'cell-arrow-open' : ''}}">›</text>
+    </view>
+    <!-- 设置展开项 -->
+    <block wx:if="{{settingOpen}}">
+      <view class="menu-cell menu-cell-sub" bindtap="onClearCache">
+        <text class="cell-icon">🧹</text>
+        <view class="cell-text flex-1">清除缓存（重置演示数据）</view>
+        <text class="cell-arrow">›</text>
+      </view>
+      <view class="menu-cell menu-cell-sub" bindtap="onLogout">
+        <text class="cell-icon">🚪</text>
+        <view class="cell-text flex-1 text-primary">退出登录</view>
+        <text class="cell-arrow">›</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- ========== 底部演示提示 ========== -->
+  <view class="demo-tip">演示环境 · 数据均为 Mock，不产生真实交易</view>
+  <view class="safe-bottom"></view>
+
+  <!-- ========== 关于我们弹层 ========== -->
+  <view wx:if="{{showAbout}}" class="popup-mask" bindtap="closeAbout"></view>
+  <view wx:if="{{showAbout}}" class="popup-bottom about-popup">
+    <view class="popup-header">
+      <text class="popup-title">关于我们</text>
+      <text class="popup-close" bindtap="closeAbout">✕</text>
+    </view>
+    <view class="about-body">
+      <view class="about-logo">🍪</view>
+      <view class="about-name">零食商城 · 直营店</view>
+      <view class="about-version">版本号 {{version}}</view>
+      <view class="about-text">零食商城·直营店成立于 2020 年，是一家专注于休闲零食的连锁品牌直营店。我们坚持产地直采、当日分拣、冷链配送，主营坚果炒货、饼干糕点、糖果巧克力、肉脯卤味、进口零食等 18 大类上千种商品。</view>
+      <view class="about-text">门店配备专业骑手团队，周边 60 公里最快 45 分钟送达；会员体系五级成长，签到、购物、评价均可赚取积分与成长值，享受专属折扣、免配送费、生日礼包等多重特权。</view>
+      <view class="demo-tip">演示环境 · 数据均为 Mock，不产生真实交易</view>
+    </view>
   </view>
 </view>

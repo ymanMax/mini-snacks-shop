@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "拼团特惠",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "empty-state": "../../components/empty-state/empty-state",
+    "skeleton": "../../components/skeleton/skeleton"
+  }
+}

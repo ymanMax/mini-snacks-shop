@@ -1,0 +1,314 @@
+/* pages/order/detail.wxss — 订单详情页 */
+/* 规范：主题色 #b4282d / 背景 #f5f6f7 / 卡片白底圆角 16rpx / 间距 24rpx */
+
+.order-detail-page {
+  padding-bottom: 24rpx;
+}
+
+.card-title {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-bottom: 20rpx;
+}
+.card-title-sub {
+  margin-left: 12rpx;
+  font-size: 22rpx;
+  font-weight: normal;
+  color: #838383;
+}
+
+/* ---------- 1. 状态头部渐变卡 ---------- */
+.status-hero {
+  padding: 48rpx 32rpx 56rpx;
+  background: linear-gradient(135deg, #d0342c 0%, #b4282d 60%, #8e1f23 100%);
+  color: #ffffff;
+  border-radius: 0 0 24rpx 24rpx;
+}
+.hero-gray {
+  background: linear-gradient(135deg, #9a9a9a 0%, #7d7d7d 100%);
+}
+.hero-status {
+  font-size: 44rpx;
+  font-weight: bold;
+  line-height: 1.3;
+}
+.hero-desc {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  opacity: 0.92;
+  line-height: 38rpx;
+}
+.hero-tip {
+  margin-top: 12rpx;
+  font-size: 20rpx;
+  opacity: 0.7;
+}
+
+/* ---------- 2. 骑手卡片 ---------- */
+.rider-card {
+  display: flex;
+  align-items: center;
+  margin-top: -24rpx;
+  position: relative;
+  z-index: 2;
+}
+.rider-avatar {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 50%;
+  background: #f5f6f7;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.rider-name {
+  display: flex;
+  align-items: center;
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+}
+.rider-name .tag {
+  margin-left: 12rpx;
+}
+.rider-sub {
+  margin-top: 8rpx;
+  font-size: 22rpx;
+  color: #838383;
+}
+
+/* ---------- 配送 timeline ---------- */
+.tl {
+  padding-left: 4rpx;
+}
+.tl-item {
+  display: flex;
+}
+.tl-left {
+  width: 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.tl-dot {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  background: #dddddd;
+  margin-top: 10rpx;
+}
+.tl-dot-on {
+  width: 22rpx;
+  height: 22rpx;
+  margin-top: 6rpx;
+  background: #b4282d;
+  box-shadow: 0 0 0 6rpx #fdeeef;
+}
+.tl-line {
+  flex: 1;
+  width: 2rpx;
+  background: #eeeeee;
+  margin: 6rpx 0;
+}
+.tl-body {
+  flex: 1;
+  min-width: 0;
+  padding: 0 0 28rpx 16rpx;
+}
+.tl-remark {
+  font-size: 26rpx;
+  color: #838383;
+  line-height: 38rpx;
+}
+.tl-remark-on {
+  color: #b4282d;
+  font-weight: bold;
+}
+.tl-time {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+
+/* ---------- 3. 地址快照 ---------- */
+.addr-line1 {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.addr-icon {
+  font-size: 28rpx;
+  margin-right: 8rpx;
+}
+.addr-name {
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333333;
+  margin-right: 16rpx;
+}
+.addr-phone {
+  font-size: 26rpx;
+  color: #838383;
+  margin-right: 12rpx;
+}
+.addr-full {
+  margin-top: 12rpx;
+  font-size: 26rpx;
+  color: #666666;
+  line-height: 38rpx;
+}
+
+/* ---------- 4. 商品清单 ---------- */
+.goods-row {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 0;
+  border-bottom: 2rpx solid #f5f6f7;
+}
+.goods-row:last-child {
+  border-bottom: none;
+}
+.goods-thumb {
+  width: 130rpx;
+  height: 130rpx;
+  border-radius: 12rpx;
+  background: #f5f6f7;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.goods-name {
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 38rpx;
+}
+.goods-spec {
+  display: inline-block;
+  margin-top: 8rpx;
+  padding: 4rpx 16rpx;
+  font-size: 22rpx;
+  color: #838383;
+  background: #f2f3f5;
+  border-radius: 999rpx;
+}
+.goods-right {
+  margin-left: 16rpx;
+  text-align: right;
+  flex-shrink: 0;
+}
+.goods-right .price {
+  font-size: 28rpx;
+}
+.goods-count {
+  margin-top: 8rpx;
+  font-size: 24rpx;
+  color: #838383;
+}
+
+/* ---------- 5. 金额明细 ---------- */
+.amount-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10rpx 0;
+}
+.amount-label {
+  display: flex;
+  align-items: center;
+  font-size: 26rpx;
+  color: #666666;
+}
+.amount-sub {
+  font-size: 22rpx;
+  color: #b2b2b2;
+}
+.amount-value {
+  font-size: 26rpx;
+  color: #333333;
+}
+.amount-pay {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+.info-icon {
+  margin-left: 8rpx;
+  font-size: 26rpx;
+  color: #b2b2b2;
+}
+
+/* ---------- 6. 订单信息 ---------- */
+.info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12rpx 0;
+}
+.info-label {
+  font-size: 26rpx;
+  color: #838383;
+  flex-shrink: 0;
+}
+.info-value {
+  display: flex;
+  align-items: center;
+  margin-left: 24rpx;
+  font-size: 26rpx;
+  color: #333333;
+  text-align: right;
+}
+.copy-btn {
+  margin-left: 16rpx;
+  padding: 2rpx 20rpx;
+  font-size: 22rpx;
+  color: #b4282d;
+  border: 2rpx solid #b4282d;
+  border-radius: 999rpx;
+}
+
+/* ---------- 7. 底部操作栏 ---------- */
+.action-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  background: #ffffff;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.06);
+}
+.action-bar .demo-tip {
+  padding: 8rpx 24rpx 0;
+}
+.action-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-height: 100rpx;
+  padding: 12rpx 24rpx;
+}
+.ab-btn {
+  margin-left: 16rpx;
+  height: 68rpx;
+  line-height: 64rpx;
+  padding: 0 32rpx;
+  text-align: center;
+}
+.ab-btn.btn-primary {
+  line-height: 68rpx;
+  font-size: 28rpx;
+}
+.advance-tip {
+  padding: 0 24rpx 12rpx;
+  font-size: 20rpx;
+  color: #b2b2b2;
+  text-align: right;
+}
+
+/* justCreated=1：突出「去支付」 */
+@keyframes ab-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(180, 40, 45, 0.45); }
+  70% { box-shadow: 0 0 0 16rpx rgba(180, 40, 45, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(180, 40, 45, 0); }
+}
+.ab-glow {
+  animation: ab-pulse 1.4s infinite;
+}

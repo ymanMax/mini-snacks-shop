@@ -1,0 +1,210 @@
+<wxs src="../../utils/format.wxs" module="fmt" />
+
+<view class="page-container tickets-page">
+
+  <!-- ========== 状态 Tab ========== -->
+  <scroll-view
+    class="tab-scroll"
+    scroll-x="{{true}}"
+    enhanced="{{true}}"
+    show-scrollbar="{{false}}"
+    scroll-into-view="tab{{status}}"
+    scroll-with-animation="{{true}}">
+    <view
+      class="tab-item {{status === item.status ? 'tab-on' : ''}}"
+      id="tab{{item.status}}"
+      wx:for="{{tabs}}"
+      wx:key="status"
+      data-status="{{item.status}}"
+      bindtap="onTabTap">
+      <text class="tab-text">{{item.name}}</text>
+      <view class="tab-line" wx:if="{{status === item.status}}"></view>
+    </view>
+  </scroll-view>
+
+  <!-- ========== 首屏骨架屏 ========== -->
+  <skeleton wx:if="{{loading}}" type="order" />
+
+  <!-- ========== 工单列表 ========== -->
+  <block wx:elif="{{records.length}}">
+    <view class="list-tip">共 {{total}} 条售后记录 · 点击卡片查看状态跟踪</view>
+
+    <view
+      class="card tk-card"
+      wx:for="{{records}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onCardTap">
+
+      <!-- 头部：类型胶囊 + 状态徽章 -->
+      <view class="tk-head">
+        <text class="tk-type {{item.typeClass}}">{{item.typeText}}</text>
+        <text class="tk-no">工单 #{{item.id}}</text>
+        <text class="tk-status {{item.statusClass}}">{{item.statusText}}</text>
+      </view>
+
+      <!-- 中部：商品图 + 名称 + 原因 -->
+      <view class="tk-body">
+        <image
+          class="tk-thumb"
+          src="{{item.goodsPic}}"
+          mode="aspectFill"
+          lazy-load="{{true}}"
+          data-index="{{index}}"
+          binderror="onImgError"></image>
+        <view class="flex-1">
+          <view class="tk-name ellipsis-2">{{item.goodsName}}</view>
+          <view class="tk-reason ellipsis">原因：{{item.reason}}</view>
+        </view>
+        <view class="tk-refund" wx:if="{{item.refundAmount > 0}}">
+          <text class="tk-refund-label">退款</text>
+          <text class="price tk-refund-amount">￥{{fmt.priceNum(item.refundAmount)}}</text>
+        </view>
+      </view>
+
+      <!-- 底部：申请时间 + 查看详情 -->
+      <view class="tk-foot">
+        <text class="tk-time">申请时间 {{item.createTime}}</text>
+        <text class="tk-more">查看详情 ›</text>
+      </view>
+    </view>
+
+    <view class="load-more">{{noMore ? '没有更多了' : (loadingMore ? '加载中...' : '上拉加载更多')}}</view>
+    <view class="fab-placeholder"></view>
+    <view class="safe-bottom"></view>
+  </block>
+
+  <!-- ========== 空态 ========== -->
+  <empty-state wx:else text="暂无售后记录" btn-text="联系客服咨询 →" bind:action="onGoChat" />
+
+  <!-- ========== 底部悬浮「联系客服」 ========== -->
+  <view class="fab-chat" bindtap="onGoChat">
+    <text class="fab-icon">🎧</text>
+    <text>联系客服</text>
+  </view>
+
+  <!-- ========== 工单详情半屏弹层 ========== -->
+  <view wx:if="{{showDetail}}" class="popup-mask" bindtap="closeDetail"></view>
+  <view wx:if="{{showDetail}}" class="popup-bottom dt-popup">
+    <view class="popup-header">
+      <text class="popup-title">售后工单详情</text>
+      <text class="popup-close" bindtap="closeDetail">✕</text>
+    </view>
+
+    <view class="dt-loading" wx:if="{{detailLoading && !detail}}">工单加载中...</view>
+
+    <scroll-view class="dt-body" wx:if="{{detail}}" scroll-y="{{true}}" enhanced="{{true}}" show-scrollbar="{{false}}">
+
+      <!-- 状态条 -->
+      <view class="dt-status-bar">
+        <text class="dt-type {{detail.typeClass}}">{{detail.typeText}}</text>
+        <text class="dt-status {{detail.statusClass}}">{{detail.statusText}}</text>
+      </view>
+
+      <!-- 商品 + 订单号（跳订单详情） -->
+      <view class="dt-goods">
+        <image class="dt-thumb" src="{{detail.goodsPic}}" mode="aspectFill" binderror="onDetailImgError"></image>
+        <view class="flex-1">
+          <view class="dt-goods-name ellipsis-2">{{detail.goodsName}}</view>
+          <view class="dt-order-no" bindtap="onGoOrder">订单号：{{detail.orderNo}} ›</view>
+        </view>
+      </view>
+
+      <!-- 申请信息 -->
+      <view class="dt-info">
+        <view class="dt-info-row">
+          <text class="dt-info-label">工单编号</text>
+          <text class="dt-info-value">AS{{detail.id}}</text>
+        </view>
+        <view class="dt-info-row">
+          <text class="dt-info-label">申请原因</text>
+          <text class="dt-info-value">{{detail.reason}}</text>
+        </view>
+        <view class="dt-info-row">
+          <text class="dt-info-label">问题描述</text>
+          <text class="dt-info-value">{{detail.desc || '无'}}</text>
+        </view>
+        <view class="dt-info-row">
+          <text class="dt-info-label">申请时间</text>
+          <text class="dt-info-value">{{detail.createTime}}</text>
+        </view>
+        <view class="dt-info-row" wx:if="{{detail.refundAmount > 0}}">
+          <text class="dt-info-label">退款金额</text>
+          <text class="dt-info-value price">￥{{fmt.priceNum(detail.refundAmount)}}</text>
+        </view>
+      </view>
+
+      <!-- 凭证图片 -->
+      <block wx:if="{{detail.images && detail.images.length}}">
+        <view class="dt-sec-title">凭证图片</view>
+        <view class="dt-imgs">
+          <image
+            class="dt-img"
+            wx:for="{{detail.images}}"
+            wx:key="*this"
+            src="{{item}}"
+            mode="aspectFill"
+            data-ii="{{index}}"
+            bindtap="onPreviewImage"
+            binderror="onEvidenceImgError"></image>
+        </view>
+      </block>
+
+      <!-- 状态跟踪 timeline（倒序，最新节点高亮） -->
+      <view class="dt-sec-title">状态跟踪</view>
+      <view class="tl">
+        <view class="tl-item" wx:for="{{detail.timeline}}" wx:key="index">
+          <view class="tl-left">
+            <view class="tl-dot {{item.latest ? 'tl-dot-on' : ''}}"></view>
+            <view class="tl-line" wx:if="{{index !== detail.timeline.length - 1}}"></view>
+          </view>
+          <view class="tl-body">
+            <view class="tl-status {{item.latest ? 'tl-status-on' : ''}}">{{item.statusText}}</view>
+            <view class="tl-remark {{item.latest ? 'tl-remark-on' : ''}}">{{item.remark}}</view>
+            <view class="tl-time">{{item.time}}</view>
+          </view>
+        </view>
+      </view>
+
+      <view class="demo-tip">演示环境，售后流程为 Mock 模拟，不产生真实交易</view>
+    </scroll-view>
+
+    <!-- 操作按钮 -->
+    <view class="dt-ops" wx:if="{{detail}}">
+      <view class="dt-done-tip" wx:if="{{detail.refundDone}}">✅ 退款 ￥{{fmt.priceNum(detail.refundAmount)}} 已原路退回（演示）</view>
+      <view class="dt-btn-row">
+        <view class="btn-gray dt-btn" wx:if="{{detail.canCancel}}" bindtap="onCancelTicket">撤销申请</view>
+        <view class="btn-plain dt-btn" wx:if="{{detail.canAdvance}}" bindtap="onAdvanceTicket">模拟商家处理</view>
+        <view class="btn-plain dt-btn" wx:if="{{detail.isDone}}" bindtap="openRate">评价售后</view>
+      </view>
+      <view class="dt-ops-tip" wx:if="{{detail.canAdvance}}">演示按钮：点击可推进工单状态（待审核 → 处理中 → 已完成）</view>
+    </view>
+    <view class="safe-bottom"></view>
+  </view>
+
+  <!-- ========== 评价售后弹层 ========== -->
+  <view wx:if="{{showRate}}" class="popup-mask rate-mask" bindtap="closeRate"></view>
+  <view wx:if="{{showRate}}" class="popup-bottom rate-popup">
+    <view class="popup-header">
+      <text class="popup-title">评价售后服务</text>
+      <text class="popup-close" bindtap="closeRate">✕</text>
+    </view>
+    <view class="rate-row">
+      <text class="rate-label">解决满意度</text>
+      <star-rate value="{{rateSolve}}" size="{{44}}" readonly="{{false}}" bind:change="onSolveChange" />
+      <text class="rate-score">{{rateSolveText}}</text>
+    </view>
+    <view class="rate-input-wrap">
+      <input
+        class="rate-input"
+        value="{{rateContent}}"
+        maxlength="{{maxLen}}"
+        placeholder="对本次售后处理的评价（选填）"
+        placeholder-class="input-ph"
+        bindinput="onRateInput" />
+    </view>
+    <view class="btn-primary rate-submit {{rateSubmitting ? 'btn-disabled' : ''}}" bindtap="submitRate">提交评价</view>
+    <view class="demo-tip">演示环境 · 评价数据仅在本地生效</view>
+    <view class="safe-bottom"></view>
+  </view>
+</view>

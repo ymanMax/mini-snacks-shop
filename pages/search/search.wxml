@@ -1,0 +1,130 @@
+<wxs src="../../utils/format.wxs" module="fmt" />
+
+<view class="page-container search-page">
+  <!-- 搜索栏（吸顶） -->
+  <view class="search-header">
+    <view class="search-box">
+      <text class="search-icon">🔍</text>
+      <input
+        class="search-input"
+        value="{{keyword}}"
+        placeholder="搜索零食，如：每日坚果"
+        placeholder-class="search-ph"
+        focus
+        confirm-type="search"
+        bindinput="onKeywordInput"
+        bindconfirm="onSearchConfirm"
+        bindfocus="onInputFocus"
+      />
+      <text wx:if="{{keyword}}" class="search-clear" catchtap="onClearKeyword">✕</text>
+    </view>
+    <view class="search-btn" bindtap="onSearchConfirm">搜索</view>
+  </view>
+
+  <!-- 联想下拉面板 -->
+  <view class="suggest-panel" wx:if="{{showSuggest}}">
+    <view
+      class="suggest-item"
+      wx:for="{{suggest}}"
+      wx:key="id"
+      data-id="{{item.id}}"
+      bindtap="onSuggestTap"
+    >
+      <image
+        class="suggest-img"
+        src="{{item.pic}}"
+        mode="aspectFill"
+        lazy-load
+        data-list="suggest"
+        data-index="{{index}}"
+        binderror="onImgError"
+      ></image>
+      <view class="suggest-info">
+        <view class="suggest-name ellipsis">{{item.name}}</view>
+        <view class="suggest-price price">{{fmt.formatPrice(item.price)}}</view>
+      </view>
+    </view>
+    <view class="suggest-empty" wx:if="{{!suggest.length}}">无匹配商品，按“搜索”查看全部结果</view>
+  </view>
+
+  <!-- 主体（非联想态） -->
+  <block wx:if="{{!showSuggest}}">
+    <!-- 历史 + 热门 -->
+    <block wx:if="{{mode === 'idle'}}">
+      <view class="sec" wx:if="{{history.length}}">
+        <view class="sec-head">
+          <text class="sec-title">搜索历史</text>
+          <text class="sec-action" bindtap="onClearHistory">清空</text>
+        </view>
+        <view class="tag-wrap">
+          <view
+            class="his-tag"
+            wx:for="{{history}}"
+            wx:key="*this"
+            data-kw="{{item}}"
+            bindtap="onHistoryTap"
+          >
+            <text class="his-tag-text">{{item}}</text>
+            <text class="his-del" catchtap="onDeleteHistory" data-kw="{{item}}">×</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="sec" wx:if="{{hot.length}}">
+        <view class="sec-head">
+          <text class="sec-title">热门搜索</text>
+        </view>
+        <view class="hot-list">
+          <view
+            class="hot-item"
+            wx:for="{{hot}}"
+            wx:key="*this"
+            data-kw="{{item}}"
+            bindtap="onHotTap"
+          >
+            <text class="hot-no {{index < 3 ? 'hot' : ''}}">{{index + 1}}</text>
+            <text class="hot-kw ellipsis">{{item}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+
+    <!-- 搜索结果 -->
+    <block wx:else>
+      <view class="sort-tabs">
+        <view
+          class="sort-tab {{sort === item.key ? 'active' : ''}}"
+          wx:for="{{sortTabs}}"
+          wx:key="key"
+          data-sort="{{item.key}}"
+          bindtap="onSortTap"
+        >{{item.label}}</view>
+      </view>
+
+      <skeleton wx:if="{{firstLoading}}" type="goods" />
+
+      <block wx:else>
+        <view class="goods-grid" wx:if="{{list.length}}">
+          <goods-card
+            wx:for="{{list}}"
+            wx:key="id"
+            goods="{{item}}"
+            mode="grid"
+          />
+        </view>
+
+        <empty-state
+          wx:if="{{!list.length}}"
+          text="没有找到相关商品"
+          btn-text="返回"
+          bind:action="onBackToIdle"
+        />
+
+        <view class="load-more" wx:if="{{list.length && !hasMore}}">没有更多了</view>
+        <view class="load-more" wx:elif="{{loading}}">加载中...</view>
+      </block>
+    </block>
+  </block>
+
+  <view class="footer-placeholder"></view>
+</view>

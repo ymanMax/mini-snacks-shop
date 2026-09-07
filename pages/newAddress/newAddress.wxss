@@ -1,31 +1,228 @@
-@import '../../utils/weui.wxss';
+/* pages/newAddress/newAddress.wxss — 新增/编辑地址 */
 
- 
-
-.weui-cells:before{
-
-  top:0;
-
-  border-top:1rpx solid white;
-
-  }
-
-.weui-cell{
-
-  line-height: 3.5rem;
-
+.form-card {
+  padding: 8rpx 24rpx;
 }
 
-.weui-cells:after{
-
-  bottom:0;border-bottom:1rpx solid white
-
+.form-row {
+  display: flex;
+  align-items: center;
+  min-height: 104rpx;
+  border-bottom: 2rpx solid #f5f6f7;
+}
+.form-row-last {
+  border-bottom: none;
+}
+.form-label {
+  width: 190rpx;
+  flex-shrink: 0;
+  font-size: 28rpx;
+  color: #333333;
+}
+.form-input {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333333;
+}
+.form-ph {
+  color: #b2b2b2;
+}
+.form-value {
+  font-size: 28rpx;
+  color: #333333;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.form-value.form-ph {
+  color: #b2b2b2;
+}
+.arrow {
+  color: #b2b2b2;
+  font-size: 36rpx;
+  margin-left: 12rpx;
 }
 
- 
-
-.weui-btn{
-
-  width: 80%;
-
+/* 详细地址：竖向块（头部 = 标签 + 地图选点按钮，下方 textarea + 距离提示） */
+.form-row-area {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 24rpx 0;
 }
+.area-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16rpx;
+}
+.form-row-area .form-label {
+  line-height: 1.6;
+}
+.map-btn {
+  font-size: 26rpx;
+  color: #b4282d;
+  padding: 8rpx 24rpx;
+  border: 2rpx solid #b4282d;
+  border-radius: 999rpx;
+  background: #fdeeef;
+}
+.form-textarea {
+  width: 100%;
+  height: 140rpx;
+  font-size: 28rpx;
+  color: #333333;
+  line-height: 1.6;
+}
+
+/* 距离 / 超范围提示 */
+.distance-info {
+  margin-top: 16rpx;
+}
+.distance-now {
+  font-size: 24rpx;
+  color: #838383;
+}
+.distance-warn {
+  margin-top: 10rpx;
+  padding: 12rpx 16rpx;
+  font-size: 24rpx;
+  color: #b4282d;
+  background: #fdeeef;
+  border-radius: 8rpx;
+  line-height: 34rpx;
+}
+
+
+/* 地址标签胶囊单选 */
+.tag-options {
+  display: flex;
+  align-items: center;
+}
+.tag-option {
+  padding: 10rpx 32rpx;
+  border-radius: 999rpx;
+  background: #f2f3f5;
+  color: #666666;
+  font-size: 26rpx;
+  margin-right: 20rpx;
+  border: 2rpx solid transparent;
+}
+.tag-option-on {
+  background: #fdeeef;
+  color: #b4282d;
+  border-color: #b4282d;
+  font-weight: bold;
+}
+
+/* 删除按钮（编辑模式） */
+.del-btn {
+  margin: 40rpx 24rpx 0;
+  width: auto;
+}
+
+/* 底部固定保存按钮 */
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  padding: 16rpx 24rpx;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
+  z-index: 10;
+}
+.save-btn {
+  width: 100%;
+}
+
+/* ---------- 地图选点 POI 面板 ---------- */
+.poi-popup {
+  display: flex;
+  flex-direction: column;
+  max-height: 76vh;
+}
+.popup-head {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 24rpx 16rpx;
+}
+.popup-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333333;
+}
+.relocate-btn {
+  margin-left: auto;
+  margin-right: 24rpx;
+  font-size: 26rpx;
+  color: #b4282d;
+  padding: 8rpx 20rpx;
+  border: 2rpx solid #b4282d;
+  border-radius: 999rpx;
+  background: #fdeeef;
+}
+.popup-close {
+  font-size: 44rpx;
+  color: #b2b2b2;
+  line-height: 1;
+  padding: 0 8rpx;
+}
+.poi-search {
+  padding: 8rpx 24rpx 16rpx;
+}
+.poi-search-input {
+  height: 72rpx;
+  padding: 0 24rpx;
+  font-size: 26rpx;
+  color: #333333;
+  background: #f2f3f5;
+  border-radius: 999rpx;
+}
+.poi-scroll {
+  flex: 1;
+  max-height: 52vh;
+  padding: 0 24rpx;
+  box-sizing: border-box;
+}
+.poi-loading,
+.poi-empty {
+  padding: 60rpx 0;
+  text-align: center;
+  font-size: 24rpx;
+  color: #b2b2b2;
+}
+.poi-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 8rpx;
+  border-bottom: 2rpx solid #f5f6f7;
+}
+.poi-item:active {
+  background: #fdf6f6;
+}
+.poi-pin {
+  width: 44rpx;
+  font-size: 28rpx;
+  text-align: center;
+  flex-shrink: 0;
+}
+.poi-name {
+  font-size: 28rpx;
+  color: #333333;
+  font-weight: bold;
+}
+.poi-sub {
+  margin-top: 6rpx;
+  font-size: 22rpx;
+  color: #838383;
+}
+.poi-dist {
+  margin-left: 16rpx;
+  font-size: 24rpx;
+  color: #838383;
+  flex-shrink: 0;
+}
+.poi-dist-oor {
+  color: #b4282d;
+}
+

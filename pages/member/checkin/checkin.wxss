@@ -1,0 +1,276 @@
+/* pages/member/checkin/checkin.wxss — 每日签到 */
+
+.checkin-page { min-height: 100vh; }
+
+/* ---------- 顶部积分卡 ---------- */
+.points-hero {
+  position: relative;
+  margin: 0;
+  padding: 48rpx 32rpx 120rpx;
+  background:
+    radial-gradient(circle at 85% 15%, rgba(247, 212, 136, 0.3) 0%, rgba(247, 212, 136, 0) 45%),
+    linear-gradient(160deg, #d0342c 0%, #b4282d 60%, #8f1f23 100%);
+  color: #ffffff;
+  text-align: center;
+  border-radius: 0 0 32rpx 32rpx;
+}
+.ph-label {
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.75);
+}
+.ph-points {
+  font-size: 88rpx;
+  font-weight: bold;
+  line-height: 1.2;
+  color: #f7d488;
+  margin-top: 8rpx;
+}
+.ph-continuous {
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.85);
+  margin-top: 8rpx;
+}
+.ph-days {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #f7b500;
+  padding: 0 4rpx;
+}
+.ph-link {
+  position: absolute;
+  top: 32rpx;
+  right: 32rpx;
+  font-size: 24rpx;
+  color: rgba(255, 255, 255, 0.85);
+  padding: 8rpx 20rpx;
+  border-radius: 999rpx;
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* ---------- 签到按钮 ---------- */
+.sign-area {
+  margin-top: -88rpx;
+  display: flex;
+  justify-content: center;
+}
+.sign-btn-wrap {
+  position: relative;
+}
+.sign-btn {
+  width: 176rpx;
+  height: 176rpx;
+  border-radius: 50%;
+  background: linear-gradient(160deg, #f7d488 0%, #f7b500 100%);
+  box-shadow: 0 8rpx 24rpx rgba(247, 181, 0, 0.45), 0 0 0 12rpx rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #7a2b00;
+}
+.sign-btn:active { transform: scale(0.96); }
+.sign-btn-done {
+  background: #d8d9db;
+  box-shadow: 0 0 0 12rpx rgba(255, 255, 255, 0.9);
+  color: #ffffff;
+}
+.sign-btn-text {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+.sign-btn-sub {
+  font-size: 22rpx;
+  margin-top: 6rpx;
+  opacity: 0.85;
+}
+
+/* +N 积分上浮渐隐动画（纯 CSS） */
+.float-points {
+  position: absolute;
+  left: 50%;
+  top: -10rpx;
+  transform: translateX(-50%);
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #f7b500;
+  text-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
+  pointer-events: none;
+  animation: float-up 1.5s ease-out forwards;
+  z-index: 5;
+}
+@keyframes float-up {
+  0% { opacity: 0; transform: translate(-50%, 0) scale(0.8); }
+  20% { opacity: 1; transform: translate(-50%, -30rpx) scale(1.1); }
+  100% { opacity: 0; transform: translate(-50%, -140rpx) scale(1); }
+}
+
+/* ---------- 连续奖励梯度 ---------- */
+.reward-row {
+  display: flex;
+  justify-content: space-between;
+}
+.reward-cell {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+/* 格子间连接线 */
+.reward-cell::before {
+  content: '';
+  position: absolute;
+  top: 36rpx;
+  left: -50%;
+  width: 100%;
+  height: 4rpx;
+  background: #eeeeee;
+  z-index: 0;
+}
+.reward-cell:first-child::before { display: none; }
+.reward-cell.done::before { background: #f7b500; }
+.reward-circle {
+  position: relative;
+  z-index: 1;
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #f2f3f5;
+  color: #b2b2b2;
+  font-size: 22rpx;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.reward-cell.done .reward-circle {
+  background: #f7b500;
+  color: #ffffff;
+}
+.reward-cell.current .reward-circle {
+  background: linear-gradient(160deg, #d0342c, #b4282d);
+  color: #ffffff;
+  box-shadow: 0 4rpx 12rpx rgba(180, 40, 45, 0.4);
+  border: 4rpx solid #fdeeef;
+}
+/* 第 7 格金色大奖样式 */
+.reward-big .reward-circle {
+  background: linear-gradient(160deg, #f7d488, #f7b500);
+  color: #7a2b00;
+  font-size: 32rpx;
+}
+.reward-big.done .reward-circle { color: #ffffff; }
+.reward-day {
+  font-size: 20rpx;
+  color: #838383;
+  margin-top: 10rpx;
+}
+.reward-cell.current .reward-day {
+  color: #b4282d;
+  font-weight: bold;
+}
+.reward-big .reward-day {
+  color: #b07c00;
+  font-weight: bold;
+}
+.reward-points {
+  font-size: 18rpx;
+  color: #b2b2b2;
+  margin-top: 2rpx;
+}
+
+/* ---------- 签到日历（纯 CSS grid） ---------- */
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 16rpx;
+}
+.cal-head {
+  text-align: center;
+  font-size: 24rpx;
+  color: #838383;
+  padding: 8rpx 0 12rpx;
+}
+.cal-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 76rpx;
+}
+.cal-day {
+  position: relative;
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  color: #333333;
+  background: transparent;
+}
+/* 已签：主题色圆底白字 + ✓ 角标 */
+.cal-signed {
+  background: #b4282d;
+  color: #ffffff;
+  font-weight: bold;
+}
+.cal-check {
+  position: absolute;
+  right: -2rpx;
+  bottom: -4rpx;
+  width: 26rpx;
+  height: 26rpx;
+  line-height: 24rpx;
+  border-radius: 50%;
+  background: #f7b500;
+  color: #ffffff;
+  font-size: 16rpx;
+  text-align: center;
+}
+/* 今天未签：边框高亮显示“签” */
+.cal-today {
+  border: 3rpx solid #b4282d;
+  color: #b4282d;
+  font-weight: bold;
+}
+.cal-is-today.cal-signed {
+  box-shadow: 0 0 0 4rpx #fdeeef;
+}
+.cal-legend {
+  display: flex;
+  justify-content: center;
+  margin-top: 20rpx;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  font-size: 22rpx;
+  color: #838383;
+  margin: 0 20rpx;
+}
+.legend-dot {
+  width: 20rpx;
+  height: 20rpx;
+  border-radius: 50%;
+  margin-right: 8rpx;
+}
+.legend-signed { background: #b4282d; }
+.legend-today { border: 3rpx solid #b4282d; box-sizing: border-box; }
+
+/* ---------- 签到规则 ---------- */
+.rule-item {
+  display: flex;
+  padding: 10rpx 0;
+}
+.rule-dot {
+  color: #b4282d;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+.rule-text {
+  font-size: 24rpx;
+  color: #666666;
+  line-height: 1.7;
+}

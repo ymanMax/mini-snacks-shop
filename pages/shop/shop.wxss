@@ -1,0 +1,280 @@
+/* pages/shop/shop.wxss — 店铺页 */
+
+/* ---------- 顶部店铺卡 ---------- */
+.sc-top {
+  display: flex;
+  align-items: flex-start;
+}
+.sc-logo {
+  width: 132rpx;
+  height: 132rpx;
+  border-radius: 16rpx;
+  background: #f2f3f5;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+}
+.sc-info {
+  min-width: 0;
+}
+.sc-name-row {
+  display: flex;
+  align-items: center;
+}
+.sc-name {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #333333;
+  max-width: 380rpx;
+}
+.open-badge {
+  background: #e8f7f0;
+  color: #0ea47a;
+  font-size: 20rpx;
+  line-height: 1;
+  padding: 8rpx 14rpx;
+  border-radius: 999rpx;
+  margin-left: 16rpx;
+  flex-shrink: 0;
+}
+.sc-hours {
+  margin-top: 8rpx;
+}
+.sc-score-row {
+  display: flex;
+  align-items: baseline;
+  margin-top: 12rpx;
+  flex-wrap: wrap;
+}
+.sc-score {
+  font-size: 44rpx;
+  font-weight: bold;
+  color: #b4282d;
+  line-height: 1;
+}
+.sc-score-label {
+  margin-left: 8rpx;
+}
+.sc-subs {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+.sc-sub {
+  font-size: 20rpx;
+  color: #838383;
+  margin-left: 16rpx;
+}
+.sc-sub .text-primary {
+  font-weight: bold;
+}
+
+.sc-notice {
+  margin-top: 20rpx;
+  font-size: 24rpx;
+  color: #666666;
+  background: #fdf6f0;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  line-height: 1.5;
+}
+.notice-tag {
+  display: inline-block;
+  background: #fff4e5;
+  color: #ff8800;
+  font-size: 20rpx;
+  border-radius: 8rpx;
+  padding: 2rpx 10rpx;
+  margin-right: 12rpx;
+}
+.sc-address {
+  margin-top: 16rpx;
+  line-height: 1.5;
+}
+
+/* ---------- 门店照片 ---------- */
+.photos-row {
+  display: flex;
+  justify-content: space-between;
+}
+.photo-img {
+  width: 214rpx;
+  height: 160rpx;
+  border-radius: 12rpx;
+  background: #f2f3f5;
+}
+
+/* ---------- 内容 Tab ---------- */
+.content-tabs {
+  display: flex;
+  background: #ffffff;
+  border-radius: 16rpx;
+  margin: 24rpx;
+  padding: 8rpx;
+}
+.ct-tab {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  color: #666666;
+  padding: 16rpx 0;
+  border-radius: 12rpx;
+}
+.ct-tab-on {
+  background: #fdeeef;
+  color: #b4282d;
+  font-weight: bold;
+}
+
+/* ---------- 店铺主页：招牌推荐横滑 ---------- */
+.goods-hscroll {
+  width: 100%;
+  white-space: nowrap;
+}
+.goods-hinner {
+  display: flex;
+  padding: 4rpx 0;
+}
+
+/* ---------- 店铺评价 ---------- */
+.summary-bar {
+  display: flex;
+  align-items: center;
+}
+.sum-left {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: 32rpx;
+  flex-shrink: 0;
+}
+.sum-score {
+  font-size: 56rpx;
+  font-weight: bold;
+  color: #b4282d;
+  line-height: 1.1;
+}
+.sum-mid {
+  flex: 1;
+  min-width: 0;
+}
+.sum-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 22rpx;
+  color: #838383;
+  padding: 2rpx 0;
+}
+.sum-val {
+  color: #b4282d;
+  font-weight: bold;
+}
+.sum-total {
+  flex-shrink: 0;
+  margin-left: 20rpx;
+}
+
+.review-card {
+  padding-bottom: 20rpx;
+}
+.rv-head {
+  display: flex;
+  align-items: center;
+}
+.rv-avatar {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #f2f3f5;
+  margin-right: 16rpx;
+  flex-shrink: 0;
+}
+.rv-name {
+  color: #333333;
+  font-weight: bold;
+}
+.rv-scores {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 16rpx;
+}
+.rv-score-item {
+  display: flex;
+  align-items: center;
+  margin-right: 24rpx;
+}
+.rv-score-label {
+  font-size: 22rpx;
+  color: #838383;
+  margin-right: 8rpx;
+}
+.rv-content {
+  font-size: 26rpx;
+  color: #333333;
+  line-height: 1.6;
+  margin-top: 12rpx;
+}
+
+/* ---------- 配送说明 ---------- */
+.rule-tiles {
+  display: flex;
+  justify-content: space-between;
+}
+.rule-tile {
+  flex: 1;
+  background: #fdf3f3;
+  border-radius: 12rpx;
+  text-align: center;
+  padding: 24rpx 8rpx;
+  margin-right: 16rpx;
+}
+.rule-tile:last-child {
+  margin-right: 0;
+}
+.rt-num {
+  font-size: 34rpx;
+  font-weight: bold;
+  color: #b4282d;
+}
+.rt-label {
+  font-size: 20rpx;
+  color: #838383;
+  margin-top: 8rpx;
+}
+.dt-row {
+  font-size: 24rpx;
+  color: #666666;
+  line-height: 1.7;
+  padding: 6rpx 0;
+}
+.member-tip {
+  margin-top: 20rpx;
+  background: #fff4e5;
+  color: #ff8800;
+  font-size: 22rpx;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  line-height: 1.5;
+}
+
+/* ---------- 底部操作条 ---------- */
+.bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  padding: 16rpx 24rpx 0;
+  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
+  z-index: 10;
+}
+.bar-inner {
+  display: flex;
+  align-items: center;
+  padding-bottom: 16rpx;
+}
+.bar-btn {
+  flex: 1;
+  margin: 0 12rpx;
+}

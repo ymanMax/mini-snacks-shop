@@ -1,15 +1,38 @@
-<!--pages/list/list.wxml-->
-<view class="main">
-  <view class="banner">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + pic}}"></image>
-    </view>
-  <view class="list-box">
-    <view class="newest-list" wx:for="{{products}}">
-      <navigator url="../detail/detail?product_id={{item.id}}">
-        <image src="{{'https://hanmashanghu.qiaomai365.com' + item.main_img_url}}"></image>
-        <view class="newest-text"><text>{{item.name}}</text></view>
-        <view class="newest-text"><text>{{item.price}}</text></view>
-      </navigator>
+<wxs src="../../utils/format.wxs" module="fmt" />
+
+<view class="page-container list-page">
+  <!-- 主题信息条 -->
+  <view class="card theme-info" wx:if="{{theme}}">
+    <image
+      class="theme-info-img"
+      src="{{theme.topic_img}}"
+      mode="aspectFill"
+      binderror="onThemeImgError"
+    ></image>
+    <view class="theme-info-body flex-column flex-1">
+      <view class="theme-info-name ellipsis">{{theme.name}}</view>
+      <view class="theme-info-desc ellipsis-2">{{theme.description}}</view>
     </view>
   </view>
+
+  <!-- 首屏骨架 -->
+  <skeleton wx:if="{{firstLoading}}" type="goods" />
+
+  <block wx:else>
+    <view class="goods-grid" wx:if="{{list.length}}">
+      <goods-card
+        wx:for="{{list}}"
+        wx:key="id"
+        goods="{{item}}"
+        mode="grid"
+      />
+    </view>
+
+    <empty-state wx:if="{{!list.length}}" text="该主题下暂无商品" />
+
+    <view class="load-more" wx:if="{{list.length && !hasMore}}">没有更多了</view>
+    <view class="load-more" wx:elif="{{loading}}">加载中...</view>
+  </block>
+
+  <view class="footer-placeholder"></view>
 </view>

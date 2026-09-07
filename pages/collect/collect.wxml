@@ -1,0 +1,53 @@
+<view class="page-container collect-page">
+  <!-- 首屏骨架 -->
+  <skeleton wx:if="{{firstLoading}}" type="goods" />
+
+  <block wx:else>
+    <!-- ============ 我的收藏 ============ -->
+    <block wx:if="{{type === 'collect'}}">
+      <view class="goods-grid" wx:if="{{list.length}}">
+        <view class="collect-cell" wx:for="{{list}}" wx:key="id">
+          <goods-card goods="{{item}}" mode="grid" />
+          <view class="fav-btn" catchtap="onCancelCollect" data-id="{{item.id}}">♥</view>
+        </view>
+      </view>
+
+      <empty-state
+        wx:if="{{!list.length}}"
+        text="还没有收藏，去逛逛 →"
+        btn-text="去首页逛逛"
+        bind:action="onGoHome"
+      />
+
+      <view class="load-more" wx:if="{{list.length && !hasMore}}">没有更多了</view>
+      <view class="load-more" wx:elif="{{loading}}">加载中...</view>
+    </block>
+
+    <!-- ============ 浏览足迹 ============ -->
+    <block wx:else>
+      <view class="fp-toolbar" wx:if="{{groups.length}}">
+        <text class="fp-count">共 {{groups.length}} 天浏览记录</text>
+        <text class="fp-clear" bindtap="onClearFootprint">清空足迹</text>
+      </view>
+
+      <block wx:if="{{groups.length}}">
+        <view class="fp-group" wx:for="{{groups}}" wx:for-item="grp" wx:key="date">
+          <view class="fp-date">{{grp.date}}</view>
+          <view class="goods-grid">
+            <goods-card
+              wx:for="{{grp.goods}}"
+              wx:for-item="g"
+              wx:key="id"
+              goods="{{g}}"
+              mode="grid"
+            />
+          </view>
+        </view>
+      </block>
+
+      <empty-state wx:if="{{!groups.length}}" text="暂无浏览记录" />
+    </block>
+  </block>
+
+  <view class="footer-placeholder"></view>
+</view>
